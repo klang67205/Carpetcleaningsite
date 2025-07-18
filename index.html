@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Professional carpet, upholstery, tile, and hardwood cleaning in Wichita, KS. Eco-friendly, fast-drying services with transparent pricing starting at $75. Book now!">
+    <meta name="keywords" content="carpet cleaning Wichita, upholstery cleaning KS, tile grout cleaning, hardwood floor cleaning, pet odor removal, commercial cleaning Wichita">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.wichitacarpetcleaningservices.com/">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.wichitacarpetcleaningservices.com/">
+    <meta property="og:title" content="Wichita Carpet Cleaning Services | Professional Local Cleaning">
+    <meta property="og:description" content="Wichita's trusted local carpet cleaning experts using revolutionary eco-friendly technology. Fast drying, transparent pricing, exceptional results.">
+    <meta property="og:image" content="https://www.wichitacarpetcleaningservices.com/og-image.jpg"> <!-- Placeholder; replace with real image -->
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://www.wichitacarpetcleaningservices.com/">
+    <meta name="twitter:title" content="Wichita Carpet Cleaning Services | Professional Local Cleaning">
+    <meta name="twitter:description" content="Wichita's trusted local carpet cleaning experts using revolutionary eco-friendly technology. Fast drying, transparent pricing, exceptional results.">
+    <meta name="twitter:image" content="https://www.wichitacarpetcleaningservices.com/twitter-image.jpg"> <!-- Placeholder; replace with real image -->
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧹</text></svg>">
+    <title>Wichita Carpet Cleaning Services | Professional Local Cleaning</title>
+    <!-- Schema Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Wichita Carpet Cleaning Services",
+      "description": "Professional carpet, upholstery, tile, and hardwood cleaning services in Wichita, KS using eco-friendly Orbot SprayBorg™ technology.",
+      "url": "https://www.wichitacarpetcleaningservices.com",
+      "logo": "https://www.wichitacarpetcleaningservices.com/logo.png", <!-- Placeholder; replace with real logo -->
+      "image": "https://www.wichitacarpetcleaningservices.com/business-image.jpg", <!-- Placeholder -->
+      "priceRange": "$",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Wichita",
+        "addressRegion": "KS",
+        "postalCode": "67201", <!-- Placeholder; use real if available -->
+        "streetAddress": "123 Main St" <!-- Placeholder; use real if available -->
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 37.6872,
+        "longitude": -97.3301
+      },
+      "telephone": "+1-316-209-2176",
+      "email": "info@wichitacarpetcleaningservices.com", <!-- Placeholder -->
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "08:00",
+          "closes": "18:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Saturday",
+          "opens": "09:00",
+          "closes": "14:00"
+        }
+      ],
+      "areaServed": {
+        "@type": "Place",
+        "name": "Wichita, Kansas and surrounding areas"
+      },
+      "sameAs": [
+        "https://www.facebook.com/wichitacarpetcleaning", <!-- Placeholder -->
+        "https://twitter.com/wichitacarpet" <!-- Placeholder -->
+      ]
+    }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            perspective: 1px; /* Helps with fixed elements on iOS */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Fixed Background Div (Replaces body background for iOS compatibility) */
+        .fixed-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #007bff 0%, #00bfff 100%);
+            z-index: -2;
+            will-change: transform;
+        }
+
+        .fixed-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(1deg); }
+            66% { transform: translateY(-10px) rotate(-1deg); }
+        }
+
+        /* Reduce motion for accessibility and performance */
+        @media (prefers-reduced-motion: reduce) {
+            .fixed-bg::before, .floating-element, .cta-button, .service-card, .pricing-card {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
+        /* Mobile Optimizations: Disable blur, animations, reduce padding */
+        @media (max-width: 767px) {
+            nav, .section-bg, .service-card, .pricing-card, .faq-item, .form-group input, .form-group textarea {
+                -webkit-backdrop-filter: none !important;
+                backdrop-filter: none !important;
+                background: rgba(255, 255, 255, 1) !important; /* Solid white fallback */
+            }
+            .fixed-bg::before {
+                animation: none !important; /* Disable grid animation on mobile */
+            }
+            .scroll-fade {
+                opacity: 1 !important;
+                transform: translateY(0) !important;
+                transition: none !important;
+            }
+            section {
+                padding: 60px 0 !important; /* Reduce padding for shorter scrolls */
+            }
+            .hero {
+                padding-top: 60px !important; /* Balance vertical centering on mobile */
+            }
+        }
+
+        /* Glassmorphism Navigation */
+        nav {
+            position: fixed;
+            top: 20px;
+            right: 0;
+            left: 0;
+            margin: auto;
+            width: fit-content;
+            display: flex;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.15);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 10px 30px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            transform: translate3d(0, 0, 0);
+            will-change: backdrop-filter;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            justify-content: center; /* Added to center the navigation links */
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 10px 15px;
+            border-radius: 25px;
+        }
+
+        nav ul li a:hover, nav ul li a:focus {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            outline: 2px solid white;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            height: -webkit-fill-available; /* Fix for Safari iOS viewport */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            padding-top: 120px;
+        }
+
+        @supports (height: 100dvh) {
+            .hero {
+                height: 100dvh; /* Dynamic viewport for modern browsers */
+            }
+        }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 10;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #fff, #f0f8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255,255,255,0.3); }
+            to { text-shadow: 0 0 30px rgba(255,255,255,0.6); }
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-button:hover::before, .cta-button:focus::before {
+            left: 100%;
+        }
+
+        .cta-button:hover, .cta-button:focus {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.4);
+            outline: 2px solid white;
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float-around 6s infinite ease-in-out;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float-around {
+            0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+            25% { transform: translateY(-30px) translateX(20px) rotate(90deg); }
+            50% { transform: translateY(-60px) translateX(-20px) rotate(180deg); }
+            75% { transform: translateY(-30px) translateX(-40px) rotate(270deg); }
+        }
+
+        /* Section Styles */
+        section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-bg {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            transform: translate3d(0, 0, 0);
+            will-change: backdrop-filter;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #007bff, #00bfff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 60px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.8);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            transform: translate3d(0, 0, 0);
+            will-change: backdrop-filter;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(45deg, #007bff, #00bfff);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover::before, .service-card:focus-within::before {
+            transform: scaleX(1);
+        }
+
+        .service-card:hover, .service-card:focus-within {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #007bff, #00bfff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: white;
+        }
+
+        /* Pricing Cards */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .pricing-category {
+            margin-top: 60px;
+        }
+
+        .pricing-category:first-child {
+            margin-top: 0;
+        }
+
+        .pricing-category h3 {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.9);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            transform: translate3d(0, 0, 0);
+            will-change: backdrop-filter;
+        }
+
+        .pricing-card.featured {
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured .price {
+            color: #007bff;
+        }
+
+        .pricing-card:hover, .pricing-card:focus-within {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 30px 0;
+        }
+
+        .pricing-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        /* Technology Section */
+        .tech-showcase {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            text-align: center;
+            transform: translate3d(0, 0, 0);
+        }
+
+        .tech-feature {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin: 60px 0;
+        }
+
+        .tech-feature:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .tech-content {
+            flex: 1;
+        }
+
+        .tech-visual {
+            flex: 1;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Contact Section */
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            background: rgba(255, 255, 255, 0.8);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            transform: translate3d(0, 0, 0);
+            will-change: backdrop-filter;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* FAQ Section */
+        .faq-item {
+            background: rgba(255, 255, 255, 0.8);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transform: translate3d(0, 0, 0);
+            will-change: backdrop-filter;
+        }
+
+        .faq-question {
+            padding: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover, .faq-question:focus {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-answer.active {
+            max-height: none;
+            padding: 20px;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (min-width: 576px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            nav ul {
+                flex-direction: row;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+            .section-title {
+                font-size: 2.5rem;
+            }
+            .tech-feature {
+                flex-direction: row;
+            }
+            .tech-feature:nth-child(even) {
+                flex-direction: row-reverse;
+            }
+            .services-grid, .pricing-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .hero h1 {
+                font-size: 4rem;
+            }
+            .section-title {
+                font-size: 3rem;
+            }
+            .services-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .pricing-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1440px) {
+            .container {
+                max-width: 1400px;
+            }
+            .pricing-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Scroll Animations */
+        .scroll-fade {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+            will-change: opacity, transform;
+        }
+
+        .scroll-fade.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="fixed-bg"></div>
+
+    <nav aria-label="Main navigation">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#technology">Technology</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        
+        <div class="hero-content">
+            <h1>Wichita Carpet Cleaning Services</h1>
+            <p>We are a proudly local business serving Wichita, Kansas, and surrounding areas, committed to delivering fast, affordable, and professional carpet, tile, upholstery, and hardwood floor cleaning with a small-business level of care.</p>
+            <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+        </div>
+    </section>
+
+    <section id="services" class="section-bg scroll-fade">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <p class="section-subtitle">Comprehensive cleaning solutions for your home and business using the revolutionary Orbot SprayBorg™ system</p>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🏠</div>
+                    <h3>Residential Carpet Cleaning</h3>
+                    <p>Tailored solutions for pet stains, high foot traffic, or seasonal refresh, including deodorizing, enzyme treatment, and free closet cleaning in many packages.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">🪑</div>
+                    <h3>Upholstery Cleaning</h3>
+                    <p>Cleaning for sofas, loveseats, recliners, sectionals, couches, chairs, and dining chairs, with deodorizer included in some packages.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">🏢</div>
+                    <h3>Tile & Grout</h3>
+                    <p>Cleaning for kitchens, bathrooms, and whole floors, including small areas for free.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">🌳</div>
+                    <h3>Hardwood Floor Cleaning</h3>
+                    <p>Cleaning for entries, hallways, living rooms, and full floors, including buffing, polishing, sealing, and stairwell cleaning, with small areas free.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">🐕</div>
+                    <h3>Pet Odor Treatment</h3>
+                    <p>Specialized enzyme treatments to eliminate pet stains and odors permanently. Safe for pets and family.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">🏪</div>
+                    <h3>Commercial Cleaning</h3>
+                    <p>Professional cleaning for offices, churches, and rental properties. Minimal downtime with fast-drying technology.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="section-bg scroll-fade">
+        <div class="container">
+            <h2 class="section-title">Transparent Pricing</h2>
+            <p class="section-subtitle">No hidden fees, no surprise charges. What you book is what you pay. Flat, rounded pricing.</p>
+            
+            <div class="pricing-category">
+                <h3>Carpet Cleaning Packages</h3>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3>Minimum</h3>
+                        <div class="price">$75</div>
+                        <ul class="pricing-features">
+                            <li>Up to 3 rooms</li>
+                            <li>Small closets included free</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <h3>Essentials</h3>
+                        <div class="price">$99</div>
+                        <ul class="pricing-features">
+                            <li>3 rooms, 1 hallway</li>
+                            <li>Stairwell, deodorizer</li>
+                            <li>Small closets free</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <h3>Fresh Start</h3>
+                        <div class="price">$149</div>
+                        <ul class="pricing-features">
+                            <li>7 rooms, 2 hallways</li>
+                            <li>Stairwell, deodorizer</li>
+                            <li>Closets free</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                    
+                    <div class="pricing-card featured">
+                        <h3>Pet Pro</h3>
+                        <div class="price">$179</div>
+                        <ul class="pricing-features">
+                            <li>7 rooms, 2 hallways</li>
+                            <li>Enzymes, deodorizer</li>
+                            <li>Stairwell</li>
+                            <li>Closets free</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <h3>Ultimate Clean</h3>
+                        <div class="price">$219</div>
+                        <ul class="pricing-features">
+                            <li>7 rooms, 2 hallways</li>
+                            <li>Enzymes, deodorizer, protectant</li>
+                            <li>Stairwell</li>
+                            <li>Closets free</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pricing-category">
+                <h3>Upholstery Cleaning</h3>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3>Sofa Saver</h3>
+                        <div class="price">$109</div>
+                        <ul class="pricing-features">
+                            <li>Sofa + loveseat</li>
+                            <li>Deodorizer included</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <h3>Whole Set</h3>
+                        <div class="price">$139</div>
+                        <ul class="pricing-features">
+                            <li>Sofa + loveseat + recliner</li>
+                            <li>Deodorizer included</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <h3>Sectional</h3>
+                        <div class="price">$89</div>
+                        <ul class="pricing-features">
+                            <li>Sectional upholstery cleaning</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <h3>Couch</h3>
+                        <div class="price">$69</div>
+                        <ul class="pricing-features">
+                            <li>Couch upholstery cleaning</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <h3>Loveseat</h3>
+                        <div class="price">$59</div>
+                        <ul class="pricing-features">
+                            <li>Loveseat upholstery cleaning</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <h3>Chair</h3>
+                        <div class="price">$39</div>
+                        <ul class="pricing-features">
+                            <li>Chair upholstery cleaning</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <h3>Dining Chair</h3>
+                        <div class="price">$15</div>
+                        <ul class="pricing-features">
+                            <li>Dining chair upholstery cleaning</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pricing-category">
+                <h3>Tile & Grout Cleaning</h3>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3>Kitchen Reset</h3>
+                        <div class="price">$119</div>
+                        <ul class="pricing-features">
+                            <li>Kitchen up to 150 sq ft</li>
+                            <li>Small areas free</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <h3>Bathroom Revival</h3>
+                        <div class="price">$75</div>
+                        <ul class="pricing-features">
+                            <li>Two bathrooms up to 100 sq ft</li>
+                            <li>Small areas free</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <h3>Whole Floor Pro</h3>
+                        <div class="price">$229</div>
+                        <ul class="pricing-features">
+                            <li>400 sq ft tile + ceiling</li>
+                            <li>Small areas free</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pricing-category">
+                <h3>Hardwood Floor Cleaning</h3>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3>Entry Refresh</h3>
+                        <div class="price">$75</div>
+                        <ul class="pricing-features">
+                            <li>Entry & hallways up to 150 sq ft</li>
+                            <li>Small areas free</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <h3>Living Room Restore</h3>
+                        <div class="price">$139</div>
+                        <ul class="pricing-features">
+                            <li>300 sq ft, buffing, polish</li>
+                            <li>Stairwell</li>
+                            <li>Small areas free</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <h3>Full Floor Shine</h3>
+                        <div class="price">$239</div>
+                        <ul class="pricing-features">
+                            <li>600 sq ft, deep clean, buff, seal</li>
+                            <li>Stairwell</li>
+                            <li>Small areas free</li>
+                        </ul>
+                        <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" class="cta-button">Book Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="technology" class="tech-showcase scroll-fade">
+        <div class="container">
+            <h2 class="section-title" style="color: white;">Revolutionary Technology</h2>
+            <p class="section-subtitle" style="color: rgba(255,255,255,0.8);">The Orbot SprayBorg™ system sets us apart from traditional steam cleaning</p>
+            
+            <div class="tech-feature">
+                <div class="tech-content">
+                    <h3>Orbital Agitation</h3>
+                    <p>Unlike traditional steam cleaners, our system uses orbital agitation to deep clean fibers without soaking your carpets. This means better cleaning and faster drying.</p>
+                </div>
+                <div class="tech-visual">🌀</div>
+            </div>
+            
+            <div class="tech-feature">
+                <div class="tech-content">
+                    <h3>Low Moisture Technology</h3>
+                    <p>Controlled moisture application ensures deep cleaning while leaving carpets dry in just 1-2 hours. Perfect for busy homes and commercial spaces.</p>
+                </div>
+                <div class="tech-visual">💧</div>
+            </div>
+            
+            <div class="tech-feature">
+                <div class="tech-content">
+                    <h3>Eco-Friendly Process</h3>
+                    <p>Our environmentally responsible cleaning process is safe for your family, pets, and the planet while delivering superior results.</p>
+                </div>
+                <div class="tech-visual">🌱</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-bg scroll-fade">
+        <div class="container">
+            <h2 class="section-title">Why Choose Us?</h2>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🏠</div>
+                    <h3>Locally Owned & Trusted</h3>
+                    <p>We’re a Wichita-based business, not a franchise. That means real accountability, personalized service, and money that stays in the local economy.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">⚡</div>
+                    <h3>Superior Technology</h3>
+                    <p>The Orbot SprayBorg™ system uses orbital agitation and low moisture to deep clean fibers—leaving carpets dry in 1–2 hours without the risks of steam cleaning.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">💰</div>
+                    <h3>Transparent, Value-Based Pricing</h3>
+                    <p>We use flat, rounded pricing with no hidden fees or sneaky upsells. What you book is what you pay.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">🎯</div>
+                    <h3>No Upselling—Ever</h3>
+                    <p>Our team is trained to clean—not sell. You’ll never be pressured into add-ons you don’t need.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-bg scroll-fade">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            
+            <div role="region" aria-label="FAQ accordion">
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq1" id="faq-question1" onclick="toggleFAQ(this)">
+                        Are there any added travel or service fees?
+                    </button>
+                    <div class="faq-answer" id="faq1" aria-labelledby="faq-question1">
+                        No, the price you see is the price you pay. No surprise fees—ever.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq2" id="faq-question2" onclick="toggleFAQ(this)">
+                        Do you move furniture?
+                    </button>
+                    <div class="faq-answer" id="faq2" aria-labelledby="faq-question2">
+                        We move small items (couches, loveseats), but not large sectionals or beds. Please move those before we arrive.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq3" id="faq-question3" onclick="toggleFAQ(this)">
+                        How long will the appointment take?
+                    </button>
+                    <div class="faq-answer" id="faq3" aria-labelledby="faq-question3">
+                        Most cleanings take 1.5 to 2 hours depending on the size and services.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq4" id="faq-question4" onclick="toggleFAQ(this)">
+                        What is the dry time?
+                    </button>
+                    <div class="faq-answer" id="faq4" aria-labelledby="faq-question4">
+                        1–2 hours for most carpets depending on material and environment.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq5" id="faq-question5" onclick="toggleFAQ(this)">
+                        Can I substitute a rug for a room?
+                    </button>
+                    <div class="faq-answer" id="faq5" aria-labelledby="faq-question5">
+                        Yes, as long as it’s standard size and not wool or too lightweight.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq6" id="faq-question6" onclick="toggleFAQ(this)">
+                        What payment forms do you accept?
+                    </button>
+                    <div class="faq-answer" id="faq6" aria-labelledby="faq-question6">
+                        Cash or credit card at time of service. We can also text a secure payment link.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq7" id="faq-question7" onclick="toggleFAQ(this)">
+                        Do I need to be home?
+                    </button>
+                    <div class="faq-answer" id="faq7" aria-labelledby="faq-question7">
+                        No, but we need access. Many clients provide garage codes or let us in via neighbors.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq8" id="faq-question8" onclick="toggleFAQ(this)">
+                        What if I have pet stains?
+                    </button>
+                    <div class="faq-answer" id="faq8" aria-labelledby="faq-question8">
+                        Choose the Pet Pro or Ultimate package—both include enzymes and deodorizing.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq9" id="faq-question9" onclick="toggleFAQ(this)">
+                        Do you clean Base Housing?
+                    </button>
+                    <div class="faq-answer" id="faq9" aria-labelledby="faq-question9">
+                        No, we currently do not service on-base military housing.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section-bg scroll-fade">
+        <div class="container">
+            <h2 class="section-title">Get Your Free Quote</h2>
+            <p class="section-subtitle">Ready for professional carpet cleaning? Contact us today for a free, no-obligation quote.</p>
+            
+            <div class="contact-form">
+                <form action="https://formspree.io/f/xrblbpka" method="POST" aria-label="Contact form">
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" name="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Email Address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Phone Number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Tell us about your cleaning needs...</label>
+                        <textarea id="message" name="message" rows="5" placeholder="Tell us about your cleaning needs..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="cta-button">Contact Us</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <p><strong>Business Details:</strong></p>
+                <p>Wichita Carpet Cleaning Services</p>
+                <p>Phone: (316) 209-2176</p>
+                <p>Email: info@wichitacarpetcleaningservices.com <!-- Placeholder --></p>
+                <p><strong>Payment Options:</strong> Cash or credit card at time of service. We can also text a secure payment link.</p>
+                <p><strong>Service Area:</strong> Wichita, Kansas and surrounding areas</p>
+                <p><em>Note: We currently do not service on-base military housing</em></p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 Wichita Carpet Cleaning Services. All rights reserved.</p>
+            <p>Professional carpet, tile, upholstery, and hardwood cleaning services in Wichita, Kansas</p>
+            <p><a href="/privacy-policy">Privacy Policy</a> | <a href="/terms-of-service">Terms of Service</a> | <a href="/accessibility">Accessibility Statement</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-fade').forEach(el => {
+            observer.observe(el);
+        });
+
+        // FAQ toggle functionality with ARIA updates
+        function toggleFAQ(button) {
+            const expanded = button.getAttribute('aria-expanded') === 'true';
+            button.setAttribute('aria-expanded', !expanded);
+            const answer = button.nextElementSibling;
+            answer.classList.toggle('active');
+            
+            // Close other FAQ items
+            document.querySelectorAll('.faq-question').forEach(otherButton => {
+                if (otherButton !== button) {
+                    otherButton.setAttribute('aria-expanded', 'false');
+                    otherButton.nextElementSibling.classList.remove('active');
+                }
+            });
+        }
+
+        // Form submission handling (Formspree handles it, but keep alert for demo)
+        document.querySelector('form').addEventListener('submit', function(e) {
+            // e.preventDefault(); // Remove to allow actual submission
+            alert('Thank you for your inquiry! We\'ll contact you soon with a free quote.');
+        });
+
+        // Dynamic navigation background on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.style.background = 'rgba(255, 255, 255, 0.25)';
+                nav.style.backdropFilter = 'blur(30px)';
+                nav.style.webkitBackdropFilter = 'blur(30px)';
+            } else {
+                nav.style.background = 'rgba(255, 255, 255, 0.15)';
+                nav.style.backdropFilter = 'blur(10px)';
+                nav.style.webkitBackdropFilter = 'blur(10px)';
+            }
+        });
+
+        // Parallax effect for floating elements
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelectorAll('.floating-element');
+            const speed = 0.5;
+
+            parallax.forEach(element => {
+                const yPos = -(scrolled * speed);
+                element.style.transform = `translateY(${yPos}px)`;
+            });
+        });
+
+        // Add hover/focus effects for pricing cards
+        document.querySelectorAll('.pricing-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                if (this.classList.contains('featured')) {
+                    this.style.transform = 'scale(1.05)';
+                } else {
+                    this.style.transform = 'translateY(0) scale(1)';
+                }
+            });
+            
+            card.addEventListener('focusin', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('focusout', function() {
+                if (this.classList.contains('featured')) {
+                    this.style.transform = 'scale(1.05)';
+                } else {
+                    this.style.transform = 'translateY(0) scale(1)';
+                }
+            });
+        });
+
+        // Initialize scroll animations on page load
+        window.addEventListener('load', () => {
+            const event = new Event('scroll');
+            window.dispatchEvent(event);
+        });
+    </script>
+</body>
+</html>
