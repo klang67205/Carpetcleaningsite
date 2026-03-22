@@ -1,0 +1,1935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="Wichita Carpet Cleaning Services — rotary brush encapsulation. Carpets dry in 1–2 hours. Serving Wichita, Derby, Andover, Goddard & Maize. No hidden fees.">
+<meta name="keywords" content="carpet cleaning Wichita, rotary brush encapsulation, fast dry carpet cleaning, carpet cleaning Derby KS, upholstery cleaning Wichita, tile grout cleaning">
+<meta property="og:title" content="Wichita Carpet Cleaning Services | Dry in 1–2 Hours">
+<meta property="og:description" content="Rotary brush encapsulation. Deep clean. Dry in 1–2 hours. No hidden fees. Locally owned. Serving Wichita and surrounding areas.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.wichitacarpetcleaningservices.com">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.wichitacarpetcleaningservices.com">
+<title>Wichita Carpet Cleaning Services | Dry in 1–2 Hours | Wichita, KS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   TOKENS
+══════════════════════════════════════════ */
+:root{
+  --ink:        #07090b;
+  --ink-1:      #0c1014;
+  --ink-2:      #111820;
+  --ink-3:      #18222c;
+  --cream:      #f0ead8;
+  --cream-dim:  rgba(240,234,216,.65);
+  --cream-faint:rgba(240,234,216,.12);
+  --rust:       #c04e1a;
+  --rust-2:     #d9612d;
+  --rust-3:     #eb7845;
+  --rust-glow:  rgba(192,78,26,.22);
+  --gold:       #c8923a;
+  --gold-2:     #e0a84a;
+  --border:     rgba(240,234,216,.07);
+  --border-2:   rgba(240,234,216,.13);
+  --r:          2px;
+  --ease:       cubic-bezier(.4,0,.2,1);
+  --t:          .26s;
+  --ff-serif:   'Playfair Display', Georgia, serif;
+  --ff-sans:    'Outfit', system-ui, sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--ff-sans);background:var(--ink);color:var(--cream);overflow-x:hidden;cursor:none;-webkit-font-smoothing:antialiased;line-height:1.6;}
+a{color:inherit;text-decoration:none;}
+ul{list-style:none;}
+button{font-family:inherit;cursor:none;border:none;background:none;}
+::selection{background:var(--rust);color:var(--cream);}
+
+/* ── CURSOR ── */
+#cx{position:fixed;inset:0;pointer-events:none;z-index:9999;}
+#cdot{position:absolute;width:6px;height:6px;background:var(--rust-2);border-radius:50%;transform:translate(-50%,-50%);}
+#cring{position:absolute;width:30px;height:30px;border:1px solid rgba(192,78,26,.4);border-radius:50%;transform:translate(-50%,-50%);transition:width .18s var(--ease),height .18s var(--ease),background .18s,border-color .18s;}
+body:hover #cring.hov{width:50px;height:50px;background:rgba(192,78,26,.06);border-color:var(--rust-2);}
+
+/* ── NOISE ── */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.022;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* ── PARTICLES ── */
+#pc{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.22;}
+
+/* ══════════════════════════════════════════
+   TOPBAR
+══════════════════════════════════════════ */
+.topbar{position:relative;z-index:60;background:var(--rust);padding:.48rem 3rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;}
+.topbar a,.topbar span{font-size:.68rem;font-weight:500;letter-spacing:.09em;color:rgba(240,234,216,.82);display:inline-flex;align-items:center;gap:.35rem;transition:color var(--t);}
+.topbar a:hover{color:var(--cream);}
+.topbar-l,.topbar-r{display:flex;align-items:center;gap:1.8rem;}
+.tb-pill{background:rgba(0,0,0,.15);padding:.18rem .7rem;border-radius:20px;font-size:.64rem;letter-spacing:.12em;color:var(--cream);}
+
+/* ══════════════════════════════════════════
+   NAV
+══════════════════════════════════════════ */
+nav{position:sticky;top:0;z-index:100;padding:1rem 3rem;display:flex;justify-content:space-between;align-items:center;transition:background var(--t),border-color var(--t),backdrop-filter var(--t);border-bottom:1px solid transparent;}
+nav.sc{background:rgba(7,9,11,.9);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-color:var(--border);}
+.nlogo{display:flex;align-items:center;gap:.65rem;}
+.nlogo-svg{width:34px;height:34px;flex-shrink:0;}
+.nlogo-txt{display:flex;flex-direction:column;line-height:1.15;}
+.nlogo-top{font-family:var(--ff-sans);font-size:1.05rem;font-weight:700;letter-spacing:.06em;color:var(--cream);line-height:1.1;}
+.nlogo-bot{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--rust-2);font-weight:600;}
+.nlinks{display:flex;gap:.1rem;}
+.nlink{font-size:.75rem;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--cream-dim);padding:.45rem .9rem;border-radius:var(--r);transition:color var(--t),background var(--t);position:relative;}
+.nlink:hover,.nlink.on{color:var(--cream);}
+.nlink.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:14px;height:1.5px;background:var(--rust-2);border-radius:1px;}
+.nright{display:flex;align-items:center;gap:.9rem;}
+.nphone{font-size:.75rem;color:var(--cream-dim);display:flex;align-items:center;gap:.35rem;transition:color var(--t);}
+.nphone:hover{color:var(--cream);}
+.nbtn{background:var(--rust);color:var(--cream);padding:.6rem 1.5rem;font-size:.74rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border-radius:var(--r);transition:background var(--t),transform var(--t),box-shadow var(--t);box-shadow:0 2px 14px var(--rust-glow);}
+.nbtn:hover{background:var(--rust-2);transform:translateY(-1px);box-shadow:0 6px 28px var(--rust-glow);}
+.hbg{display:none;flex-direction:column;gap:4px;padding:8px;}
+.hbg span{width:20px;height:1.5px;background:var(--cream);border-radius:1px;transition:all .3s;}
+
+/* mobile drawer */
+.drawer{position:fixed;top:0;right:-100%;width:76%;max-width:320px;height:100vh;background:var(--ink-2);z-index:200;padding:2rem 1.5rem;transition:right .32s var(--ease);border-left:1px solid var(--border);overflow-y:auto;}
+.drawer.open{right:0;}
+.drawer-x{position:absolute;top:1.4rem;right:1.4rem;color:var(--cream-dim);font-size:1.2rem;}
+.drawer .nlogo{margin-bottom:2.5rem;}
+.dlinks{display:flex;flex-direction:column;gap:.2rem;}
+.dlinks a{font-size:.95rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--cream-dim);padding:.85rem 1rem;border-radius:var(--r);transition:color var(--t),background var(--t);display:block;}
+.dlinks a:hover{color:var(--cream);background:var(--cream-faint);}
+.dover{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:150;opacity:0;pointer-events:none;transition:opacity .28s;}
+.dover.on{opacity:1;pointer-events:all;}
+
+/* ══════════════════════════════════════════
+   HERO
+══════════════════════════════════════════ */
+.hero{position:relative;min-height:calc(100vh - 104px);display:flex;align-items:center;padding:5rem 3rem;overflow:hidden;z-index:1;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 65% 75% at 100% 60%,rgba(24,34,44,.75) 0%,transparent 65%),radial-gradient(ellipse 50% 50% at 5% 80%,rgba(192,78,26,.07) 0%,transparent 55%);}
+.hero-lines{position:absolute;inset:0;background-image:linear-gradient(rgba(240,234,216,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(240,234,216,.018) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(ellipse 75% 75% at 50% 50%,black 20%,transparent 100%);}
+/* Large decorative time element */
+.hero-time-bg{position:absolute;right:-2vw;top:50%;transform:translateY(-50%);font-family:var(--ff-serif);font-size:clamp(14rem,22vw,26rem);font-weight:900;color:rgba(192,78,26,.045);line-height:1;letter-spacing:-.03em;pointer-events:none;white-space:nowrap;user-select:none;}
+.hero-content{position:relative;z-index:2;max-width:700px;}
+.hero-tag{display:inline-flex;align-items:center;gap:.55rem;border:1px solid rgba(192,78,26,.28);background:rgba(192,78,26,.07);padding:.32rem .9rem;border-radius:20px;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--rust-3);font-weight:600;margin-bottom:2rem;opacity:0;animation:up .7s .12s forwards;}
+.hero-tag .dot{width:5px;height:5px;background:var(--rust-3);border-radius:50%;animation:blink 1.8s ease-in-out infinite;}
+.hero-h{font-family:var(--ff-serif);font-size:clamp(3.8rem,8vw,7.5rem);line-height:.95;font-weight:900;color:var(--cream);letter-spacing:-.02em;opacity:0;animation:up .85s .24s forwards;}
+.hero-h .accent{display:block;font-style:italic;font-weight:700;color:var(--rust-2);font-size:.88em;}
+.hero-h .sub{display:block;font-size:.42em;font-family:var(--ff-sans);font-weight:300;color:var(--cream-dim);letter-spacing:.01em;margin-top:.5rem;font-style:normal;}
+/* fast dry pill — centrepiece */
+.hero-dry{display:inline-flex;align-items:center;gap:1.2rem;background:var(--ink-2);border:1px solid var(--border-2);border-radius:6px;padding:1.1rem 1.6rem;margin-top:2.2rem;opacity:0;animation:up .85s .36s forwards;}
+.hero-dry-num{font-family:var(--ff-serif);font-size:3.2rem;font-weight:900;color:var(--cream);line-height:1;}
+.hero-dry-num span{color:var(--rust-2);}
+.hero-dry-info{}
+.hero-dry-info strong{display:block;font-size:.82rem;font-weight:600;color:var(--cream);letter-spacing:.04em;}
+.hero-dry-info p{font-size:.72rem;color:var(--cream-dim);margin-top:.1rem;}
+.hero-dry-vs{font-size:.65rem;color:rgba(240,234,216,.35);margin-left:.5rem;letter-spacing:.08em;border-left:1px solid var(--border);padding-left:1.2rem;}
+.hero-dry-vs strong{display:block;font-size:.78rem;color:rgba(240,234,216,.25);text-decoration:line-through;}
+.hero-dry-vs span{color:var(--cream-dim);}
+.hero-biz-name{
+  font-family:var(--ff-sans);
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--rust-2);
+  margin-top:1.6rem;
+  opacity:0;
+  animation:up .85s .44s forwards;
+  display:flex;
+  align-items:center;
+  gap:.7rem;
+}
+.hero-biz-name::before{
+  content:'';
+  width:24px;
+  height:1.5px;
+  background:var(--rust-2);
+}
+.hero-p{font-size:.95rem;line-height:1.75;color:var(--cream-dim);max-width:520px;margin-top:1.8rem;font-weight:300;opacity:0;animation:up .85s .46s forwards;}
+.hero-p strong{color:var(--cream);font-weight:500;}
+.hero-btns{display:flex;gap:.8rem;margin-top:2rem;flex-wrap:wrap;opacity:0;animation:up .85s .56s forwards;}
+.btn-p{background:var(--rust);color:var(--cream);padding:.9rem 2rem;font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border-radius:var(--r);transition:background var(--t),transform var(--t),box-shadow var(--t);display:inline-flex;align-items:center;gap:.5rem;box-shadow:0 4px 22px var(--rust-glow);}
+.btn-p:hover{background:var(--rust-2);transform:translateY(-2px);box-shadow:0 10px 36px var(--rust-glow);}
+.btn-p svg{transition:transform var(--t);}
+.btn-p:hover svg{transform:translateX(3px);}
+.btn-g{color:var(--cream-dim);font-size:.78rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;display:inline-flex;align-items:center;gap:.45rem;border:1px solid var(--border-2);padding:.88rem 1.6rem;border-radius:var(--r);transition:color var(--t),border-color var(--t);}
+.btn-g:hover{color:var(--cream);border-color:var(--border-2);}
+.hero-trust{display:flex;gap:2rem;margin-top:2.5rem;flex-wrap:wrap;opacity:0;animation:up .85s .66s forwards;}
+.htrust{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:rgba(240,234,216,.45);letter-spacing:.04em;}
+.htrust svg{color:var(--gold);}
+
+/* ══════════════════════════════════════════
+   FAST DRY FEATURE BAND
+══════════════════════════════════════════ */
+.dry-band{position:relative;z-index:1;background:var(--ink-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:3.5rem 3rem;display:grid;grid-template-columns:1.2fr 1px 1fr 1px 1fr 1px 1fr;gap:0;align-items:center;}
+.dry-divider{width:1px;height:60px;background:var(--border-2);justify-self:center;}
+.dry-cell{padding:0 2.5rem;text-align:center;}
+.dry-cell:first-child{padding-left:0;text-align:left;}
+.dry-cell-hero{display:flex;align-items:center;gap:1.4rem;}
+.dry-icon-big{width:52px;height:52px;background:rgba(192,78,26,.1);border:1px solid rgba(192,78,26,.22);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
+.dry-cell-hero h3{font-family:var(--ff-serif);font-size:1.7rem;font-weight:900;color:var(--cream);line-height:1;}
+.dry-cell-hero h3 span{color:var(--rust-2);}
+.dry-cell-hero p{font-size:.72rem;color:var(--cream-dim);margin-top:.2rem;letter-spacing:.04em;}
+.dry-stat-num{font-family:var(--ff-serif);font-size:2.4rem;font-weight:700;color:var(--cream);line-height:1;display:block;}
+.dry-stat-num em{color:var(--rust-2);font-style:normal;}
+.dry-stat-label{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--cream-dim);margin-top:.3rem;display:block;}
+.dry-stat-sub{font-size:.7rem;color:rgba(240,234,216,.3);margin-top:.2rem;}
+
+/* ══════════════════════════════════════════
+   MARQUEE
+══════════════════════════════════════════ */
+.mq-wrap{overflow:hidden;padding:.78rem 0;background:var(--rust);border-top:1px solid rgba(255,255,255,.08);position:relative;z-index:1;}
+.mq-track{display:flex;gap:2.5rem;animation:mq 30s linear infinite;white-space:nowrap;width:max-content;}
+.mq-item{font-family:var(--ff-sans);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(240,234,216,.7);flex-shrink:0;display:flex;align-items:center;gap:2.5rem;font-weight:600;}
+.mq-sep{width:4px;height:4px;background:rgba(240,234,216,.35);border-radius:50%;flex-shrink:0;}
+
+/* ══════════════════════════════════════════
+   SHARED
+══════════════════════════════════════════ */
+.kicker{display:inline-flex;align-items:center;gap:.55rem;font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;color:var(--rust-2);font-weight:700;margin-bottom:.9rem;}
+.kicker::before{content:'';width:18px;height:1.5px;background:var(--rust-2);}
+.sh{font-family:var(--ff-serif);font-size:clamp(2rem,4.5vw,3.2rem);font-weight:700;line-height:1.06;color:var(--cream);}
+.sh em{font-style:italic;color:var(--rust-2);}
+.sl{font-size:.9rem;color:var(--cream-dim);line-height:1.75;font-weight:300;}
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .65s var(--ease),transform .65s var(--ease);}
+.reveal.in{opacity:1;transform:none;}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
+
+/* ══════════════════════════════════════════
+   SERVICES
+══════════════════════════════════════════ */
+.svc-section{padding:7rem 3rem;position:relative;z-index:1;}
+.svc-head{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:end;margin-bottom:4rem;}
+.svc-head-r{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:1.2rem;}
+.svc-head-r .sl{max-width:360px;}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);}
+.sc{background:var(--ink);padding:2.4rem 2.2rem;position:relative;overflow:hidden;display:block;color:inherit;transition:background var(--t);}
+.sc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--rust),var(--rust-2));transform:scaleX(0);transform-origin:left;transition:transform .38s var(--ease);}
+.sc:hover{background:rgba(192,78,26,.05);}
+.sc:hover::after{transform:scaleX(1);}
+.sc-ico{width:46px;height:46px;background:rgba(192,78,26,.07);border:1px solid rgba(192,78,26,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:1.4rem;transition:background var(--t),border-color var(--t);}
+.sc:hover .sc-ico{background:rgba(192,78,26,.14);border-color:rgba(192,78,26,.3);}
+.sc h3{font-family:var(--ff-serif);font-size:1.2rem;font-weight:700;color:var(--cream);margin-bottom:.55rem;}
+.sc p{font-size:.83rem;color:var(--cream-dim);line-height:1.7;font-weight:300;}
+.sc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:1.4rem;padding-top:1rem;border-top:1px solid var(--border);}
+.sc-price{font-size:.7rem;font-weight:700;color:var(--rust-2);letter-spacing:.12em;text-transform:uppercase;}
+.sc-arr{width:26px;height:26px;border:1px solid var(--border-2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--cream-dim);font-size:.7rem;transition:all var(--t);}
+.sc:hover .sc-arr{border-color:var(--rust-2);color:var(--rust-2);transform:translate(2px,-2px);}
+
+/* ══════════════════════════════════════════
+   METHOD SECTION
+══════════════════════════════════════════ */
+.method-sec{padding:7rem 3rem;background:var(--ink-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;z-index:1;overflow:hidden;}
+.method-sec::before{content:'';position:absolute;right:-180px;top:-180px;width:550px;height:550px;border-radius:50%;background:radial-gradient(circle,rgba(192,78,26,.06) 0%,transparent 70%);pointer-events:none;}
+.method-grid{display:grid;grid-template-columns:1fr 1fr;gap:7rem;align-items:center;}
+/* visual */
+.mvis{position:relative;height:480px;display:flex;align-items:center;justify-content:center;}
+.mr1{position:absolute;width:340px;height:340px;border-radius:50%;border:1px solid rgba(192,78,26,.13);animation:spin 28s linear infinite;}
+.mr1::before{content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:8px;height:8px;border-radius:50%;background:var(--rust-2);}
+.mr2{position:absolute;width:230px;height:230px;border-radius:50%;border:1px dashed rgba(192,78,26,.09);animation:spin 19s linear infinite reverse;}
+.mr2::before{content:'';position:absolute;bottom:-3px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--gold);}
+.mcore{position:absolute;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(192,78,26,.18) 0%,transparent 70%);border:1px solid rgba(192,78,26,.22);display:flex;align-items:center;justify-content:center;animation:glow 3s ease-in-out infinite;}
+.mbrush{width:72px;height:72px;animation:spin 4s linear infinite;}
+.mbadges{position:absolute;inset:0;}
+.mb{position:absolute;background:rgba(7,9,11,.95);border:1px solid var(--border-2);padding:.5rem .9rem;border-radius:3px;font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--cream);white-space:nowrap;box-shadow:0 4px 18px rgba(0,0,0,.4);}
+.mb::before{content:'';display:inline-block;width:4px;height:4px;background:var(--rust-2);border-radius:50%;margin-right:.4rem;vertical-align:middle;}
+.mb1{top:6%;right:-5%;}
+.mb2{bottom:10%;right:0%;}
+.mb3{top:42%;left:-8%;}
+.mb4{bottom:25%;left:-4%;}
+/* steps */
+.msteps{margin-top:2.4rem;display:flex;flex-direction:column;gap:0;}
+.mstep{display:flex;gap:1.2rem;align-items:flex-start;padding-bottom:1.8rem;position:relative;}
+.mstep-line{position:absolute;left:17px;top:36px;bottom:0;width:1px;background:linear-gradient(var(--border-2),transparent);}
+.mstep:last-child .mstep-line{display:none;}
+.mstep-n{width:34px;height:34px;border-radius:50%;background:rgba(192,78,26,.09);border:1px solid rgba(192,78,26,.22);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--rust-2);flex-shrink:0;position:relative;z-index:1;}
+.mstep-b h4{font-size:.86rem;font-weight:600;color:var(--cream);margin-bottom:.25rem;letter-spacing:.02em;}
+.mstep-b p{font-size:.8rem;color:var(--cream-dim);line-height:1.65;font-weight:300;}
+.badge-inline{display:inline-block;background:rgba(200,146,58,.1);border:1px solid rgba(200,146,58,.22);color:var(--gold-2);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;padding:.12rem .45rem;border-radius:2px;font-weight:700;margin-left:.4rem;vertical-align:middle;}
+
+/* why-enc cards */
+.enc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-top:5rem;}
+.enc-card{background:var(--ink);padding:1.8rem 1.6rem;}
+.enc-n{font-family:var(--ff-serif);font-size:2.2rem;font-weight:900;color:rgba(192,78,26,.15);line-height:1;margin-bottom:.7rem;}
+.enc-card h4{font-size:.82rem;font-weight:600;color:var(--cream);margin-bottom:.35rem;letter-spacing:.03em;}
+.enc-card p{font-size:.78rem;color:var(--cream-dim);line-height:1.6;font-weight:300;}
+
+/* ══════════════════════════════════════════
+   SPEED SECTION — fast dry hero feature
+══════════════════════════════════════════ */
+.speed-sec{position:relative;z-index:1;padding:7rem 3rem;overflow:hidden;}
+.speed-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(192,78,26,.07) 0%,transparent 70%);}
+.speed-inner{position:relative;z-index:2;max-width:900px;margin:0 auto;text-align:center;}
+.speed-inner .kicker{justify-content:center;}
+.speed-inner .kicker::before{display:none;}
+.speed-clocks{display:flex;justify-content:center;align-items:stretch;gap:1px;background:var(--border);margin:3rem 0;border:1px solid var(--border);}
+.sclock{flex:1;padding:2.8rem 2rem;background:var(--ink-2);text-align:center;position:relative;}
+.sclock.highlight{background:rgba(192,78,26,.08);}
+.sclock-label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cream-dim);font-weight:600;margin-bottom:1rem;display:block;}
+.sclock-time{font-family:var(--ff-serif);font-size:clamp(2.8rem,6vw,5rem);font-weight:900;color:var(--cream);line-height:1;}
+.sclock-time .unit{font-size:.5em;color:var(--cream-dim);font-weight:400;}
+.sclock.highlight .sclock-time{color:var(--rust-2);}
+.sclock-method{font-size:.7rem;color:var(--cream-dim);margin-top:.6rem;}
+.sclock-check{position:absolute;top:1rem;right:1rem;}
+.sclock-check svg{color:var(--rust-2);}
+.sclock-x{position:absolute;top:1rem;right:1rem;color:rgba(240,234,216,.18);font-size:.9rem;}
+.speed-note{font-size:.82rem;color:var(--cream-dim);line-height:1.7;max-width:560px;margin:0 auto;}
+
+/* ══════════════════════════════════════════
+   STATS BAND
+══════════════════════════════════════════ */
+.stats-band{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);}
+.sblock{padding:2.8rem 2.2rem;background:var(--ink-3);text-align:center;}
+.sblock-n{font-family:var(--ff-serif);font-size:2.8rem;font-weight:900;color:var(--cream);line-height:1;display:block;}
+.sblock-n .u{font-size:1.3rem;color:var(--rust-2);}
+.sblock-l{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--cream-dim);margin-top:.5rem;display:block;}
+.sblock-d{font-size:.75rem;color:rgba(240,234,216,.28);margin-top:.25rem;}
+
+/* ══════════════════════════════════════════
+   PRICING
+══════════════════════════════════════════ */
+.price-sec{padding:7rem 3rem;position:relative;z-index:1;}
+.price-hd{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:end;margin-bottom:3rem;}
+.price-hd-r p{font-size:.86rem;color:var(--cream-dim);line-height:1.75;text-align:right;max-width:340px;margin-left:auto;}
+.price-guarantee{display:inline-flex;align-items:center;gap:.5rem;background:rgba(200,146,58,.07);border:1px solid rgba(200,146,58,.18);padding:.55rem 1rem;border-radius:3px;font-size:.7rem;color:var(--gold-2);font-weight:600;letter-spacing:.06em;margin-top:.8rem;}
+.tabs{display:flex;border:1px solid var(--border-2);border-radius:var(--r);overflow:hidden;width:fit-content;margin-bottom:2rem;}
+.tab{padding:.6rem 1.5rem;background:transparent;color:var(--cream-dim);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;border-right:1px solid var(--border);transition:all var(--t);}
+.tab:last-child{border-right:none;}
+.tab.on{background:var(--rust);color:var(--cream);}
+.tab:not(.on):hover{color:var(--cream);background:rgba(192,78,26,.09);}
+.pane{display:none;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:1px;background:var(--border);}
+.pane.on{display:grid;}
+.pc2{background:var(--ink);padding:1.8rem 1.6rem;position:relative;transition:background var(--t);}
+.pc2.pop{background:rgba(192,78,26,.07);}
+.pc2.pop::before{content:'BEST VALUE';position:absolute;top:.8rem;right:.8rem;font-size:.52rem;letter-spacing:.18em;color:var(--gold-2);font-weight:700;}
+.pc2:hover{background:rgba(192,78,26,.05);}
+.pc2 h3{font-family:var(--ff-serif);font-size:1rem;font-weight:700;color:var(--cream);margin-bottom:.4rem;}
+.pc2-price{font-family:var(--ff-serif);font-size:2.4rem;font-weight:900;color:var(--rust-2);line-height:1;margin:.3rem 0;}
+.pc2-price sup{font-size:1rem;vertical-align:super;}
+.pc2 ul{margin:.9rem 0 1.2rem;display:flex;flex-direction:column;gap:.25rem;}
+.pc2 ul li{font-size:.78rem;color:var(--cream-dim);display:flex;align-items:center;gap:.4rem;font-weight:300;padding:.22rem 0;border-bottom:1px solid rgba(240,234,216,.04);}
+.pc2 ul li::before{content:'';width:12px;height:1px;background:var(--rust-2);flex-shrink:0;}
+.pc2-cta{display:block;text-align:center;padding:.6rem;background:rgba(192,78,26,.1);color:var(--rust-2);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;border:1px solid rgba(192,78,26,.2);border-radius:var(--r);transition:all var(--t);}
+.pc2-cta:hover{background:var(--rust);color:var(--cream);}
+
+/* ══════════════════════════════════════════
+   WHY US
+══════════════════════════════════════════ */
+.why-sec{padding:7rem 3rem;background:var(--ink-2);border-top:1px solid var(--border);position:relative;z-index:1;}
+.why-layout{display:grid;grid-template-columns:1fr 1.8fr;gap:6rem;align-items:start;}
+.why-l .sl{margin-top:1rem;}
+.why-l .btn-outline{display:inline-flex;align-items:center;gap:.5rem;margin-top:2rem;border:1px solid rgba(192,78,26,.3);color:var(--rust-2);padding:.78rem 1.6rem;border-radius:var(--r);font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;transition:all var(--t);}
+.why-l .btn-outline:hover{background:var(--rust);color:var(--cream);border-color:var(--rust);}
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
+.wc{background:var(--ink);padding:2rem 1.8rem;position:relative;overflow:hidden;}
+.wc::after{content:attr(data-n);position:absolute;right:1rem;bottom:.3rem;font-family:var(--ff-serif);font-size:3.5rem;font-weight:900;color:rgba(240,234,216,.025);line-height:1;pointer-events:none;}
+.wc-ico{font-size:1.4rem;margin-bottom:.9rem;}
+.wc h3{font-size:.88rem;font-weight:600;color:var(--cream);margin-bottom:.4rem;letter-spacing:.02em;}
+.wc p{font-size:.8rem;color:var(--cream-dim);line-height:1.65;font-weight:300;}
+
+/* ══════════════════════════════════════════
+   FAQ
+══════════════════════════════════════════ */
+.faq-sec{padding:7rem 3rem;position:relative;z-index:1;}
+.faq-layout{display:grid;grid-template-columns:1fr 1.5fr;gap:6rem;align-items:start;}
+.faq-l .sl{margin-top:1rem;}
+.faq-list{display:flex;flex-direction:column;}
+.fi{border-bottom:1px solid var(--border);}
+.fq{padding:1.3rem 0;display:flex;justify-content:space-between;align-items:center;font-size:.88rem;font-weight:500;color:var(--cream);letter-spacing:.02em;transition:color var(--t);}
+.fq:hover{color:var(--rust-2);}
+.fi-icon{width:20px;height:20px;border:1px solid var(--border-2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--rust-2);font-size:.8rem;flex-shrink:0;transition:transform .3s,background .3s;}
+.fi.open .fi-icon{transform:rotate(45deg);background:var(--rust);border-color:var(--rust);color:var(--cream);}
+.fa{max-height:0;overflow:hidden;transition:max-height .36s ease,padding .28s;font-size:.82rem;color:var(--cream-dim);line-height:1.7;font-weight:300;}
+.fi.open .fa{max-height:220px;padding-bottom:1.3rem;}
+
+/* ══════════════════════════════════════════
+   AREA
+══════════════════════════════════════════ */
+.area-sec{padding:4rem 3rem;background:var(--ink-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;z-index:1;}
+.area-inner{display:grid;grid-template-columns:auto 1fr;gap:4rem;align-items:center;}
+.area-cities{display:flex;flex-wrap:wrap;gap:.6rem;}
+.acity{background:rgba(192,78,26,.06);border:1px solid rgba(192,78,26,.17);padding:.5rem 1.1rem;border-radius:2px;font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--cream);transition:all var(--t);}
+.acity:hover,.acity.main{border-color:rgba(192,78,26,.38);color:var(--rust-2);}
+.area-note{font-size:.74rem;color:var(--cream-dim);opacity:.5;margin-top:.8rem;display:flex;align-items:center;gap:.35rem;}
+
+/* ══════════════════════════════════════════
+   CONTACT
+══════════════════════════════════════════ */
+.contact-sec{padding:7rem 3rem;background:var(--ink-2);border-top:1px solid var(--border);position:relative;z-index:1;overflow:hidden;}
+.contact-sec::after{content:'';position:absolute;right:-120px;top:-120px;width:450px;height:450px;border-radius:50%;background:radial-gradient(circle,rgba(192,78,26,.07) 0%,transparent 70%);pointer-events:none;}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:start;}
+.ci .sl{margin-top:1rem;margin-bottom:1.8rem;}
+.cdetails{display:flex;flex-direction:column;gap:.9rem;margin-bottom:1.8rem;}
+.cd2{display:flex;gap:.8rem;align-items:flex-start;font-size:.84rem;color:var(--cream-dim);}
+.cd2-ico{width:34px;height:34px;background:rgba(192,78,26,.07);border:1px solid rgba(192,78,26,.17);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;margin-top:.05rem;}
+.cd2 strong{display:block;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cream-dim);opacity:.6;font-weight:600;margin-bottom:.15rem;}
+.cd2 a{color:var(--cream);transition:color var(--t);}
+.cd2 a:hover{color:var(--rust-2);}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.2rem;}
+.chip2{font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;color:var(--cream-dim);border:1px solid var(--border);padding:.18rem .55rem;border-radius:1px;}
+.soc-row{display:flex;gap:.6rem;margin-top:1.2rem;}
+.sb{width:34px;height:34px;border:1px solid var(--border-2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--cream-dim);transition:all var(--t);}
+.sb:hover{border-color:var(--rust-2);color:var(--rust-2);}
+/* form */
+.cform{display:flex;flex-direction:column;gap:.75rem;}
+.cf-r{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+.cfg{display:flex;flex-direction:column;gap:.3rem;}
+.cfg label{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--cream-dim);opacity:.55;font-weight:600;}
+.cfg input,.cfg textarea,.cfg select{background:rgba(240,234,216,.03);border:1px solid var(--border);border-radius:var(--r);padding:.8rem .95rem;color:var(--cream);font-family:var(--ff-sans);font-size:.85rem;font-weight:300;outline:none;resize:none;transition:border-color var(--t),background var(--t);-webkit-appearance:none;appearance:none;}
+.cfg input:focus,.cfg textarea:focus,.cfg select:focus{border-color:rgba(192,78,26,.45);background:rgba(192,78,26,.03);}
+.cfg input::placeholder,.cfg textarea::placeholder{color:rgba(240,234,216,.22);}
+.cfg select option{background:var(--ink);}
+.cfg textarea{height:96px;}
+.cf-sub{background:var(--rust);color:var(--cream);padding:.92rem;font-family:var(--ff-sans);font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-radius:var(--r);width:100%;transition:background var(--t),transform var(--t),box-shadow var(--t);box-shadow:0 3px 18px var(--rust-glow);display:flex;align-items:center;justify-content:center;gap:.5rem;}
+.cf-sub:hover{background:var(--rust-2);transform:translateY(-1px);box-shadow:0 8px 32px var(--rust-glow);}
+.cf-note{text-align:center;font-size:.68rem;color:rgba(240,234,216,.3);margin-top:.2rem;}
+
+/* ══════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════ */
+footer{position:relative;z-index:1;background:var(--ink);border-top:1px solid var(--border);}
+.ft-body{padding:4rem 3rem;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:3rem;}
+.ft-brand p{font-size:.78rem;color:var(--cream-dim);line-height:1.65;max-width:220px;font-weight:300;margin-top:.9rem;opacity:.7;}
+.ft-soc{display:flex;gap:.5rem;margin-top:1.1rem;}
+.fsb{width:32px;height:32px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--cream-dim);transition:all var(--t);}
+.fsb:hover{border-color:var(--rust-2);color:var(--rust-2);}
+.ft-col h4{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--rust-2);font-weight:700;margin-bottom:1.1rem;}
+.ft-col ul li{margin-bottom:.55rem;}
+.ft-col ul li a{font-size:.8rem;color:rgba(240,234,216,.4);transition:color var(--t);font-weight:300;}
+.ft-col ul li a:hover{color:var(--cream);}
+.ft-bot{padding:1.1rem 3rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.8rem;}
+.ft-bot p{font-size:.72rem;color:rgba(240,234,216,.22);}
+.ft-legal{display:flex;gap:1.4rem;}
+.ft-legal a{font-size:.68rem;color:rgba(240,234,216,.22);transition:color var(--t);}
+.ft-legal a:hover{color:var(--cream-dim);}
+.ft-nm{display:inline-flex;align-items:center;gap:.35rem;font-size:.63rem;color:rgba(240,234,216,.22);}
+.ft-nm::before{content:'';width:4px;height:4px;background:var(--rust-2);border-radius:50%;}
+
+/* FLOAT CTA */
+.fcta{position:fixed;bottom:1.8rem;right:1.8rem;z-index:80;background:var(--rust);color:var(--cream);padding:.82rem 1.5rem;border-radius:28px;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;box-shadow:0 6px 28px var(--rust-glow);display:flex;align-items:center;gap:.45rem;transform:translateY(100px);opacity:0;transition:transform .38s var(--ease),opacity .38s,background var(--t);}
+.fcta.on{transform:translateY(0);opacity:1;}
+.fcta:hover{background:var(--rust-2);}
+.fp{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.55);animation:blink 1.6s ease-in-out infinite;}
+
+/* ══════════════════════════════════════════
+   KEYFRAMES
+══════════════════════════════════════════ */
+@keyframes up{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(192,78,26,.14)}50%{box-shadow:0 0 28px 6px rgba(192,78,26,.07)}}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media(max-width:1100px){
+  .hero{grid-template-columns:1fr;}
+  .dry-band{grid-template-columns:1fr 1fr;gap:1.5rem;}.dry-divider{display:none;}
+  .svc-head,.method-grid,.why-layout,.contact-grid,.faq-layout,.price-hd{grid-template-columns:1fr;gap:3rem;}
+  .svc-head-r,.price-hd-r p{text-align:left;align-items:flex-start;margin-left:0;}
+  .stats-band{grid-template-columns:1fr 1fr;}
+  .ft-body{grid-template-columns:1fr 1fr;}
+  .area-inner{grid-template-columns:1fr;}
+  .enc-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:768px){
+  .topbar{padding:.48rem 1.2rem;}.topbar-l{gap:1rem;flex-wrap:wrap;}
+  nav{padding:.9rem 1.2rem;}.nlinks,.nphone{display:none;}.hbg{display:flex;}
+  .hero{padding:4rem 1.2rem 3rem;}.hero-time-bg{display:none;}
+  .dry-band{padding:2.5rem 1.2rem;grid-template-columns:1fr;gap:1.5rem;}
+  .svc-section,.method-sec,.price-sec,.why-sec,.faq-sec,.contact-sec,.speed-sec,.area-sec{padding:5rem 1.2rem;}
+  .svc-grid{grid-template-columns:1fr;}
+  .speed-clocks{flex-direction:column;}
+  .stats-band{grid-template-columns:1fr 1fr;}
+  .why-grid{grid-template-columns:1fr;}
+  .enc-grid{grid-template-columns:1fr;}
+  .ft-body{padding:3rem 1.2rem;grid-template-columns:1fr;}
+  .ft-bot{padding:1.1rem 1.2rem;flex-direction:column;text-align:center;}
+  .cf-r{grid-template-columns:1fr;}
+  .fcta{bottom:1rem;right:1rem;}
+  .tabs{flex-wrap:wrap;}
+}
+
+@supports(padding:max(0px)){
+  nav{padding-left:max(1.2rem,env(safe-area-inset-left));padding-right:max(1.2rem,env(safe-area-inset-right));}
+  footer{padding-bottom:max(1.4rem,env(safe-area-inset-bottom));}
+  main{padding-left:max(1.5rem,env(safe-area-inset-left));padding-right:max(1.5rem,env(safe-area-inset-right));}
+}
+
+/* ══ THANK-YOU PAGE ══ */
+/* ══════════════════════════════════════════
+   TOKENS — match index.html exactly
+══════════════════════════════════════════ */
+:root{
+  --ink:        #07090b;
+  --ink-1:      #0c1014;
+  --ink-2:      #111820;
+  --ink-3:      #18222c;
+  --cream:      #f0ead8;
+  --cream-dim:  rgba(240,234,216,.65);
+  --cream-faint:rgba(240,234,216,.1);
+  --rust:       #c04e1a;
+  --rust-2:     #d9612d;
+  --rust-3:     #eb7845;
+  --rust-glow:  rgba(192,78,26,.22);
+  --gold:       #c8923a;
+  --gold-2:     #e0a84a;
+  --border:     rgba(240,234,216,.07);
+  --border-2:   rgba(240,234,216,.13);
+  --green:      #2a8a5c;
+  --green-2:    #38b076;
+  --green-glow: rgba(42,138,92,.2);
+  --r:          2px;
+  --ease:       cubic-bezier(.4,0,.2,1);
+  --t:          .26s;
+  --ff-serif:   'Playfair Display', Georgia, serif;
+  --ff-sans:    'Outfit', system-ui, sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;height:100%;}
+body{
+  font-family:var(--ff-sans);
+  background:var(--ink);
+  color:var(--cream);
+  min-height:100vh;
+  overflow-x:hidden;
+  cursor:none;
+  -webkit-font-smoothing:antialiased;
+  display:flex;
+  flex-direction:column;
+}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:none;border:none;background:none;}
+::selection{background:var(--rust);color:var(--cream);}
+
+/* ── CURSOR ── */
+#cx{position:fixed;inset:0;pointer-events:none;z-index:9999;}
+#cdot{position:absolute;width:6px;height:6px;background:var(--rust-2);border-radius:50%;transform:translate(-50%,-50%);}
+#cring{position:absolute;width:30px;height:30px;border:1px solid rgba(192,78,26,.4);border-radius:50%;transform:translate(-50%,-50%);transition:width .18s var(--ease),height .18s var(--ease),background .18s,border-color .18s;}
+#cring.hov{width:50px;height:50px;background:rgba(192,78,26,.06);border-color:var(--rust-2);}
+
+/* ── PARTICLES ── */
+#pc{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.2;}
+
+/* ── NOISE ── */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.022;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* ── NAV (minimal) ── */
+nav{
+  position:relative;z-index:10;
+  padding:1.1rem 3rem;
+  display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid var(--border);
+  background:rgba(7,9,11,.6);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+.nlogo{display:flex;align-items:center;gap:.65rem;}
+.nlogo-svg{width:34px;height:34px;flex-shrink:0;}
+.nlogo-txt{display:flex;flex-direction:column;line-height:1.15;}
+.nlogo-top{font-size:.95rem;font-weight:700;letter-spacing:.08em;color:var(--cream);}
+.nlogo-bot{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--rust-2);font-weight:600;}
+.nbtn{background:var(--rust);color:var(--cream);padding:.6rem 1.5rem;font-size:.74rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border-radius:var(--r);transition:background var(--t),transform var(--t);box-shadow:0 2px 14px var(--rust-glow);display:inline-block;}
+.nbtn:hover{background:var(--rust-2);transform:translateY(-1px);}
+
+/* ══════════════════════════════════════════
+   MAIN CONTENT
+══════════════════════════════════════════ */
+main{
+  flex:1;
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;
+  padding:5rem 1.5rem 4rem;
+}
+
+/* ── BACKGROUND RADIAL ── */
+.bg-glow{position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(42,138,92,.06) 0%,rgba(192,78,26,.04) 40%,transparent 70%);pointer-events:none;z-index:0;}
+
+/* ── SUCCESS BADGE ── */
+.success-wrap{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;
+  max-width:680px;
+  width:100%;
+}
+.check-ring{
+  width:88px;height:88px;
+  border-radius:50%;
+  background:rgba(42,138,92,.1);
+  border:1.5px solid rgba(42,138,92,.3);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:2rem;
+  animation:popIn .6s var(--ease) forwards, glowPulse 2.5s 1s ease-in-out infinite;
+  opacity:0;
+}
+.check-ring svg{color:var(--green-2);}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:.55rem;
+  background:rgba(42,138,92,.08);
+  border:1px solid rgba(42,138,92,.2);
+  padding:.32rem .9rem;border-radius:20px;
+  font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--green-2);font-weight:600;margin-bottom:1.4rem;
+  opacity:0;animation:up .6s .3s forwards;
+}
+.eyebrow .dot{width:5px;height:5px;background:var(--green-2);border-radius:50%;animation:blink 1.8s ease-in-out infinite;}
+.confirm-h{
+  font-family:var(--ff-serif);
+  font-size:clamp(2.4rem,6vw,4.2rem);
+  font-weight:900;line-height:1.02;
+  color:var(--cream);letter-spacing:-.01em;
+  opacity:0;animation:up .7s .42s forwards;
+}
+.confirm-h em{font-style:italic;color:var(--rust-2);}
+.confirm-name{
+  font-family:var(--ff-serif);
+  font-size:clamp(1.6rem,4vw,2.6rem);
+  font-weight:700;font-style:italic;
+  color:var(--rust-2);
+  display:block;
+  opacity:0;animation:up .7s .5s forwards;
+  min-height:1.2em;
+}
+.confirm-sub{
+  font-size:1rem;line-height:1.75;color:var(--cream-dim);
+  max-width:500px;margin:1.4rem auto 0;font-weight:300;
+  opacity:0;animation:up .7s .56s forwards;
+}
+
+/* ── NEXT STEPS CARD ── */
+.steps-card{
+  width:100%;max-width:620px;
+  background:var(--ink-2);
+  border:1px solid var(--border-2);
+  border-radius:6px;
+  padding:2.2rem 2.4rem;
+  margin-top:2.8rem;
+  opacity:0;animation:up .7s .68s forwards;
+}
+.steps-card h3{
+  font-family:var(--ff-sans);
+  font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--rust-2);font-weight:700;
+  margin-bottom:1.6rem;
+  display:flex;align-items:center;gap:.55rem;
+}
+.steps-card h3::before{content:'';width:16px;height:1.5px;background:var(--rust-2);}
+.step-row{
+  display:flex;gap:1.2rem;align-items:flex-start;
+  padding-bottom:1.4rem;position:relative;
+}
+.step-row:last-child{padding-bottom:0;}
+.step-row::after{
+  content:'';position:absolute;
+  left:16px;top:34px;bottom:0;
+  width:1px;background:linear-gradient(var(--border-2),transparent);
+}
+.step-row:last-child::after{display:none;}
+.step-num{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(192,78,26,.1);border:1px solid rgba(192,78,26,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:700;color:var(--rust-2);
+  flex-shrink:0;position:relative;z-index:1;
+}
+.step-body h4{font-size:.88rem;font-weight:600;color:var(--cream);margin-bottom:.2rem;letter-spacing:.02em;}
+.step-body p{font-size:.8rem;color:var(--cream-dim);line-height:1.6;font-weight:300;}
+
+/* ── CTA BUTTONS ── */
+.cta-group{
+  display:flex;gap:.9rem;margin-top:2.4rem;
+  justify-content:center;flex-wrap:wrap;
+  opacity:0;animation:up .7s .8s forwards;
+}
+.btn-book-now{
+  background:var(--rust);color:var(--cream);
+  padding:1rem 2.2rem;
+  font-size:.82rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  border-radius:var(--r);
+  transition:background var(--t),transform var(--t),box-shadow var(--t);
+  box-shadow:0 4px 22px var(--rust-glow);
+  display:inline-flex;align-items:center;gap:.5rem;
+}
+.btn-book-now:hover{background:var(--rust-2);transform:translateY(-2px);box-shadow:0 8px 34px var(--rust-glow);}
+.btn-book-now svg{transition:transform var(--t);}
+.btn-book-now:hover svg{transform:translateX(3px);}
+.btn-home{
+  color:var(--cream-dim);font-size:.8rem;font-weight:500;
+  letter-spacing:.08em;text-transform:uppercase;
+  border:1px solid var(--border-2);
+  padding:.98rem 1.8rem;border-radius:var(--r);
+  transition:color var(--t),border-color var(--t);
+  display:inline-flex;align-items:center;gap:.45rem;
+}
+.btn-home:hover{color:var(--cream);border-color:rgba(240,234,216,.2);}
+
+/* ── HOURS + CONTACT MINI STRIP ── */
+.info-strip{
+  width:100%;max-width:620px;
+  display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;
+  gap:0;background:var(--border);
+  border:1px solid var(--border);
+  border-radius:4px;margin-top:1.6rem;
+  opacity:0;animation:up .7s .9s forwards;
+  overflow:hidden;
+}
+.strip-divider{width:1px;background:var(--border-2);}
+.strip-cell{
+  background:var(--ink-2);
+  padding:1.2rem 1.4rem;
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;gap:.3rem;
+}
+.strip-icon{font-size:1.1rem;}
+.strip-label{font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cream-dim);font-weight:600;}
+.strip-val{font-size:.82rem;color:var(--cream);font-weight:500;line-height:1.35;}
+.strip-val a{color:var(--cream);transition:color var(--t);}
+.strip-val a:hover{color:var(--rust-2);}
+
+/* ── WHAT TO EXPECT ── */
+.expect-section{
+  width:100%;max-width:620px;
+  margin-top:3.5rem;
+  opacity:0;animation:up .7s 1s forwards;
+}
+.expect-section h3{
+  font-family:var(--ff-sans);
+  font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--rust-2);font-weight:700;margin-bottom:1.4rem;
+  display:flex;align-items:center;gap:.55rem;
+}
+.expect-section h3::before{content:'';width:16px;height:1.5px;background:var(--rust-2);}
+.expect-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
+.exp-card{
+  background:var(--ink-2);
+  padding:1.4rem 1.5rem;
+  display:flex;gap:.9rem;align-items:flex-start;
+}
+.exp-ico{font-size:1.2rem;flex-shrink:0;margin-top:.05rem;}
+.exp-body h4{font-size:.82rem;font-weight:600;color:var(--cream);margin-bottom:.2rem;}
+.exp-body p{font-size:.75rem;color:var(--cream-dim);line-height:1.6;font-weight:300;}
+
+/* ── TRUST FOOTER ── */
+.trust-row{
+  display:flex;gap:2rem;margin-top:2.8rem;
+  flex-wrap:wrap;justify-content:center;
+  opacity:0;animation:up .7s 1.1s forwards;
+}
+.tr-item{display:flex;align-items:center;gap:.4rem;font-size:.7rem;color:rgba(240,234,216,.38);letter-spacing:.05em;}
+.tr-item svg{color:var(--gold);}
+
+/* ── FOOTER ── */
+footer{
+  position:relative;z-index:2;
+  border-top:1px solid var(--border);
+  padding:1.4rem 3rem;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:.8rem;
+  background:var(--ink);
+}
+footer p{font-size:.72rem;color:rgba(240,234,216,.22);}
+.ft-legal{display:flex;gap:1.4rem;}
+.ft-legal a{font-size:.68rem;color:rgba(240,234,216,.22);transition:color var(--t);}
+.ft-legal a:hover{color:var(--cream-dim);}
+
+/* ══════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════ */
+@keyframes up{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{0%{opacity:0;transform:scale(.5)}70%{transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(42,138,92,.15)}50%{box-shadow:0 0 24px 6px rgba(42,138,92,.08)}}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+@keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* ── CONFETTI ── */
+.confetti-piece{
+  position:fixed;
+  top:-20px;
+  width:8px;height:12px;
+  border-radius:2px;
+  animation:confetti-fall linear forwards;
+  pointer-events:none;z-index:999;
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media(max-width:600px){
+  nav{padding:.9rem 1.2rem;}
+  main{padding:3.5rem 1rem 3rem;}
+  .steps-card{padding:1.6rem 1.4rem;}
+  .info-strip{grid-template-columns:1fr;}.strip-divider{display:none;}.strip-cell{border-bottom:1px solid var(--border);}
+  .strip-cell:last-child{border-bottom:none;}
+  .expect-grid{grid-template-columns:1fr;}
+  .cta-group{flex-direction:column;align-items:center;}
+  .btn-book-now,.btn-home{width:100%;justify-content:center;}
+  footer{padding:1.2rem;flex-direction:column;text-align:center;}
+  .trust-row{gap:1.2rem;}
+}
+@media(max-width:380px){
+  .confirm-h{font-size:2rem;}
+  .check-ring{width:72px;height:72px;}
+}
+/* Safe area insets for notched phones */
+@supports(padding:max(0px)){
+  nav{padding-left:max(3rem,env(safe-area-inset-left));padding-right:max(3rem,env(safe-area-inset-right));}
+  footer{padding-left:max(3rem,env(safe-area-inset-left));padding-right:max(3rem,env(safe-area-inset-right));padding-bottom:max(1.4rem,env(safe-area-inset-bottom));}
+}
+
+/* ══ PAGE SWITCHER ══ */
+#page-main{display:block;}
+#page-thankyou{display:none;}
+body.show-thankyou #page-main{display:none;}
+body.show-thankyou #page-thankyou{display:block;}
+
+
+/* ── ACCESSIBILITY: Focus Visible ── */
+a:focus-visible,button:focus-visible,input:focus-visible,
+textarea:focus-visible,select:focus-visible{
+  outline:2px solid var(--rust-2);
+  outline-offset:3px;
+  border-radius:2px;
+}
+
+/* ── RESPONSIVE: 480px (iPhone SE, small Android) ── */
+@media(max-width:480px){
+  .hero-h{font-size:3.2rem;}
+  .hero-dry{flex-direction:column;gap:.8rem;align-items:flex-start;}
+  .hero-dry-vs{border-left:none;padding-left:0;border-top:1px solid var(--border-2);padding-top:.6rem;margin-left:0;}
+  .dry-band{grid-template-columns:1fr;padding:2rem 1.2rem;}
+  .stats-band{grid-template-columns:1fr;}
+  .pane,.pricing-pane{grid-template-columns:1fr;}
+  .tabs{flex-wrap:wrap;}
+  .speed-clocks{flex-direction:column;}
+  .ft-body{grid-template-columns:1fr;}
+  .topbar-r{display:none;}
+  .hero-btns{flex-direction:column;}
+  .btn-p,.btn-g{width:100%;justify-content:center;text-align:center;}
+}
+
+/* ── ACCESSIBILITY: Reduced Motion ── */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+  .mq-track{animation:none;transform:none;}
+  .mr1,.mr2,.mcore,.mbrush{animation:none;}
+  .reveal{opacity:1;transform:none;transition:none;}
+  .hero-h,.hero-tag,.hero-dry,.hero-p,.hero-btns,.hero-trust,.hero-biz-name{
+    opacity:1;transform:none;animation:none;
+  }
+  .check-ring,.eyebrow,.confirm-h,.confirm-sub,
+  .steps-card,.cta-group,.info-strip,.expect-section,.trust-row{
+    opacity:1;transform:none;animation:none;
+  }
+  .fcta{transform:translateY(0);opacity:1;}
+}
+</style>
+
+<!-- Schema.org LocalBusiness Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": "https://www.wichitacarpetcleaningservices.com",
+  "name": "Wichita Carpet Cleaning Services",
+  "description": "Professional rotary brush encapsulation carpet cleaning serving Wichita, Derby, Andover, Goddard and Maize Kansas. Carpets dry in 1-2 hours. No hidden fees.",
+  "url": "https://www.wichitacarpetcleaningservices.com",
+  "telephone": "+13162092176",
+  "email": "info@wichitacarpetcleaningservices.com",
+  "logo": "https://www.wichitacarpetcleaningservices.com/logo.svg",
+  "image": "https://www.wichitacarpetcleaningservices.com/og-image.jpg",
+  "priceRange": "$75-$239",
+  "currenciesAccepted": "USD",
+  "paymentAccepted": "Cash, Credit Card",
+  "areaServed": [
+    {"@type": "City", "name": "Wichita", "containedInPlace": {"@type": "State", "name": "Kansas"}},
+    {"@type": "City", "name": "Derby", "containedInPlace": {"@type": "State", "name": "Kansas"}},
+    {"@type": "City", "name": "Andover", "containedInPlace": {"@type": "State", "name": "Kansas"}},
+    {"@type": "City", "name": "Goddard", "containedInPlace": {"@type": "State", "name": "Kansas"}},
+    {"@type": "City", "name": "Maize", "containedInPlace": {"@type": "State", "name": "Kansas"}}
+  ],
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Wichita",
+    "addressRegion": "KS",
+    "addressCountry": "US"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "37.6872",
+    "longitude": "-97.3301"
+  },
+  "openingHoursSpecification": [
+    {"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"17:00"},
+    {"@type":"OpeningHoursSpecification","dayOfWeek":["Saturday"],"opens":"08:00","closes":"17:00","description":"By request only"}
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Cleaning Services",
+    "itemListElement": [
+      {"@type":"Offer","itemOffered":{"@type":"Service","name":"Residential Carpet Cleaning","description":"Rotary brush encapsulation carpet cleaning"},"priceSpecification":{"@type":"PriceSpecification","price":"75","priceCurrency":"USD","minPrice":"75","maxPrice":"219"}},
+      {"@type":"Offer","itemOffered":{"@type":"Service","name":"Upholstery Cleaning"},"priceSpecification":{"@type":"PriceSpecification","price":"15","priceCurrency":"USD","minPrice":"15","maxPrice":"139"}},
+      {"@type":"Offer","itemOffered":{"@type":"Service","name":"Tile and Grout Cleaning"},"priceSpecification":{"@type":"PriceSpecification","price":"75","priceCurrency":"USD","minPrice":"75","maxPrice":"229"}},
+      {"@type":"Offer","itemOffered":{"@type":"Service","name":"Hardwood Floor Cleaning"},"priceSpecification":{"@type":"PriceSpecification","price":"75","priceCurrency":"USD","minPrice":"75","maxPrice":"239"}},
+      {"@type":"Offer","itemOffered":{"@type":"Service","name":"Pet Odor Treatment"}},
+      {"@type":"Offer","itemOffered":{"@type":"Service","name":"Commercial Carpet Cleaning"}}
+    ]
+  },
+  "sameAs": ["https://www.facebook.com/wichitacarpetcleaningservices"]
+}
+</script>
+<!-- FAQ Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"What is rotary brush encapsulation carpet cleaning?","acceptedAnswer":{"@type":"Answer","text":"A counter-rotating cylindrical brush agitates deep into carpet fiber while a crystalline polymer solution surrounds each soil particle in a crystal matrix. Those crystals are vacuumed away — leaving carpets clean and dry in just 1-2 hours with no residue."}},
+    {"@type":"Question","name":"How fast do carpets dry after encapsulation cleaning?","acceptedAnswer":{"@type":"Answer","text":"Carpets are typically dry and walkable within 1-2 hours of cleaning — compared to 24-48 hours with traditional steam cleaning."}},
+    {"@type":"Question","name":"Are there hidden fees?","acceptedAnswer":{"@type":"Answer","text":"No. The price you see is the price you pay — always. We use flat, rounded pricing with zero hidden fees."}},
+    {"@type":"Question","name":"What cities do you serve?","acceptedAnswer":{"@type":"Answer","text":"We serve Wichita, Derby, Andover, Goddard, and Maize Kansas with no travel fees."}},
+    {"@type":"Question","name":"What are your business hours?","acceptedAnswer":{"@type":"Answer","text":"We are open Monday through Friday 8am to 5pm. Saturday service is available by request."}}
+  ]
+}
+</script>
+<!-- BreadcrumbList Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://www.wichitacarpetcleaningservices.com"},
+    {"@type":"ListItem","position":2,"name":"Services","item":"https://www.wichitacarpetcleaningservices.com/#services"},
+    {"@type":"ListItem","position":3,"name":"Pricing","item":"https://www.wichitacarpetcleaningservices.com/#pricing"},
+    {"@type":"ListItem","position":4,"name":"Book Now","item":"https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true"}
+  ]
+}
+</script>
+<!-- Preconnect hints -->
+<link rel="preconnect" href="https://book.housecallpro.com">
+<link rel="dns-prefetch" href="https://book.housecallpro.com">
+<!-- Extra OG/SEO meta -->
+<meta property="og:site_name" content="Wichita Carpet Cleaning Services">
+<meta property="og:locale" content="en_US">
+<meta name="geo.region" content="US-KS">
+<meta name="geo.placename" content="Wichita, Kansas">
+<meta name="geo.position" content="37.6872;-97.3301">
+<meta name="ICBM" content="37.6872, -97.3301">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#c04e1a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+<div id="page-main">
+<a href="#home" class="skip-link" style="position:fixed;top:-50px;left:1rem;z-index:99999;background:var(--rust);color:var(--cream);padding:.5rem 1.2rem;font-size:.82rem;font-weight:600;border-radius:0 0 4px 4px;transition:top .2s;" onfocus="this.style.top='0'" onblur="this.style.top='-50px'">Skip to main content</a>
+<a href="#home" style="position:absolute;top:-40px;left:0;background:var(--rust);color:var(--cream);padding:.5rem 1rem;font-size:.8rem;font-weight:600;z-index:10000;border-radius:0 0 4px 0;transition:top .2s;" onfocus="this.style.top='0'" onblur="this.style.top='-40px'">Skip to main content</a>
+
+<!-- CURSOR -->
+<div id="cx"><div id="cdot"></div><div id="cring"></div></div>
+
+<!-- PARTICLES -->
+<canvas id="pc"></canvas>
+
+<!-- DRAWER OVERLAY -->
+<div class="dover" id="dover" onclick="closeDrawer()"></div>
+
+<!-- MOBILE DRAWER -->
+<div class="drawer" id="drawer">
+  <button class="drawer-x" onclick="closeDrawer()">✕</button>
+  <div class="nlogo">
+    <svg class="nlogo-svg" viewBox="0 0 34 34" fill="none">
+      <circle cx="17" cy="17" r="15.5" stroke="#c04e1a" stroke-width="1.1"/>
+      <circle cx="17" cy="17" r="10" stroke="#c04e1a" stroke-width=".6" stroke-dasharray="2.2 1.8"/>
+      <circle cx="17" cy="17" r="4.2" fill="#c04e1a" fill-opacity=".16" stroke="#c04e1a" stroke-width=".9"/>
+      <line x1="17" y1="17" x2="17" y2="6.5" stroke="#c04e1a" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="17" y1="17" x2="25.5" y2="22" stroke="#c04e1a" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="17" y1="17" x2="8.5" y2="22" stroke="#c04e1a" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="17" y1="17" x2="17" y2="27.5" stroke="#c04e1a" stroke-width=".6" stroke-linecap="round" opacity=".4"/>
+      <line x1="17" y1="17" x2="8.5" y2="12" stroke="#c04e1a" stroke-width=".6" stroke-linecap="round" opacity=".4"/>
+      <line x1="17" y1="17" x2="25.5" y2="12" stroke="#c04e1a" stroke-width=".6" stroke-linecap="round" opacity=".4"/>
+      <circle cx="17" cy="17" r="1.9" fill="#c04e1a"/>
+    </svg>
+    <div class="nlogo-txt"><span class="nlogo-top">Wichita Carpet</span><span class="nlogo-bot">Cleaning Services</span></div>
+  </div>
+  <div class="dlinks">
+    <a href="#services" onclick="closeDrawer()">Services</a>
+    <a href="#method" onclick="closeDrawer()">Our Method</a>
+    <a href="#speed" onclick="closeDrawer()">Why Fast Dry</a>
+    <a href="#pricing" onclick="closeDrawer()">Pricing</a>
+    <a href="#why" onclick="closeDrawer()">Why Us</a>
+    <a href="#faq" onclick="closeDrawer()">FAQ</a>
+    <a href="#contact" onclick="closeDrawer()">Contact</a>
+  </div>
+  <div style="margin-top:2rem;">
+    <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="nbtn" style="display:block;text-align:center;padding:1rem;" rel="noopener noreferrer">Book Now →</a>
+  </div>
+</div>
+
+<!-- ══════════════ TOP BAR ══════════════ -->
+<div class="topbar">
+  <div class="topbar-l">
+    <a href="tel:3162092176">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.6 3.42C1.58 2.31 2.4 1.28 3.5 1.08h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.09a16 16 0 0 0 6 6l.39-.39a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      (316) 209-2176
+    </a>
+    <a id="em-tb" href="#" style="color:rgba(240,234,216,.82);display:inline-flex;align-items:center;gap:.35rem;transition:color .26s;" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='rgba(240,234,216,.82)'">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span id="em-tb-txt"></span></a>
+  </div>
+  <div class="topbar-l-name" style="font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(240,234,216,.95);display:none;">Wichita Carpet Cleaning Services</div>
+  <div class="topbar-r">
+    <span class="tb-pill">Wichita · Derby · Andover · Goddard · Maize</span>
+    <span class="tb-pill" style="background:rgba(255,255,255,.18);color:#fff;">Dry in 1–2 Hours</span>
+    <span class="tb-pill">Mon–Fri 8am–5pm &middot; Sat by Request</span>
+  </div>
+</div>
+
+<!-- ══════════════ NAV ══════════════ -->
+<nav id="nb">
+  <a href="#home" class="nlogo">
+    <svg class="nlogo-svg" viewBox="0 0 34 34" fill="none">
+      <circle cx="17" cy="17" r="15.5" stroke="#c04e1a" stroke-width="1.1"/>
+      <circle cx="17" cy="17" r="10" stroke="#c04e1a" stroke-width=".6" stroke-dasharray="2.2 1.8"/>
+      <circle cx="17" cy="17" r="4.2" fill="#c04e1a" fill-opacity=".16" stroke="#c04e1a" stroke-width=".9"/>
+      <line x1="17" y1="17" x2="17" y2="6.5" stroke="#c04e1a" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="17" y1="17" x2="25.5" y2="22" stroke="#c04e1a" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="17" y1="17" x2="8.5" y2="22" stroke="#c04e1a" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="17" y1="17" x2="17" y2="27.5" stroke="#c04e1a" stroke-width=".6" stroke-linecap="round" opacity=".4"/>
+      <line x1="17" y1="17" x2="8.5" y2="12" stroke="#c04e1a" stroke-width=".6" stroke-linecap="round" opacity=".4"/>
+      <line x1="17" y1="17" x2="25.5" y2="12" stroke="#c04e1a" stroke-width=".6" stroke-linecap="round" opacity=".4"/>
+      <circle cx="17" cy="17" r="1.9" fill="#c04e1a"/>
+    </svg>
+    <div class="nlogo-txt"><span class="nlogo-top">Wichita Carpet</span><span class="nlogo-bot">Cleaning Services</span></div>
+  </a>
+  <div class="nlinks">
+    <a href="#services" class="nlink">Services</a>
+    <a href="#method" class="nlink">Method</a>
+    <a href="#speed" class="nlink">Fast Dry</a>
+    <a href="#pricing" class="nlink">Pricing</a>
+    <a href="#why" class="nlink">Why Us</a>
+    <a href="#faq" class="nlink">FAQ</a>
+  </div>
+  <div class="nright">
+    <a href="tel:3162092176" class="nphone">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--rust-2)"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.6 3.42C1.58 2.31 2.4 1.28 3.5 1.08h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.09a16 16 0 0 0 6 6l.39-.39a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      (316) 209-2176
+    </a>
+    <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="nbtn" rel="noopener noreferrer">Book Now</a>
+    <button class="hbg" onclick="openDrawer()" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-lines"></div>
+  <div class="hero-time-bg">1–2hr</div>
+  <div class="hero-content">
+    <div class="hero-tag"><span class="dot"></span>Wichita Carpet Cleaning Services</div>
+    <h1 class="hero-h">
+      Wichita's<br>
+      <em class="accent">Carpet Clean.</em>
+      <span class="sub">Dry in 1–2 hours. No hidden fees. Locally owned.</span>
+    </h1>
+
+    <!-- FAST DRY CALLOUT — centrepiece -->
+    <div class="hero-dry">
+      <div class="hero-dry-num"><span>1</span>–<span>2</span><span style="font-size:1.6rem;color:var(--cream-dim);font-style:italic"> hr</span></div>
+      <div class="hero-dry-info">
+        <strong>Dry Time — Guaranteed</strong>
+        <p>Walk on your carpets within hours, not days.</p>
+      </div>
+      <div class="hero-dry-vs">
+        <strong>24–48 hrs</strong>
+        <span>Steam cleaning</span>
+      </div>
+    </div>
+
+    <p class="hero-biz-name">Wichita Carpet Cleaning Services</p>
+    <p class="hero-p">Powered by <strong>rotary brush encapsulation</strong> — a cylindrical brush agitates deep into carpet fibers while a crystalline polymer locks and lifts every soil particle. No soaking. No shrinkage risk. Safe for children and pets.</p>
+    <div class="hero-btns">
+      <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="btn-p" rel="noopener noreferrer">
+        Book Your Clean
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="#method" class="btn-g">How It Works</a>
+    </div>
+    <div class="hero-trust">
+      <span class="htrust"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>No Hidden Fees</span>
+      <span class="htrust"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Locally Owned</span>
+      <span class="htrust"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Kid & Pet Safe</span>
+    </div>
+  </div>
+</section>
+
+<!-- FAST DRY METRICS BAND -->
+<div class="dry-band">
+  <div class="dry-cell dry-cell-hero reveal">
+    <div class="dry-icon-big">⏱</div>
+    <div>
+      <h3><span>1–2</span> Hour<br>Dry Time</h3>
+      <p>Our single biggest advantage over the competition</p>
+    </div>
+  </div>
+  <div class="dry-divider"></div>
+  <div class="dry-cell reveal d1" style="text-align:center;">
+    <span class="dry-stat-num" style="font-size:clamp(1.6rem,3vw,2.4rem);font-family:var(--ff-sans);font-weight:700;">Very Low</span>
+    <span class="dry-stat-label">Moisture Method</span>
+    <p class="dry-stat-sub">fiber tips only — never soaks through</p>
+  </div>
+  <div class="dry-divider"></div>
+  <div class="dry-cell reveal d2" style="text-align:center;">
+    <span class="dry-stat-num" style="font-size:clamp(1.6rem,3vw,2.4rem);font-family:var(--ff-sans);font-weight:700;">No Soak</span>
+    <span class="dry-stat-label">No Steam. No Flood.</span>
+    <p class="dry-stat-sub">no shrinkage, no wicking, no mold risk</p>
+  </div>
+  <div class="dry-divider"></div>
+    <div class="dry-cell reveal d3" style="text-align:center;">
+    <span class="dry-stat-num" style="font-size:clamp(1.6rem,3vw,2.4rem);font-family:var(--ff-sans);font-weight:700;">Zero</span>
+    <span class="dry-stat-label">Upsells or Hidden Fees</span>
+    <p class="dry-stat-sub">flat price — what you book is what you pay</p>
+  </div>
+</div>
+
+<!-- MARQUEE -->
+<div class="mq-wrap">
+  <div class="mq-track">
+    <div class="mq-item" style="color:rgba(240,234,216,.95);font-weight:700;">Wichita Carpet Cleaning Services<span class="mq-sep"></span></div>
+    <div class="mq-item">Rotary Brush Encapsulation<span class="mq-sep"></span></div>
+    <div class="mq-item">Dry in 1–2 Hours<span class="mq-sep"></span></div>
+    <div class="mq-item">Carpet Cleaning<span class="mq-sep"></span></div>
+    <div class="mq-item">Upholstery<span class="mq-sep"></span></div>
+    <div class="mq-item">Tile &amp; Grout<span class="mq-sep"></span></div>
+    <div class="mq-item">Hardwood Floors<span class="mq-sep"></span></div>
+    <div class="mq-item">Pet Odor Treatment<span class="mq-sep"></span></div>
+    <div class="mq-item">Wichita · Derby · Andover · Goddard · Maize<span class="mq-sep"></span></div>
+    <div class="mq-item">No Hidden Fees — Ever<span class="mq-sep"></span></div>
+    <div class="mq-item">Locally Owned &amp; Operated<span class="mq-sep"></span></div>
+    <div class="mq-item" style="color:rgba(240,234,216,.95);font-weight:700;">Wichita Carpet Cleaning Services<span class="mq-sep"></span></div>
+    <div class="mq-item">Rotary Brush Encapsulation<span class="mq-sep"></span></div>
+    <div class="mq-item">Dry in 1–2 Hours<span class="mq-sep"></span></div>
+    <div class="mq-item">Carpet Cleaning<span class="mq-sep"></span></div>
+    <div class="mq-item">Upholstery<span class="mq-sep"></span></div>
+    <div class="mq-item">Tile &amp; Grout<span class="mq-sep"></span></div>
+    <div class="mq-item">Hardwood Floors<span class="mq-sep"></span></div>
+    <div class="mq-item">Pet Odor Treatment<span class="mq-sep"></span></div>
+    <div class="mq-item">Wichita · Derby · Andover · Goddard · Maize<span class="mq-sep"></span></div>
+    <div class="mq-item">No Hidden Fees — Ever<span class="mq-sep"></span></div>
+    <div class="mq-item">Locally Owned &amp; Operated<span class="mq-sep"></span></div>
+  </div>
+</div>
+
+<!-- ══════════════ SERVICES ══════════════ -->
+<section class="svc-section" id="services">
+  <div class="svc-head reveal">
+    <div>
+      <div class="kicker">What We Clean</div>
+      <h2 class="sh">Every Surface,<br><em>Spotless.</em></h2>
+    </div>
+    <div class="svc-head-r">
+      <p class="sl">Professional encapsulation cleaning across five cities in the Wichita area. Every service card links directly to booking.</p>
+      <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="nbtn" rel="noopener noreferrer">View All Packages</a>
+    </div>
+  </div>
+  <div class="svc-grid">
+    <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="sc reveal" rel="noopener noreferrer">
+      <div class="sc-ico">🏠</div>
+      <h3>Residential Carpet</h3>
+      <p>Rotary brush encapsulation penetrates deep into fiber — lifting pet stains, high-traffic grime, and allergens. Enzyme treatment and deodorizing available.</p>
+      <div class="sc-foot"><span class="sc-price">From $75</span><span class="sc-arr">→</span></div>
+    </a>
+    <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="sc reveal d1" rel="noopener noreferrer">
+      <div class="sc-ico">🪑</div>
+      <h3>Upholstery</h3>
+      <p>Sofas, loveseats, recliners, sectionals, and dining chairs — deep cleaned and deodorized. Safe for all fabric types with our low-moisture method.</p>
+      <div class="sc-foot"><span class="sc-price">From $15</span><span class="sc-arr">→</span></div>
+    </a>
+    <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="sc reveal d2" rel="noopener noreferrer">
+      <div class="sc-ico">🏢</div>
+      <h3>Tile & Grout</h3>
+      <p>Restore kitchens, bathrooms, and full floors to original brilliance. High-pressure cleaning clears years of buildup from grout lines. Small areas free.</p>
+      <div class="sc-foot"><span class="sc-price">From $75</span><span class="sc-arr">→</span></div>
+    </a>
+    <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="sc reveal" rel="noopener noreferrer">
+      <div class="sc-ico">🌳</div>
+      <h3>Hardwood Floors</h3>
+      <p>Deep cleaning, buffing, polishing, and sealing for entries, hallways, living rooms, and full floors. Stairwells and small areas included free.</p>
+      <div class="sc-foot"><span class="sc-price">From $75</span><span class="sc-arr">→</span></div>
+    </a>
+    <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="sc reveal d1" rel="noopener noreferrer">
+      <div class="sc-ico">🐕</div>
+      <h3>Pet Odor Treatment</h3>
+      <p>Enzyme treatments that permanently eliminate pet stains and odors at the molecular level. The rotary brush drives solution deep where odor hides at fiber base.</p>
+      <div class="sc-foot"><span class="sc-price">Add-on</span><span class="sc-arr">→</span></div>
+    </a>
+    <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="sc reveal d2" rel="noopener noreferrer">
+      <div class="sc-ico">🏪</div>
+      <h3>Commercial</h3>
+      <p>Offices, churches, and rental properties. Our encapsulation method means minimal downtime — carpets are dry and your space is back in service within hours.</p>
+      <div class="sc-foot"><span class="sc-price">Custom Quote</span><span class="sc-arr">→</span></div>
+    </a>
+  </div>
+</section>
+
+<!-- ══════════════ METHOD ══════════════ -->
+<section class="method-sec" id="method">
+  <div class="method-grid">
+    <div class="mvis reveal">
+      <div class="mr1"></div>
+      <div class="mr2"></div>
+      <div class="mcore">
+        <svg class="mbrush" viewBox="0 0 72 72" fill="none">
+          <circle cx="36" cy="36" r="14" fill="rgba(192,78,26,.16)" stroke="#c04e1a" stroke-width="1.1"/>
+          <line x1="36" y1="36" x2="36" y2="9" stroke="#c04e1a" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="36" y1="36" x2="59.4" y2="49.5" stroke="#c04e1a" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="36" y1="36" x2="12.6" y2="49.5" stroke="#c04e1a" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="36" y1="36" x2="36" y2="63" stroke="#c04e1a" stroke-width="1" stroke-linecap="round" opacity=".38"/>
+          <line x1="36" y1="36" x2="12.6" y2="22.5" stroke="#c04e1a" stroke-width="1" stroke-linecap="round" opacity=".38"/>
+          <line x1="36" y1="36" x2="59.4" y2="22.5" stroke="#c04e1a" stroke-width="1" stroke-linecap="round" opacity=".38"/>
+          <circle cx="36" cy="36" r="4.5" fill="#c04e1a"/>
+        </svg>
+      </div>
+      <div class="mbadges">
+        <div class="mb mb1">Rotary Brush Agitation</div>
+        <div class="mb mb2">1–2 Hr Dry Time</div>
+        <div class="mb mb3">Very Low Moisture</div>
+        <div class="mb mb4">Zero Residue</div>
+      </div>
+    </div>
+    <div class="reveal d2">
+      <div class="kicker">Primary Method</div>
+      <h2 class="sh">Rotary Brush<br><em>Encapsulation</em></h2>
+      <p class="sl" style="margin-top:.9rem;">Traditional steam cleaning floods carpets with water and takes 24–48 hours to dry — risking shrinkage, wicking stains, and mold. Our approach is scientifically different.</p>
+      <div class="msteps">
+        <div class="mstep">
+          <div class="mstep-line"></div>
+          <div class="mstep-n">01</div>
+          <div class="mstep-b"><h4>Pre-Inspection</h4><p>We evaluate fiber type, soiling level, and stain locations — selecting the right encapsulation formula before a drop touches your carpet.</p></div>
+        </div>
+        <div class="mstep">
+          <div class="mstep-line"></div>
+          <div class="mstep-n">02</div>
+          <div class="mstep-b"><h4>Low-Moisture Application</h4><p>Crystalline polymer solution is applied with precision — wetting fiber tips only, never saturating backing or subfloor.</p></div>
+        </div>
+        <div class="mstep">
+          <div class="mstep-line"></div>
+          <div class="mstep-n">03</div>
+          <div class="mstep-b"><h4>Rotary Brush Agitation <span class="badge-inline">Primary</span></h4><p>Counter-rotating cylindrical brush drives deep into fiber — mechanically breaking the bond between embedded soil and carpet. Far deeper than any flat-surface machine.</p></div>
+        </div>
+        <div class="mstep">
+          <div class="mstep-n">04</div>
+          <div class="mstep-b"><h4>Crystallize, Encapsulate & Extract</h4><p>Soil is locked inside polymer crystals and vacuumed away completely. Carpets dry in 1–2 hours. No residue. No re-soiling. Done.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="enc-grid reveal" style="margin-top:5rem;">
+    <div class="enc-card"><div class="enc-n">vs</div><h4>Steam vs. Encapsulation</h4><p>Steam uses gallons of water and takes 24–48 hours to dry. Encapsulation uses very low moisture — fiber tips only, never soaking through — and is dry in 1–2 hours with no mold, wicking, or shrinkage risk.</p></div>
+    <div class="enc-card"><div class="enc-n">🌿</div><h4>Eco & Family Safe</h4><p>Biodegradable, non-toxic formulas. Safe for children, pets, and people with sensitivities — without compromising cleaning performance.</p></div>
+    <div class="enc-card"><div class="enc-n">✦</div><h4>Built-In Protectant</h4><p>Our formula includes protective polymers that help fibers resist future soiling — keeping carpets cleaner longer between professional cleanings.</p></div>
+    <div class="enc-card"><div class="enc-n">0</div><h4>Zero Residue</h4><p>Unlike soap-based cleaners that leave sticky residue that attracts dirt, encapsulation crystals break down completely — leaving only clean fiber.</p></div>
+  </div>
+</section>
+
+<!-- ══════════════ FAST DRY SECTION ══════════════ -->
+<section class="speed-sec" id="speed">
+  <div class="speed-bg"></div>
+  <div class="speed-inner">
+    <div class="kicker reveal">The Fast Dry Advantage</div>
+    <h2 class="sh reveal d1" style="font-size:clamp(2.4rem,5vw,4rem);text-align:center;">Back on Your Floors<br><em>Same Day.</em></h2>
+    <p class="sl reveal d2" style="text-align:center;max-width:540px;margin:1rem auto 0;">This is our single biggest differentiator. No waiting. No planning your day around wet carpets. No coming home to floors that still aren't dry.</p>
+    <div class="speed-clocks reveal d1">
+      <div class="sclock" style="flex:1.5;">
+        <span class="sclock-x">✕</span>
+        <span class="sclock-label">Traditional Steam Cleaning</span>
+        <div class="sclock-time">24–48<span class="unit"> hrs</span></div>
+        <p class="sclock-method">Hot water extraction — carpet soaked through to backing</p>
+      </div>
+      <div class="sclock highlight" style="flex:1.5;">
+        <span class="sclock-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+        <span class="sclock-label">Our Encapsulation Method</span>
+        <div class="sclock-time">1–2<span class="unit"> hrs</span></div>
+        <p class="sclock-method">Rotary brush encapsulation — dry fiber tips only</p>
+      </div>
+    </div>
+    <p class="speed-note reveal">The difference is physics — not just technique. Encapsulation uses very low moisture (VLM), so there is simply less water to evaporate. Combined with our powerful extraction, most carpets are fully dry and walkable within an hour or two of our crew leaving your home.</p>
+  </div>
+</section>
+
+<!-- STATS BAND -->
+<div class="stats-band">
+  <div class="sblock reveal">
+    <span class="sblock-n"><span class="ctr" data-t="2">0</span><span class="u">hr</span></span>
+    <span class="sblock-l">Dry Time</span>
+    <p class="sblock-d">Walk on carpets same day — not tomorrow</p>
+  </div>
+  <div class="sblock reveal d1">
+    <span class="sblock-n">Very<span class="u" style="font-size:1.5rem;"> Low</span></span>
+    <span class="sblock-l">Moisture Method</span>
+    <p class="sblock-d">Fiber tips only — backing & subfloor stay dry</p>
+  </div>
+  <div class="sblock reveal d2">
+    <span class="sblock-n"><span class="u" style="font-size:1.5rem;">Zero</span></span>
+    <span class="sblock-l">Upsells. Ever.</span>
+    <p class="sblock-d">We clean — we don't sell. What you book is what you pay</p>
+  </div>
+  <div class="sblock reveal d3">
+    <span class="sblock-n"><span class="u">$</span><span class="ctr" data-t="75">0</span></span>
+    <span class="sblock-l">Starting Price</span>
+    <p class="sblock-d">Flat, transparent pricing — no hidden fees</p>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ PRICING ══════════════ -->
+<section class="price-sec" id="pricing">
+  <div class="price-hd reveal">
+    <div>
+      <div class="kicker">Transparent Pricing</div>
+      <h2 class="sh">No Surprises.<br><em>Ever.</em></h2>
+    </div>
+    <div class="price-hd-r">
+      <p>Flat, rounded prices across every package. Zero hidden fees, zero upsells. What you book is what you pay — period.</p>
+      <div class="price-guarantee">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Price Guarantee — No Hidden Fees
+      </div>
+    </div>
+  </div>
+  <div class="tabs reveal">
+    <button class="tab on" onclick="st('carpet',this)">Carpet</button>
+    <button class="tab" onclick="st('upholstery',this)">Upholstery</button>
+    <button class="tab" onclick="st('tile',this)">Tile & Grout</button>
+    <button class="tab" onclick="st('hardwood',this)">Hardwood</button>
+  </div>
+
+  <div class="pane on" id="pt-carpet">
+    <div class="pc2"><h3>Minimum</h3><div class="pc2-price"><sup>$</sup>75</div><ul><li>Up to 3 rooms</li><li>Small closets free</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+    <div class="pc2"><h3>Essentials</h3><div class="pc2-price"><sup>$</sup>99</div><ul><li>3 rooms + 1 hallway</li><li>Stairwell included</li><li>Deodorizer included</li><li>Small closets free</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+    <div class="pc2 pop"><h3>Fresh Start</h3><div class="pc2-price"><sup>$</sup>149</div><ul><li>7 rooms + 2 hallways</li><li>Stairwell included</li><li>Deodorizer included</li><li>All closets free</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+    <div class="pc2"><h3>Pet Pro</h3><div class="pc2-price"><sup>$</sup>179</div><ul><li>7 rooms + 2 hallways</li><li>Enzyme treatment</li><li>Deodorizer included</li><li>Stairwell + closets free</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+    <div class="pc2"><h3>Ultimate Clean</h3><div class="pc2-price"><sup>$</sup>219</div><ul><li>7 rooms + 2 hallways</li><li>Enzyme + deodorizer</li><li>Carpet protectant</li><li>Stairwell + closets free</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+  </div>
+  <div class="pane" id="pt-upholstery">
+    <div class="pc2"><h3>Dining Chair</h3><div class="pc2-price"><sup>$</sup>15</div><ul><li>Single dining chair</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+    <div class="pc2"><h3>Chair</h3><div class="pc2-price"><sup>$</sup>39</div><ul><li>Single accent chair</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+    <div class="pc2"><h3>Loveseat</h3><div class="pc2-price"><sup>$</sup>59</div><ul><li>Full loveseat cleaning</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+    <div class="pc2"><h3>Couch</h3><div class="pc2-price"><sup>$</sup>69</div><ul><li>Full couch cleaning</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+    <div class="pc2"><h3>Sectional</h3><div class="pc2-price"><sup>$</sup>89</div><ul><li>Full sectional cleaning</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+    <div class="pc2 pop"><h3>Sofa Saver</h3><div class="pc2-price"><sup>$</sup>109</div><ul><li>Sofa + loveseat</li><li>Deodorizer included</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+    <div class="pc2"><h3>Whole Set</h3><div class="pc2-price"><sup>$</sup>139</div><ul><li>Sofa + loveseat + recliner</li><li>Deodorizer included</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+  </div>
+  <div class="pane" id="pt-tile">
+    <div class="pc2"><h3>Bathroom Revival</h3><div class="pc2-price"><sup>$</sup>75</div><ul><li>Two bathrooms up to 100 sq ft</li><li>Small areas free</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+    <div class="pc2 pop"><h3>Kitchen Reset</h3><div class="pc2-price"><sup>$</sup>119</div><ul><li>Kitchen up to 150 sq ft</li><li>Small areas free</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+    <div class="pc2"><h3>Whole Floor Pro</h3><div class="pc2-price"><sup>$</sup>229</div><ul><li>400 sq ft tile + grout</li><li>Ceiling included</li><li>Small areas free</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+  </div>
+  <div class="pane" id="pt-hardwood">
+    <div class="pc2"><h3>Entry Refresh</h3><div class="pc2-price"><sup>$</sup>75</div><ul><li>Entry &amp; hallways up to 150 sq ft</li><li>Small areas free</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+    <div class="pc2 pop"><h3>Living Room Restore</h3><div class="pc2-price"><sup>$</sup>139</div><ul><li>300 sq ft</li><li>Buffing + polish</li><li>Stairwell + small areas free</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+    <div class="pc2"><h3>Full Floor Shine</h3><div class="pc2-price"><sup>$</sup>239</div><ul><li>600 sq ft</li><li>Deep clean, buff + seal</li><li>Stairwell + small areas free</li></ul><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="pc2-cta" rel="noopener noreferrer">Book Now →</a></div>
+  </div>
+</section>
+
+<!-- ══════════════ WHY US ══════════════ -->
+<section class="why-sec" id="why">
+  <div class="why-layout">
+    <div class="why-l reveal">
+      <div class="kicker">Why Choose Us</div>
+      <h2 class="sh">Locally Owned.<br><em>Locally Trusted.</em></h2>
+      <p class="sl">Not a franchise. Not a national call center. We're your neighbors — and we treat every job like it's our own home.</p>
+      <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="btn-outline" rel="noopener noreferrer">Schedule a Clean →</a>
+    </div>
+    <div class="why-grid reveal d2">
+      <div class="wc" data-n="01"><div class="wc-ico">🏠</div><h3>Not a Franchise</h3><p>Local accountability. Personalized service. Money that stays in the Wichita economy.</p></div>
+      <div class="wc" data-n="02"><div class="wc-ico">⏱</div><h3>1–2 Hour Dry Time</h3><p>Our defining advantage. Back on your floors the same day — not 24–48 hours later like steam cleaning.</p></div>
+      <div class="wc" data-n="03"><div class="wc-ico">🔄</div><h3>Rotary Brush Method</h3><p>Counter-rotating cylindrical brush + crystalline polymer — deeper clean than any flat or steam machine.</p></div>
+      <div class="wc" data-n="04"><div class="wc-ico">💰</div><h3>Flat Pricing Always</h3><p>Zero hidden fees. Zero upsells. Flat prices every time — what you book is exactly what you pay.</p></div>
+      <div class="wc" data-n="05"><div class="wc-ico">🌿</div><h3>Eco & Family Safe</h3><p>Biodegradable, non-toxic formulas. Safe for children, pets, and people with sensitivities.</p></div>
+      <div class="wc" data-n="06"><div class="wc-ico">🎯</div><h3>We Never Upsell</h3><p>Trained to clean, not sell. You'll never be pressured into add-ons you didn't ask for.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ SERVICE AREA ══════════════ -->
+<section class="area-sec">
+  <div class="area-inner reveal">
+    <div>
+      <div class="kicker">Where We Operate</div>
+      <h2 class="sh" style="font-size:clamp(1.8rem,3vw,2.3rem)">No Travel Fees<br><em>Anywhere We Serve</em></h2>
+    </div>
+    <div>
+      <div class="area-cities">
+        <span class="acity main">Wichita</span>
+        <span class="acity">Derby</span>
+        <span class="acity">Andover</span>
+        <span class="acity">Goddard</span>
+        <span class="acity">Maize</span>
+      </div>
+      <p class="area-note">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        We do not service on-base military housing.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ FAQ ══════════════ -->
+<section class="faq-sec" id="faq">
+  <div class="faq-layout">
+    <div class="faq-l reveal">
+      <div class="kicker">FAQ</div>
+      <h2 class="sh">Common<br><em>Questions</em></h2>
+      <p class="sl">Everything you need to know before booking. Still have a question? Call us directly.</p>
+      <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="nbtn" style="display:inline-block;margin-top:2rem;" rel="noopener noreferrer">Book Online Now</a>
+    </div>
+    <div class="faq-list reveal d2">
+      <div class="fi"><div class="fq" onclick="faq(this)">What is rotary brush encapsulation?<div class="fi-icon">+</div></div><div class="fa">A counter-rotating cylindrical brush agitates deep into carpet fiber while a crystalline polymer solution surrounds each soil particle. Those crystals are vacuumed away completely — leaving carpets clean and dry in 1–2 hours with no residue.</div></div>
+      <div class="fi"><div class="fq" onclick="faq(this)">Why does it dry so much faster than steam?<div class="fi-icon">+</div></div><div class="fa">Physics. Steam cleaning soaks your carpet through to the backing with gallons of water — which takes 24–48 hours to evaporate. Our very low moisture (VLM) process only wets fiber tips, so there is far less water to evaporate. Most carpets are fully dry within an hour or two of our crew leaving.</div></div>
+      <div class="fi"><div class="fq" onclick="faq(this)">Are there any hidden fees or travel charges?<div class="fi-icon">+</div></div><div class="fa">None. The price you see is the price you pay — always. We serve Wichita, Derby, Andover, Goddard, and Maize with no added travel fees whatsoever.</div></div>
+      <div class="fi"><div class="fq" onclick="faq(this)">How long does the appointment take?<div class="fi-icon">+</div></div><div class="fa">Most cleanings take 1.5 to 2 hours depending on size and services. We work efficiently and thoroughly.</div></div>
+      <div class="fi"><div class="fq" onclick="faq(this)">Do I need to be home?<div class="fi-icon">+</div></div><div class="fa">No — but we need access. Many clients provide a garage code or arrange access through a neighbor. We'll keep you updated throughout.</div></div>
+      <div class="fi"><div class="fq" onclick="faq(this)">Do you move furniture?<div class="fi-icon">+</div></div><div class="fa">We move small items like couches and loveseats. For large sectionals, beds, or heavy furniture, please move those before we arrive.</div></div>
+      <div class="fi"><div class="fq" onclick="faq(this)">Best package for pet stains and odor?<div class="fi-icon">+</div></div><div class="fa">Pet Pro ($179) or Ultimate Clean ($219) — both include enzyme treatment and deodorizing. The rotary brush drives the enzyme solution deep into the fiber base where odor actually lives.</div></div>
+      <div class="fi"><div class="fq" onclick="faq(this)">What payment do you accept?<div class="fi-icon">+</div></div><div class="fa">Cash or credit card at time of service. We can also text a secure payment link for convenience.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ CONTACT ══════════════ -->
+<section class="contact-sec" id="contact">
+  <div class="contact-grid">
+    <div class="ci reveal">
+      <div class="kicker">Wichita Carpet Cleaning Services</div>
+      <h2 class="sh">Ready for a<br><em>Fresh Start?</em></h2>
+      <p class="sl">Fill in the form and you'll be taken straight to our secure booking page — or call us directly and we'll get you scheduled.</p>
+      <div class="cdetails">
+        <div class="cd2">
+          <div class="cd2-ico">📞</div>
+          <div><strong>Phone</strong><a href="tel:3162092176">(316) 209-2176</a></div>
+        </div>
+        <div class="cd2">
+          <div class="cd2-ico">✉️</div>
+          <div><strong>Email</strong><a id="em-lnk" href="#" style="color:var(--cream);transition:color .26s;" onmouseover="this.style.color='var(--rust-2)'" onmouseout="this.style.color='var(--cream)'"><span id="em-lnk-txt"></span></a></div>
+        </div>
+        <div class="cd2">
+          <div class="cd2-ico">⏰</div>
+          <div>
+            <strong>Hours</strong>
+            <span style="color:var(--cream);font-size:.88rem;">Mon–Fri&nbsp;&nbsp;8:00 am – 5:00 pm</span><br>
+            <span style="font-size:.8rem;color:var(--cream-dim);">Saturday by request &nbsp;·&nbsp; Sunday closed</span>
+          </div>
+        </div>
+        <div class="cd2">
+          <div class="cd2-ico">📍</div>
+          <div>
+            <strong>Service Area</strong>
+            <div class="chips"><span class="chip2">Wichita</span><span class="chip2">Derby</span><span class="chip2">Andover</span><span class="chip2">Goddard</span><span class="chip2">Maize</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="soc-row">
+        <a href="https://www.facebook.com/wichitacarpetcleaningservices" target="_blank" class="sb" title="Facebook" rel="noopener noreferrer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="reveal d2">
+      <div class="cform">
+        <div class="cf-r">
+          <div class="cfg"><label>Name</label><input type="text" placeholder="Jane Smith"></div>
+          <div class="cfg"><label>Phone</label><input type="tel" placeholder="(316) 555-0000"></div>
+        </div>
+        <div class="cfg"><label>Email</label><input type="email" placeholder="jane@example.com"></div>
+        <div class="cfg">
+          <label>Service</label>
+          <select>
+            <option value="" disabled selected>Select a service...</option>
+            <option>Residential Carpet Cleaning</option>
+            <option>Upholstery Cleaning</option>
+            <option>Tile & Grout Cleaning</option>
+            <option>Hardwood Floor Cleaning</option>
+            <option>Pet Odor Treatment</option>
+            <option>Commercial Cleaning</option>
+            <option>Multiple / Not Sure</option>
+          </select>
+        </div>
+        <div class="cfg"><label>Tell Us More</label><textarea placeholder="e.g. 3 bedrooms, pet stains in living room, Derby area..."></textarea></div>
+        <button class="cf-sub" onclick="submitToBooking(this)">
+          Book Now — Free Quote
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+        <p class="cf-note">You'll be taken to our secure HouseCall Pro booking page.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer>
+  <div class="ft-body">
+    <div class="ft-brand">
+      <div style="display:flex;align-items:center;gap:.6rem;">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <circle cx="18" cy="18" r="16.5" stroke="#c04e1a" stroke-width="1"/>
+          <circle cx="18" cy="18" r="10.5" stroke="#c04e1a" stroke-width=".55" stroke-dasharray="2.2 1.8"/>
+          <circle cx="18" cy="18" r="4.5" fill="#c04e1a" fill-opacity=".14" stroke="#c04e1a" stroke-width=".8"/>
+          <line x1="18" y1="18" x2="18" y2="7" stroke="#c04e1a" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="18" y1="18" x2="27.1" y2="23.3" stroke="#c04e1a" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="18" y1="18" x2="8.9" y2="23.3" stroke="#c04e1a" stroke-width="1.4" stroke-linecap="round"/>
+          <line x1="18" y1="18" x2="18" y2="29" stroke="#c04e1a" stroke-width=".55" stroke-linecap="round" opacity=".4"/>
+          <line x1="18" y1="18" x2="8.9" y2="12.7" stroke="#c04e1a" stroke-width=".55" stroke-linecap="round" opacity=".4"/>
+          <line x1="18" y1="18" x2="27.1" y2="12.7" stroke="#c04e1a" stroke-width=".55" stroke-linecap="round" opacity=".4"/>
+          <circle cx="18" cy="18" r="2" fill="#c04e1a"/>
+        </svg>
+        <div><div style="font-size:1.05rem;font-weight:700;letter-spacing:.06em;color:var(--cream);line-height:1.1;">Wichita Carpet</div><div style="font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--rust-2);font-weight:600;">Cleaning Services</div></div>
+      </div>
+      <p>Professional rotary brush encapsulation cleaning. Locally owned. Serving Wichita and surrounding communities.</p>
+      <div class="ft-soc">
+        <a href="https://www.facebook.com/wichitacarpetcleaningservices" target="_blank" class="fsb" title="Facebook" rel="noopener noreferrer">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="ft-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" rel="noopener noreferrer">Residential Carpet</a></li>
+        <li><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" rel="noopener noreferrer">Upholstery</a></li>
+        <li><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" rel="noopener noreferrer">Tile & Grout</a></li>
+        <li><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" rel="noopener noreferrer">Hardwood Floors</a></li>
+        <li><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" rel="noopener noreferrer">Pet Odor Treatment</a></li>
+        <li><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" rel="noopener noreferrer">Commercial</a></li>
+      </ul>
+    </div>
+    <div class="ft-col">
+      <h4>Service Area</h4>
+      <ul>
+        <li><a href="#contact">Wichita, KS</a></li>
+        <li><a href="#contact">Derby, KS</a></li>
+        <li><a href="#contact">Andover, KS</a></li>
+        <li><a href="#contact">Goddard, KS</a></li>
+        <li><a href="#contact">Maize, KS</a></li>
+      </ul>
+      <div style="margin-top:1.4rem;">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="tel:3162092176">(316) 209-2176</a></li>
+          <li><a id="em-ft" href="#" style="color:rgba(240,234,216,.4);transition:color .26s;" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='rgba(240,234,216,.4)'"><span id="em-ft-txt"></span></a></li>
+          <li><a href="https://www.facebook.com/wichitacarpetcleaningservices" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="ft-col">
+      <h4>Quick Book</h4>
+      <ul>
+        <li><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" rel="noopener noreferrer">Book Carpet Cleaning</a></li>
+        <li><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" rel="noopener noreferrer">Book Upholstery</a></li>
+        <li><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" rel="noopener noreferrer">Book Tile & Grout</a></li>
+        <li><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" rel="noopener noreferrer">Book Hardwood</a></li>
+        <li><a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" rel="noopener noreferrer">Commercial Quote</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <p>© 2025 Wichita Carpet Cleaning Services. Locally owned. Not a franchise.</p>
+    <span class="ft-nm">We do not service on-base military housing</span>
+    <div class="ft-legal">
+      <a href="/privacy-policy">Privacy</a>
+      <a href="/terms-of-service">Terms</a>
+      <a href="/accessibility">Accessibility</a>
+    </div>
+  </div>
+</footer>
+
+<!-- FLOATING CTA -->
+<a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="fcta" id="fcta" rel="noopener noreferrer">
+  <span class="fp"></span>Book Now — Free Quote
+</a>
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════ -->
+<script>
+// CURSOR
+const cdot=document.getElementById('cdot'),cring=document.getElementById('cring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cdot.style.left=mx+'px';cdot.style.top=my+'px';});
+(function t(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;cring.style.left=rx+'px';cring.style.top=ry+'px';requestAnimationFrame(t);})();
+document.querySelectorAll('a,button,.sc,.pc2,.fi,.tab,.acity').forEach(el=>{el.addEventListener('mouseenter',()=>cring.classList.add('hov'));el.addEventListener('mouseleave',()=>cring.classList.remove('hov'));});
+
+// PARTICLES
+const cvs=document.getElementById('pc'),ctx=cvs.getContext('2d');
+let W,H,ps=[];
+function rsz(){W=cvs.width=innerWidth;H=cvs.height=innerHeight;}
+rsz();window.addEventListener('resize',rsz);
+class P{constructor(){this.r();}r(){this.x=Math.random()*W;this.y=Math.random()*H;this.s=Math.random()*1.3+.18;this.vx=(Math.random()-.5)*.22;this.vy=-Math.random()*.32-.07;this.o=Math.random()*.4+.08;this.l=0;this.ml=Math.random()*260+160;}u(){this.x+=this.vx;this.y+=this.vy;this.l++;if(this.l>this.ml||this.y<-4)this.r();}d(){const a=Math.sin((this.l/this.ml)*Math.PI)*this.o;ctx.beginPath();ctx.arc(this.x,this.y,this.s,0,Math.PI*2);ctx.fillStyle=`rgba(192,78,26,${a})`;ctx.fill();}}
+for(let i=0;i<85;i++)ps.push(new P());
+(function ap(){ctx.clearRect(0,0,W,H);ps.forEach(p=>{p.u();p.d();});requestAnimationFrame(ap);})();
+
+// NAVBAR SCROLL
+const nb=document.getElementById('nb');
+const fcta=document.getElementById('fcta');
+window.addEventListener('scroll',()=>{nb.classList.toggle('sc',scrollY>55);fcta.classList.toggle('on',scrollY>380);});
+
+// MOBILE DRAWER
+function openDrawer(){document.getElementById('drawer').classList.add('open');document.getElementById('dover').classList.add('on');}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('dover').classList.remove('on');}
+
+// SCROLL REVEAL
+const sobs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.07});
+document.querySelectorAll('.reveal').forEach(r=>sobs.observe(r));
+
+// PRICING TABS
+function st(id,btn){document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));document.getElementById('pt-'+id).classList.add('on');btn.classList.add('on');}
+
+// FAQ
+function faq(el){const i=el.parentElement,o=i.classList.contains('open');document.querySelectorAll('.fi').forEach(f=>f.classList.remove('open'));if(!o)i.classList.add('open');}
+
+// COUNTER ANIMATION
+function runCounter(el){
+  el.querySelectorAll('.ctr').forEach(c=>{
+    if(c.dataset.done) return;
+    c.dataset.done='1';
+    const t=+c.dataset.t;
+    if(t===0){c.textContent='0';return;}
+    let v=0;
+    const step=Math.max(t/60,0.5);
+    const ti=setInterval(()=>{
+      v=Math.min(v+step,t);
+      c.textContent=Math.floor(v);
+      if(v>=t){c.textContent=t;clearInterval(ti);}
+    },16);
+  });
+}
+const cobs=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){runCounter(e.target);cobs.unobserve(e.target);}
+}),{threshold:0,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.sblock,.dry-cell').forEach(el=>{
+  // Fire immediately if already in viewport on load
+  const r=el.getBoundingClientRect();
+  if(r.top < window.innerHeight && r.bottom > 0) runCounter(el);
+  else cobs.observe(el);
+});
+
+// FORM SUBMIT — go to confirmation page
+function submitToBooking(btn){
+  const form=btn.closest('.cform');
+  const nameEl=form?form.querySelector('input[type=text]'):null;
+  const svcEl=form?form.querySelector('select'):null;
+  const name=(nameEl?nameEl.value.trim():'');
+  const svc=(svcEl?svcEl.value:'');
+  btn.innerHTML='One moment…';btn.style.opacity='.7';
+  setTimeout(()=>showPage('thankyou',name,svc),460);
+}
+
+
+// ══ PAGE SWITCHER ══
+function showPage(page, name, svc){
+  if(page==='thankyou'){
+    document.body.classList.add('show-thankyou');
+    window.scrollTo(0,0);
+    history.pushState({},'','#thankyou');
+    // Personalise
+    const n=(name||'').replace(/[<>]/g,'').split(' ')[0];
+    const s=(svc||'').replace(/[<>]/g,'');
+    const nd=document.getElementById('nameDisplay');
+    const nc=document.getElementById('nameComma');
+    if(n&&nd){nc.textContent=',';nd.textContent=n+'.';}
+    if(nd){document.title='Thanks '+(n||'')+'| Wichita Carpet Cleaning Services';}
+    if(s&&s!=='Select a service...'){
+      const p1=document.querySelector('#page-thankyou .step-row:first-of-type .step-body p');
+      if(p1)p1.innerHTML='We received your request for <strong style="color:var(--cream)">'+s+'</strong>. Click "Complete Booking" to pick your date and time.';
+    }
+    launchConfetti();
+    startRedirectTimer();
+  } else {
+    document.body.classList.remove('show-thankyou');
+    window.scrollTo(0,0);
+    history.pushState({},'','#home');
+    document.title='Wichita Carpet Cleaning | Dry in 1–2 Hours | Rotary Encapsulation';
+  }
+}
+// Handle browser back button
+window.addEventListener('popstate',()=>{
+  if(location.hash==='#thankyou') showPage('thankyou');
+  else showPage('main');
+});
+
+// ── CURSOR
+// cursor & particles shared from main page
+
+// ── READ URL PARAMS — personalise page
+// personalisation handled by showPage()
+
+// ── CONFETTI burst on load
+(function launchConfetti(){
+  const colors=['#c04e1a','#d9612d','#f0ead8','#c8923a','#e0a84a','#2a8a5c','#38b076'];
+  const count = window.innerWidth < 600 ? 28 : 52;
+  for(let i=0;i<count;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.cssText=`
+      left:${Math.random()*100}vw;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      width:${6+Math.random()*6}px;
+      height:${10+Math.random()*8}px;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+      animation-duration:${2.2+Math.random()*2.4}s;
+      animation-delay:${Math.random()*1.2}s;
+      opacity:0;
+    `;
+    document.body.appendChild(el);
+    // Remove after animation
+    setTimeout(()=>el.remove(), (2.2+2.4+1.2)*1000);
+  }
+})();
+
+// ── AUTO-REDIRECT to booking after 45s if still on page
+function startRedirectTimer(){
+  // Clear any previous timer
+  if(window._rdTimer) clearInterval(window._rdTimer);
+  let countdown = 45;
+  window._rdTimer = setInterval(()=>{
+    countdown--;
+    if(countdown <= 0){
+      clearInterval(window._rdTimer);
+      if(document.visibilityState==='visible' && document.body.classList.contains('show-thankyou')){
+        window.location.href='https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true';
+      }
+    }
+  },1000);
+  // Cancel if user clicks the book button themselves
+  const bookBtn=document.querySelector('#page-thankyou .btn-book-now');
+  if(bookBtn) bookBtn.onclick=()=>clearInterval(window._rdTimer);
+  // Reset on tab return
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible') countdown=45;
+  },{once:false});
+}
+
+// ══ EMAIL OBFUSCATION ══
+// Assembled at runtime — no harvestable plaintext in source
+(function(){
+  var u='info',d='wichitacarpetcleaningservices',t='.com';
+  var full=u+'@'+d+t, href='mailto:'+full;
+  var targets=[
+    {id:'em-tb',     txt:'em-tb-txt',  label:full},
+    {id:'em-lnk',    txt:'em-lnk-txt', label:full},
+    {id:'em-ft',     txt:'em-ft-txt',  label:full},
+    {id:'em-ty',     txt:'em-ty-txt',  label:full}
+  ];
+  targets.forEach(function(obj){
+    var a=document.getElementById(obj.id);
+    if(a){a.href=href;}
+    var s=document.getElementById(obj.txt);
+    if(s){s.textContent=obj.label;}
+  });
+  // Also wire the topbar span separately
+  var tbtxt=document.getElementById('em-tb-txt');
+  if(tbtxt) tbtxt.textContent=full;
+})();
+
+// ACTIVE NAV LINK ON SCROLL
+const secs=document.querySelectorAll('section[id]');
+const nls=document.querySelectorAll('.nlink');
+window.addEventListener('scroll',()=>{let cur='';secs.forEach(s=>{if(scrollY>=s.offsetTop-130)cur=s.id;});nls.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+cur));},{passive:true});
+</script>
+
+</div><!-- /page-main -->
+<div id="page-thankyou">
+  <!-- Minimal nav for thankyou view -->
+  <nav style="position:relative;z-index:10;padding:1.1rem 3rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);background:rgba(7,9,11,.6);backdrop-filter:blur(16px);">
+    <a href="#home" onclick="showPage('main')" style="display:flex;align-items:center;gap:.65rem;">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+        <circle cx="17" cy="17" r="15.5" stroke="#c04e1a" stroke-width="1.1"/>
+        <circle cx="17" cy="17" r="10" stroke="#c04e1a" stroke-width=".6" stroke-dasharray="2.2 1.8"/>
+        <circle cx="17" cy="17" r="4.2" fill="#c04e1a" fill-opacity=".16" stroke="#c04e1a" stroke-width=".9"/>
+        <line x1="17" y1="17" x2="17" y2="6.5" stroke="#c04e1a" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="17" y1="17" x2="25.5" y2="22" stroke="#c04e1a" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="17" y1="17" x2="8.5" y2="22" stroke="#c04e1a" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="17" y1="17" x2="17" y2="27.5" stroke="#c04e1a" stroke-width=".6" stroke-linecap="round" opacity=".4"/>
+        <line x1="17" y1="17" x2="8.5" y2="12" stroke="#c04e1a" stroke-width=".6" stroke-linecap="round" opacity=".4"/>
+        <line x1="17" y1="17" x2="25.5" y2="12" stroke="#c04e1a" stroke-width=".6" stroke-linecap="round" opacity=".4"/>
+        <circle cx="17" cy="17" r="1.9" fill="#c04e1a"/>
+      </svg>
+      <div style="display:flex;flex-direction:column;line-height:1.15;">
+        <span style="font-size:1.05rem;font-weight:700;letter-spacing:.06em;color:var(--cream);line-height:1.1;">Wichita Carpet</span>
+        <span style="font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--rust-2);font-weight:600;">Cleaning Services</span>
+      </div>
+    </a>
+    <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="nbtn" rel="noopener noreferrer">Complete Booking →</a>
+  </nav>
+  <div class="bg-glow"></div>
+  <main>
+    <div class="success-wrap">
+
+    <!-- Check mark -->
+    <div class="check-ring" id="checkRing">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+
+    <!-- Eyebrow -->
+    <div class="eyebrow"><span class="dot"></span>Request Received</div>
+
+    <!-- Headline -->
+    <h1 class="confirm-h">
+      You're all set<span id="nameComma"></span><br>
+      <em><span id="nameDisplay">let's get started.</span></em>
+    </h1>
+
+    <!-- Subtext -->
+    <p class="confirm-sub">
+      Your request has been received. To lock in your appointment time, complete your booking below — it takes less than 60 seconds.
+    </p>
+
+    <!-- NEXT STEPS -->
+    <div class="steps-card">
+      <h3>What Happens Next</h3>
+      <div class="step-row">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <h4>Complete Your Booking Online</h4>
+          <p>Click "Complete Booking" below to choose your date and time on our secure HouseCall Pro scheduling page. Takes under a minute.</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <h4>We Confirm &amp; Prepare</h4>
+          <p>You'll receive a confirmation with your appointment details. We'll review your service selection and prepare the right encapsulation formula for your carpet type.</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <h4>We Arrive &amp; Get to Work</h4>
+          <p>Our team arrives on time, handles everything, and leaves your floors clean and dry — typically within 1–2 hours of arrival. No surprises, no mess.</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">04</div>
+        <div class="step-body">
+          <h4>Walk on Your Clean Floors in Hours</h4>
+          <p>Unlike steam cleaning that takes 24–48 hours to dry, your carpets will be fully dry and ready to use within 1–2 hours of our visit.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA BUTTONS -->
+    <div class="cta-group">
+      <a href="https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true" target="_blank" class="btn-book-now" rel="noopener noreferrer">
+        Complete Your Booking
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="#home" onclick="showPage('main')" class="btn-home">← Back to Homepage</a>
+    </div>
+
+    <!-- HOURS + CONTACT STRIP -->
+    <div class="info-strip">
+      <div class="strip-cell">
+        <span class="strip-icon">⏰</span>
+        <span class="strip-label">Hours</span>
+        <span class="strip-val">Mon–Fri 8am–5pm<br><span style="font-size:.72rem;color:var(--cream-dim);">Saturday by Request</span></span>
+      </div>
+      <div class="strip-divider"></div>
+      <div class="strip-cell">
+        <span class="strip-icon">📞</span>
+        <span class="strip-label">Call Us</span>
+        <span class="strip-val"><a href="tel:3162092176">(316) 209-2176</a></span>
+      </div>
+      <div class="strip-divider"></div>
+      <div class="strip-cell">
+        <span class="strip-icon">✉️</span>
+        <span class="strip-label">Email</span>
+        <span class="strip-val" style="font-size:.74rem;"><a id="em-ty" href="#" onmouseover="this.style.color='var(--rust-2)'" onmouseout="this.style.color='inherit'"><span id="em-ty-txt"></span></a></span>
+      </div>
+    </div>
+
+    <!-- WHAT TO EXPECT -->
+    <div class="expect-section">
+      <h3>What to Expect on Appointment Day</h3>
+      <div class="expect-grid">
+        <div class="exp-card">
+          <span class="exp-ico">🔄</span>
+          <div class="exp-body">
+            <h4>Rotary Brush Encapsulation</h4>
+            <p>Counter-rotating cylindrical brush works deep into fiber — not just the surface.</p>
+          </div>
+        </div>
+        <div class="exp-card">
+          <span class="exp-ico">⏱</span>
+          <div class="exp-body">
+            <h4>1–2 Hour Dry Time</h4>
+            <p>Walk on your carpets within hours. No waiting 24–48 hrs like steam cleaning.</p>
+          </div>
+        </div>
+        <div class="exp-card">
+          <span class="exp-ico">💰</span>
+          <div class="exp-body">
+            <h4>Flat Price — No Surprises</h4>
+            <p>The price you booked is the price you pay. Zero upsells, zero add-ons pushed.</p>
+          </div>
+        </div>
+        <div class="exp-card">
+          <span class="exp-ico">🌿</span>
+          <div class="exp-body">
+            <h4>Kid &amp; Pet Safe</h4>
+            <p>Biodegradable, non-toxic formula — safe to be back on floors immediately after drying.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRUST ROW -->
+    <div class="trust-row">
+      <span class="tr-item">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Locally Owned — Not a Franchise
+      </span>
+      <span class="tr-item">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Serving Wichita, Derby, Andover, Goddard &amp; Maize
+      </span>
+      <span class="tr-item">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        No Hidden Fees — Ever
+      </span>
+    </div>
+
+  </div><!-- /success-wrap -->
+  </main>
+  <footer style="position:relative;z-index:2;border-top:1px solid var(--border);padding:1.4rem 3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.8rem;background:var(--ink);">
+    <p style="font-size:.72rem;color:rgba(240,234,216,.22);">© 2025 Wichita Carpet Cleaning Services. Locally owned. Not a franchise. · We do not service on-base military housing.</p>
+    <div style="display:flex;gap:1.4rem;">
+      <a href="/privacy-policy" style="font-size:.68rem;color:rgba(240,234,216,.22);">y</a>
+      <a href="/terms-of-service" style="font-size:.68rem;color:rgba(240,234,216,.22);">Terms</a>
+      <a href="/accessibility" style="font-size:.68rem;color:rgba(240,234,216,.22);">Accessibility</a>
+    </div>
+  </div>
+  <!-- /thankyou footer fb link -->
+  <div style="margin-top:.6rem;text-align:center;">
+    <a href="https://www.facebook.com/wichitacarpetcleaningservices" target="_blank"
+       style="font-size:.7rem;color:rgba(240,234,216,.35);display:inline-flex;align-items:center;gap:.35rem;"
+       onmouseover="this.style.color='rgba(240,234,216,.7)'" onmouseout="this.style.color='rgba(240,234,216,.35)'" rel="noopener noreferrer">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      facebook.com/wichitacarpetcleaningservices
+    </a>
+  </div>
+</footer>
+</div><!-- /page-thankyou -->
+</body>
+</html>
