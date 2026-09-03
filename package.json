@@ -1,0 +1,8 @@
+{
+  "name": "wichita-carpet-cleaning-services",
+  "private": true,
+  "scripts": {
+    "check": "node tests/site-check.mjs",
+    "test": "node tests/site-check.mjs"
+  }
+}
