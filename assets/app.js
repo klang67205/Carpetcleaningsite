@@ -27,7 +27,7 @@ const scenarios=[
 [/complaint|unhappy|problem|damage/,`I’m sorry the visit did not meet expectations. Use the job communication in your Housecall Pro confirmation so the concern is connected to the correct appointment.`],
 [/weather|rain|snow/,`Weather can affect travel and drying conditions. Your Housecall Pro job communication is the place for appointment-specific updates.`],
 [/allerg|chemical|sensitive/,`For chemical sensitivities or special safety concerns, review the service details before booking and discuss the specific concern before service.`],
-[/today|same day|asap|urgent/,`The booking page shows the current openings. Choose the service there to see the soonest available time without waiting for a reply.`],
+[/today|same day|asap|urgent/,`Same-day appointments are not offered. The booking page shows the next available future appointment times.`],
 [/book|time|schedule|appointment|available/,`The booking page shows the current available times and the correct service options.`]
 ];
 const answer=q=>{const found=scenarios.find(([pattern])=>pattern.test(q.toLowerCase()));return found?found[1]:`I can help with pricing, pet treatment, drying time, furniture, service area, booking, rescheduling, cancellations, preparation, invoices, access, and common service questions.`;};

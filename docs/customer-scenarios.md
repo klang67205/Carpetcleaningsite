@@ -13,7 +13,7 @@ The booking guide handles these 25 customer paths using verified business inform
 9. On-base housing
 10. Business hours
 11. Booking availability
-12. Same-day availability
+12. Same-day requests, with the next available future appointment shown instead
 13. Cancellation
 14. Rescheduling
 15. Late arrival
