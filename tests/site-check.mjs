@@ -4,6 +4,7 @@ const expected = ['36104bbb2c7d409a8293445c570b5f8b?v2=true','mailto:info@wichit
 for (const value of expected) if (!html.includes(value)) throw new Error(`Missing: ${value}`);
 for (const path of ['../CNAME','../robots.txt','../sitemap.xml','../assets/styles.css','../assets/app.js']) if (!existsSync(new URL(path, import.meta.url))) throw new Error(`Missing file: ${path}`);
 for (const value of ['Oxi Fresh','CRI certified','CRI approved','zero residue','no mold risk','permanently eliminate']) if (html.toLowerCase().includes(value.toLowerCase())) throw new Error(`Unsupported public claim: ${value}`);
+for (const page of ['../privacy-policy/index.html','../terms-of-service/index.html','../accessibility/index.html']) { const text=readFileSync(new URL(page, import.meta.url),'utf8'); if (/href="tel:/i.test(text)||/\bcall\s*</i.test(text)) throw new Error(`Unexpected public call path: ${page}`); }
 const businessSchema = html.match(/<script type="application\/ld\+json">(.*?)<\/script>/)?.[1];
 if (!businessSchema) throw new Error('Missing LocalBusiness schema');
 const schema = JSON.parse(businessSchema);
