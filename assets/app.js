@@ -4,7 +4,7 @@ document.querySelectorAll('details').forEach(item=>item.addEventListener('toggle
 const concierge=document.querySelector('.concierge');
 if(concierge){const launch=concierge.querySelector('.concierge-launch'),panel=concierge.querySelector('.concierge-panel'),close=concierge.querySelector('.concierge-close'),messages=concierge.querySelector('.concierge-messages'),form=concierge.querySelector('.concierge-form'),input=concierge.querySelector('input');
 const scenarios=[
-[/cancel/,`To cancel an existing appointment, use the Manage Appointment link in your original Housecall Pro confirmation. That is the self-service path tied to your booked job.`],
+[/cancel/,`To cancel an existing appointment, use the Manage Appointment link in your original Housecall Pro confirmation. That is the self-service path tied to your booked job. The company terms request 24 hours’ cancellation notice and list a $25 fee when that notice is not provided.`],
 [/resched|change.*time|move.*appointment/,`To reschedule an existing appointment, use the Manage Appointment link in your Housecall Pro confirmation. It keeps the change tied to the correct job and calendar slot.`],
 [/late|running late|arrival|when.*arrive/,`Your scheduled arrival details are in the Housecall Pro confirmation. The booking guide can help with a new booking, but it cannot see or alter an existing job.`],
 [/lock|access|gate|code|not.*home/,`For arrival access, use the job communication in your Housecall Pro confirmation so the note stays with the appointment.`],

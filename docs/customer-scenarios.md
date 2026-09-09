@@ -14,7 +14,7 @@ The booking guide handles these 25 customer paths using verified business inform
 10. Business hours
 11. Booking availability
 12. Same-day requests, with the next available future appointment shown instead
-13. Cancellation
+13. Cancellation, including the 24-hour notice / $25 fee shown in the company terms
 14. Rescheduling
 15. Late arrival
 16. Access instructions
