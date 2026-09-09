@@ -4,8 +4,8 @@ document.querySelectorAll('details').forEach(item=>item.addEventListener('toggle
 const concierge=document.querySelector('.concierge');
 if(concierge){const launch=concierge.querySelector('.concierge-launch'),panel=concierge.querySelector('.concierge-panel'),close=concierge.querySelector('.concierge-close'),messages=concierge.querySelector('.concierge-messages'),form=concierge.querySelector('.concierge-form'),input=concierge.querySelector('input');
 const scenarios=[
-[/cancel/,`To cancel an existing appointment, use the manage-appointment link in your original Housecall Pro confirmation. That is the quickest path because it is attached to your booked job.`],
-[/resched|change.*time|move.*appointment/,`To reschedule an existing appointment, use the manage-appointment link in your Housecall Pro confirmation. It keeps the change tied to the correct job and calendar slot.`],
+[/cancel/,`To cancel an existing appointment, use the Manage Appointment link in your original Housecall Pro confirmation. That is the self-service path tied to your booked job.`],
+[/resched|change.*time|move.*appointment/,`To reschedule an existing appointment, use the Manage Appointment link in your Housecall Pro confirmation. It keeps the change tied to the correct job and calendar slot.`],
 [/late|running late|arrival|when.*arrive/,`Your scheduled arrival details are in the Housecall Pro confirmation. The booking guide can help with a new booking, but it cannot see or alter an existing job.`],
 [/lock|access|gate|code|not.*home/,`For arrival access, use the job communication in your Housecall Pro confirmation so the note stays with the appointment.`],
 [/pet|odor|urine|animal/,`Pet-treatment cleaning is $149 plus tax. It includes the same area as the standard clean—up to 5 rooms, 2 hallways and 1 standard staircase—with the pet-treatment process included.`],
@@ -23,9 +23,11 @@ const scenarios=[
 [/mold|sewage|flood|water damage/,`Mold, sewage, flooding, and water-damage situations need specialized assessment. This booking guide does not treat those as standard carpet-cleaning appointments.`],
 [/payment|card|cash|pay/,`Your Housecall Pro appointment and invoice show the payment details for your specific job.`],
 [/invoice|receipt/,`Your Housecall Pro appointment is the source for the invoice and receipt tied to that visit.`],
+[/message|text.*(you|sent)|sent.*(message|text)|reply/,`Messages sent through Housecall Pro stay with your customer record and job in its Inbox. For a new service, booking online gives you an immediate confirmation. For an existing appointment, use the Manage Appointment link in that confirmation for self-service changes.`],
 [/complaint|unhappy|problem|damage/,`I’m sorry the visit did not meet expectations. Use the job communication in your Housecall Pro confirmation so the concern is connected to the correct appointment.`],
 [/weather|rain|snow/,`Weather can affect travel and drying conditions. Your Housecall Pro job communication is the place for appointment-specific updates.`],
 [/allerg|chemical|sensitive/,`For chemical sensitivities or special safety concerns, review the service details before booking and discuss the specific concern before service.`],
+[/today|same day|asap|urgent/,`The booking page shows the current openings. Choose the service there to see the soonest available time without waiting for a reply.`],
 [/book|time|schedule|appointment|available/,`The booking page shows the current available times and the correct service options.`]
 ];
 const answer=q=>{const found=scenarios.find(([pattern])=>pattern.test(q.toLowerCase()));return found?found[1]:`I can help with pricing, pet treatment, drying time, furniture, service area, booking, rescheduling, cancellations, preparation, invoices, access, and common service questions.`;};
