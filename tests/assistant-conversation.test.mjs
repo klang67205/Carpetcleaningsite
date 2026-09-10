@@ -21,6 +21,13 @@ includes('do I have to move my sectional?',/large sectionals/i);
 includes('what should I do before you arrive?',/clear small items/i);
 includes('are you open Saturday?',/closed Saturday and Sunday/i);
 includes('do you clean tile and grout?',/tile and grout/i);
+includes('How much to clean my sofa and loveseat?',/\$149/i);
+includes('What does a sofa cost?',/\$89/i);
+includes('How much is a recliner?',/\$39/i);
+includes('Price for a large sectional?',/\$169/i);
+includes('How much is bathroom tile cleaning?',/\$99/i);
+includes('What does kitchen grout cleaning cost?',/\$129/i);
+includes('Price for 300 square feet of hard floor?',/\$139/i);
 includes('I need a quote for my office',/custom review/i);
 includes('can you remove a wine stain?',/can.t be promised/i);
 includes('do you handle sewage?',/specialized assessment/i);
@@ -56,7 +63,7 @@ const matrix=[
   [/closed Saturday and Sunday/,['are you open weekends','Saturday hours','Sunday appointments','what are your hours','open on Monday','weekday hours','when are you open']],
   [/airflow, humidity/,['drying time','how fast does it dry','when can I walk on it','will carpet be wet','how long until dry','can we use carpet after','does low moisture dry fast']],
   [/heavy furniture/,['move furniture','what about my couch','do I move beds','large sectional','prepare furniture','move a loveseat','what should I clear','prep before you arrive']],
-  [/online booking/,['clean my sofa','do you do chairs','upholstery service','tile cleaning','grout cleaning','hard floor cleaning','other services']],
+  [/future weekday time online/,['clean my sofa','do you do chairs','upholstery service','tile cleaning','grout cleaning','hard floor cleaning','other services']],
   [/custom review/,['commercial carpet','office cleaning quote','business carpet service','very large space','unusual floor plan']],
   [/can.t be promised/,['remove coffee stain','wine spill','old spot','will this stain come out','guarantee removal','promise it will be clean','ink in carpet']],
   [/specialized assessment/,['mold in carpet','sewage cleanup','flooded room','biohazard cleaning','water damage']],
@@ -92,7 +99,7 @@ const compound=[
   ['How much is pet treatment and how long to dry?',/\$149.*dries much faster/i],
   ['What furniture do I move and when will it dry?',/heavy furniture.*dries quickly/i],
   ['What hours can I book?',/Monday through Friday.*future time/i],
-  ['How much is tile cleaning?',/current options and price/i],
+  ['How much is tile cleaning?',/\$99 for a bathroom.*\$129 for a kitchen/i],
   ['I need to cancel and get a refund',/Manage Appointment.*case by case/i],
   ['Can you come today and what time?',/don.t offer same-day.*future times/i],
   ['prce for pet package',/\$149/i],

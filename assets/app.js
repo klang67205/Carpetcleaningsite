@@ -28,7 +28,7 @@ function intentSet(text){
   add('drying',/dry|drying|wet|walk on|use.*carpet/);
   add('furniture',/furniture|couch|loveseat|\bbed\b|sectional|\bmove\b/);
   add('preparation',/prepare|prep|vacuum|\bclear\b|before.*(come|arrive|visit|clean)/);
-  add('other-services',/other services|upholstery|sofa|chair|tile|grout|hard.?floor/);
+  add('other-services',/other services|upholstery|sofa|couch|loveseat|chair|recliner|sectional|seating|tile|grout|hard.?floor/);
   add('commercial',/commercial|office|business|large space|unusual|quote/);
   add('stain',/stain|spot|spill|wine|coffee|paint|ink/);
   add('specialized',/mold|sewage|flood|biohazard|water damage/);
@@ -48,6 +48,27 @@ function roomEstimate(text){
   if(rooms<1||rooms>30)return null;
   const extras=Math.max(0,rooms-5);
   return {rooms,standard:99+extras*15,pet:149+extras*15,extras};
+}
+
+function otherServicePrice(text){
+  const has=(pattern)=>pattern.test(text);
+  if(has(/sofa.*loveseat|loveseat.*sofa/))return 'Cleaning a sofa and loveseat together is $149 plus tax.';
+  if(has(/complete seating|all (?:my )?(?:seating|furniture)|sofa.*chair|chair.*sofa/))return 'Complete seating cleaning is $179 plus tax.';
+  if(has(/large sectional|big sectional/))return 'A large sectional is $169 plus tax.';
+  if(has(/small sectional/))return 'A small sectional is $119 plus tax.';
+  if(has(/\bsofa\b|\bcouch\b/))return 'A sofa is $89 plus tax.';
+  if(has(/\bloveseat\b/))return 'A loveseat is $79 plus tax.';
+  if(has(/\brecliner\b/))return 'A recliner is $39 plus tax.';
+  if(has(/\bchair\b/))return 'A chair is $19 plus tax.';
+  if(has(/bathroom.*(?:tile|grout)|(?:tile|grout).*bathroom/))return 'Bathroom tile and grout cleaning is $99 plus tax.';
+  if(has(/kitchen.*(?:tile|grout)|(?:tile|grout).*kitchen/))return 'Kitchen tile and grout cleaning is $129 plus tax.';
+  if(has(/whole (?:home|house)|whole.*(?:tile|grout)|(?:tile|grout).*whole/))return 'Whole-home tile and grout cleaning is $259 plus tax.';
+  if(has(/\b150\s*(?:sq|square|ft)/))return 'Hard-floor cleaning for up to 150 square feet is $79 plus tax.';
+  if(has(/\b300\s*(?:sq|square|ft)/))return 'Hard-floor cleaning for up to 300 square feet is $139 plus tax.';
+  if(has(/\b600\s*(?:sq|square|ft)/))return 'Hard-floor cleaning for up to 600 square feet is $239 plus tax.';
+  if(has(/tile|grout/))return 'Tile and grout cleaning is $99 for a bathroom, $129 for a kitchen, or $259 for a whole home, plus tax.';
+  if(has(/hard.?floor/))return 'Hard-floor cleaning is $79 for up to 150 square feet, $139 for up to 300, or $239 for up to 600, plus tax.';
+  return 'Upholstery prices are chair $19, recliner $39, loveseat $79, sofa $89, sofa and loveseat $149, small sectional $119, large sectional $169, or complete seating $179, plus tax.';
 }
 
 export function createConversation(){
@@ -89,7 +110,7 @@ export function createConversation(){
     if(intents.includes('pet')&&intents.includes('drying'))return remember('pet','Our pet-treatment cleaning is $149 plus tax and covers up to five rooms, two hallways, and one standard staircase. Low-moisture cleaning usually dries much faster than heavily saturated carpet, although airflow, humidity, and carpet type affect the exact time.',{booking:true});
     if((intents.includes('furniture')||intents.includes('preparation'))&&intents.includes('drying'))return remember('preparation','Please clear small items and move beds, large sectionals, and other heavy furniture before the visit. Low-moisture cleaning usually dries quickly, but the exact time depends on airflow, humidity, and carpet type.');
     if(intents.includes('hours')&&intents.includes('booking'))return remember('booking','Appointments are Monday through Friday, 7 AM to 5 PM. You can choose an available future time online.',{booking:true});
-    if(intents.includes('other-services')&&intents.includes('price'))return remember('other-services','Upholstery, tile and grout, and hard-floor cleaning are available. Choose the service in online booking to see the current options and price.',{booking:true,label:'View service options'});
+    if(intents.includes('other-services')&&intents.includes('price'))return remember('other-services',`${otherServicePrice(text)} You can choose that service and an available future weekday time online.`,{booking:true,label:'View service options'});
 
     if(estimate&&(intents.includes('price')||state.lastIntent==='price'||state.lastIntent==='pet')){
       const extra=estimate.extras?` That includes ${estimate.extras} additional room${estimate.extras===1?'':'s'} at $15 each.`:'';
@@ -108,7 +129,7 @@ export function createConversation(){
     if(intents.includes('drying'))return remember('drying','Low-moisture cleaning usually dries much faster than heavily saturated carpet. Timing varies with airflow, humidity, carpet type, and soil conditions.');
     if(intents.includes('furniture')||intents.includes('preparation'))return remember('preparation','Please clear small items before the visit. Smaller pieces can usually be worked around or moved; beds, large sectionals, and other heavy furniture should be moved beforehand.');
     if(intents.includes('hours'))return remember('hours','Appointments are Monday through Friday, 7 AM to 5 PM. The business is closed Saturday and Sunday.');
-    if(intents.includes('other-services'))return remember('other-services','Yes—upholstery, tile and grout, and hard-floor cleaning are available. Choose the service in online booking to see its current options.',{booking:true,label:'View service options'});
+    if(intents.includes('other-services'))return remember('other-services',`${otherServicePrice(text)} You can choose that service and an available future weekday time online.`,{booking:true,label:'View service options'});
     if(intents.includes('commercial'))return remember('commercial','Commercial and unusually large spaces need a custom review before a price can be promised. Send the type of space, approximate size, and photos privately in Messenger.',{messenger:true});
     if(intents.includes('safety'))return remember('safety','Please send the specific allergy, sensitivity, child, or pet concern privately before booking so the products and process can be checked for your situation.',{messenger:true});
     if(intents.includes('stain')||intents.includes('guarantee'))return remember('stain','Many spots improve, but removal depends on the carpet fiber, the substance, its age, and earlier treatments. Complete removal can’t be promised before inspection.');
