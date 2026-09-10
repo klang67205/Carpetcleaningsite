@@ -4,6 +4,10 @@ const expected = ['36104bbb2c7d409a8293445c570b5f8b?v2=true','facebook.com/wichi
 for (const value of expected) if (!html.includes(value)) throw new Error(`Missing: ${value}`);
 for (const path of ['../CNAME','../robots.txt','../sitemap.xml','../404.html','../assets/styles.css','../assets/app.js']) if (!existsSync(new URL(path, import.meta.url))) throw new Error(`Missing file: ${path}`);
 for (const value of ['Oxi Fresh','CRI certified','CRI approved','zero residue','no mold risk','permanently eliminate']) if (html.toLowerCase().includes(value.toLowerCase())) throw new Error(`Unsupported public claim: ${value}`);
+for (const value of ['Questions? Ask the booking guide','I can help with pricing',"I can't help you with that"]) if (html.includes(value)) throw new Error(`Cold or outdated assistant copy remains: ${value}`);
+if (!html.includes('<svg class="brand-mark"') || !html.includes('Hi—how can I help?')) throw new Error('Visible brand mark or natural assistant greeting missing');
+const assistant = readFileSync(new URL('../assets/app.js', import.meta.url), 'utf8');
+for (const value of ['$149 plus tax','$15 each','We don’t book same-day visits','What name is the appointment under?','clearNewIntent','Continue privately in Messenger']) if (!assistant.includes(value)) throw new Error(`Assistant flow missing: ${value}`);
 for (const page of ['../index.html','../privacy-policy/index.html','../terms-of-service/index.html','../accessibility/index.html']) { const text=readFileSync(new URL(page, import.meta.url),'utf8'); if (/href="tel:/i.test(text)||/\bcall\s*</i.test(text)||/mailto:/i.test(text)||/info@wichitacarpetcleaningservices\.com/i.test(text)) throw new Error(`Unexpected unsupported contact path: ${page}`); }
 const businessSchema = html.match(/<script type="application\/ld\+json">(.*?)<\/script>/)?.[1];
 if (!businessSchema) throw new Error('Missing LocalBusiness schema');
