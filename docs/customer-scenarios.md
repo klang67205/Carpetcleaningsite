@@ -9,8 +9,8 @@ The booking guide handles these 25 customer paths using verified business inform
 5. Drying time
 6. Furniture
 7. Preparation
-8. Service area
-9. On-base housing
+8. Service area: Wichita and surrounding areas within about 15 miles of downtown. Derby, Andover, Goddard, and Maize are examples inside that ring, not an exclusive city list.
+9. On-base military housing is not serviced, including McConnell AFB.
 10. Business hours
 11. Booking availability
 12. Same-day requests, with the next available future appointment shown instead

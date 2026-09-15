@@ -1,12 +1,21 @@
 const bookingUrl='https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true';
 const messengerUrl='https://m.me/wichitacarpetcleaningservices';
-const servedCities=['wichita','derby','andover','goddard','maize'];
-const unsupportedCities=['haysville','newton','augusta','park city','valley center','bel aire','rose hill','clearwater','cheney','mulvane'];
+const areaPhrase='Wichita and surrounding areas within about 15 miles of downtown';
+const areaExamples='Derby, Andover, Goddard, and Maize are common examples';
+const cityAliases={belaire:'Bel Aire',eldorado:'El Dorado'};
+const servedCities=['wichita','derby','andover','goddard','maize','haysville','park city','valley center','bel aire','belaire','rose hill','kechi','eastborough','colwich','benton'];
+const unsupportedCities=['newton','augusta','clearwater','cheney','mulvane','el dorado','eldorado','hutchinson','winfield','wellington','kingman','mcpherson','arkansas city','salina','pratt','halstead'];
 const clean=text=>text.toLowerCase().replace(/[’]/g,"'").replace(/[^a-z0-9$'\s-]/g,' ').replace(/\s+/g,' ').trim();
 const titleCase=text=>text.replace(/\b\w/g,char=>char.toUpperCase());
+const cityLabel=city=>cityAliases[city]||titleCase(city);
+const isMilitaryHousing=text=>/on[\s-]?base|military(?:\s+housing)?|mcconnell(?:\s+afb)?|base housing/.test(text);
+const isCountyWide=text=>/sedgwick\s+county|butler\s+county/.test(text);
 
 function findCity(text){
-  return [...servedCities,...unsupportedCities].find(city=>new RegExp(`\\b${city.replace(' ','\\s+')}\\b`,'i').test(text))||null;
+  if(isCountyWide(text))return null;
+  return [...servedCities,...unsupportedCities]
+    .sort((a,b)=>b.length-a.length)
+    .find(city=>new RegExp(`\\b${city.replace(/ /g,'\\s+')}\\b`,'i').test(text))||null;
 }
 
 function intentSet(text){
@@ -101,12 +110,13 @@ export function createConversation(){
     if(intents.includes('confirmation'))return remember('confirmation','A booking is confirmed only after Housecall Pro sends the confirmation. If none arrived, use online booking to choose a future time again.',{booking:true});
     if(intents.includes('same-day'))return remember('same-day','We don’t offer same-day appointments. The booking page shows the next available future times.',{booking:true});
 
+    if(isMilitaryHousing(text))return remember('area','On-base military housing isn’t serviced.');
     if(city&&intents.includes('price')){
-      const area=servedCities.includes(city)?`${titleCase(city)} is in our service area.`:`${titleCase(city)} isn’t in our listed service area.`;
+      if(!servedCities.includes(city))return remember('area',`${cityLabel(city)} isn’t in the service area. Service is ${areaPhrase}.`);
       const offer=intents.includes('pet')?'Pet-treatment cleaning is $149 plus tax for up to five rooms, two hallways, and one standard staircase.':'Standard cleaning is $99 plus tax for up to five rooms, two hallways, and one standard staircase.';
-      return remember('price',`${area} ${offer} Additional rooms are $15 each.`,servedCities.includes(city)?{booking:true}:{});
+      return remember('price',`${cityLabel(city)} is in our service area. ${offer} Additional rooms are $15 each.`,{booking:true});
     }
-    if(intents.includes('area')&&intents.includes('price'))return remember('price','Our standard cleaning is $99 plus tax; pet-treatment cleaning is $149. Both cover up to five rooms, two hallways, and one standard staircase, and additional rooms are $15 each. We serve Wichita, Derby, Andover, Goddard, and Maize.',{booking:true});
+    if(intents.includes('area')&&intents.includes('price'))return remember('price',`Our standard cleaning is $99 plus tax; pet-treatment cleaning is $149. Both cover up to five rooms, two hallways, and one standard staircase, and additional rooms are $15 each. Service is ${areaPhrase}.`,{booking:true});
     if(intents.includes('pet')&&intents.includes('drying'))return remember('pet','Our pet-treatment cleaning is $149 plus tax and covers up to five rooms, two hallways, and one standard staircase. Low-moisture cleaning usually dries much faster than heavily saturated carpet, although airflow, humidity, and carpet type affect the exact time.',{booking:true});
     if((intents.includes('furniture')||intents.includes('preparation'))&&intents.includes('drying'))return remember('preparation','Please clear small items and move beds, large sectionals, and other heavy furniture before the visit. Low-moisture cleaning usually dries quickly, but the exact time depends on airflow, humidity, and carpet type.');
     if(intents.includes('hours')&&intents.includes('booking'))return remember('booking','Appointments are Monday through Friday, 7 AM to 5 PM. You can choose an available future time online.',{booking:true});
@@ -117,14 +127,13 @@ export function createConversation(){
       return remember('price',`For ${estimate.rooms} room${estimate.rooms===1?'':'s'}, standard cleaning is $${estimate.standard} plus tax, or $${estimate.pet} with pet treatment.${extra}`,{booking:true});
     }
     if(city&&(intents.includes('area')||intents.length===0)){
-      if(servedCities.includes(city))return remember('area',`Yes, ${titleCase(city)} is in the service area. You can see available future times here.`,{booking:true});
-      return remember('area',`${titleCase(city)} isn’t in the listed service area. Current service is Wichita, Derby, Andover, Goddard, and Maize.`);
+      if(servedCities.includes(city))return remember('area',`Yes, ${cityLabel(city)} is in the service area. You can see available future times here.`,{booking:true});
+      return remember('area',`${cityLabel(city)} isn’t in the service area. Service is ${areaPhrase}.`);
     }
     if(intents.includes('price')&&intents.includes('pet'))return remember('pet','Absolutely. Our pet-treatment cleaning is $149 plus tax and covers up to five rooms, two hallways, and one standard staircase. If you have more than five rooms, each additional room is $15.',{booking:true});
     if(intents.includes('price'))return remember('price','Our standard cleaning is $99 plus tax and covers up to five rooms, two hallways, and one standard staircase. Pet-treatment cleaning is $149, and each additional room is $15.',{booking:true});
     if(intents.includes('pet'))return remember('pet','Absolutely. Our pet-treatment cleaning is $149 plus tax and covers up to five rooms, two hallways, and one standard staircase. If you have more than five rooms, each additional room is $15.',{booking:true});
-    if(intents.includes('area'))return remember('area','The service area is Wichita, Derby, Andover, Goddard, and Maize. On-base military housing isn’t serviced. Which city are you asking about?');
-    if(/military|on base/.test(text))return remember('area','On-base military housing isn’t serviced.');
+    if(intents.includes('area'))return remember('area',`Service is ${areaPhrase}. ${areaExamples}. On-base military housing isn’t serviced. Which city are you asking about?`);
     if(intents.includes('booking'))return remember('booking','You can choose the service and an available future time online. Standard cleaning is $99; pet-treatment cleaning is $149.',{booking:true});
     if(intents.includes('drying'))return remember('drying','Low-moisture cleaning usually dries much faster than heavily saturated carpet. Timing varies with airflow, humidity, carpet type, and soil conditions.');
     if(intents.includes('furniture')||intents.includes('preparation'))return remember('preparation','Please clear small items before the visit. Smaller pieces can usually be worked around or moved; beds, large sectionals, and other heavy furniture should be moved beforehand.');

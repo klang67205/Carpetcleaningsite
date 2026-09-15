@@ -14,8 +14,11 @@ includes('What does $99 include?',/five rooms, two hallways/i);
 includes('I have 7 rooms how much?',/\$129.*\$179/i);
 includes('How much is pet treatment?',/\$149/i);
 includes('Do you serve Derby?',/in the service area/i);
-includes('Do you serve Newton?',/isn.t in the listed service area/i);
-includes('where do you work?',/Wichita, Derby, Andover, Goddard, and Maize/i);
+includes('Do you serve Newton?',/isn.t in the service area.*15 miles of downtown/i);
+includes('where do you work?',/15 miles of downtown/i);
+includes('come to Haysville',/in the service area/i);
+includes('do you clean on base?',/On-base military housing isn’t serviced/i);
+includes('Do you serve McConnell AFB?',/On-base military housing isn’t serviced/i);
 includes('How long until it is dry?',/airflow, humidity/i);
 includes('do I have to move my sectional?',/large sectionals/i);
 includes('what should I do before you arrive?',/clear small items/i);
@@ -57,9 +60,10 @@ const matrix=[
   [/Manage Appointment/,['please cancel','cancellation help','cancel my booking','need to cancel','how can I cancel','I cannot make my appointment','reschedule me','move my appointment','change appointment date','change my cleaning time']],
   [/don.t offer same-day/i,['can you clean today','same day please','I need this asap','can someone come right away','urgent appointment','anything open today','today availability','book me for today']],
   [/future time|future times/,['book a cleaning','schedule service','new appointment','show availability','any openings','I want to book','see times','can I schedule online']],
-  [/in the service area/,['service in Wichita','do you serve derby','come to Andover','travel to Goddard','is Maize covered']],
-  [/isn.t in the listed service area/,['do you serve Newton','come to Haysville','service in Augusta','are you in Park City','travel to Valley Center','do you cover Bel Aire','service Rose Hill','come to Clearwater','service Cheney','do you clean in Mulvane']],
-  [/Wichita, Derby, Andover, Goddard, and Maize/,['where do you work','what cities do you serve','service area','where are you located','what is your coverage area','do you travel','locations please']],
+  [/in the service area/,['service in Wichita','do you serve derby','come to Andover','travel to Goddard','is Maize covered','come to Haysville','are you in Park City','travel to Valley Center','do you cover Bel Aire','service Rose Hill']],
+  [/isn.t in the service area/,['do you serve Newton','service in Augusta','come to Clearwater','service Cheney','do you clean in Mulvane','come to Hutchinson','do you serve El Dorado']],
+  [/15 miles of downtown/,['where do you work','what cities do you serve','service area','where are you located','what is your coverage area','do you travel','locations please','do you serve Sedgwick County']],
+  [/On-base military housing isn’t serviced/,['do you service military housing','can you clean on base','do you serve McConnell','on-base housing in Wichita']],
   [/closed Saturday and Sunday/,['are you open weekends','Saturday hours','Sunday appointments','what are your hours','open on Monday','weekday hours','when are you open']],
   [/airflow, humidity/,['drying time','how fast does it dry','when can I walk on it','will carpet be wet','how long until dry','can we use carpet after','does low moisture dry fast']],
   [/heavy furniture/,['move furniture','what about my couch','do I move beds','large sectional','prepare furniture','move a loveseat','what should I clear','prep before you arrive']],
@@ -94,8 +98,9 @@ for(const [,inputs,expected] of journeys){const chat=createConversation();inputs
 
 const compound=[
   ['Do you serve Derby and what does it cost?',/Derby is in our service area.*\$99/i],
-  ['Do you serve Newton and how much is it?',/Newton isn.t in our listed service area.*\$99/i],
-  ['What is the price and where do you work?',/\$99.*Wichita, Derby, Andover, Goddard, and Maize/i],
+  ['Do you serve Newton and how much is it?',/Newton isn.t in the service area.*15 miles of downtown/i],
+  ['What is the price and where do you work?',/\$99.*15 miles of downtown/i],
+  ['Do you serve Haysville and what does it cost?',/Haysville is in our service area.*\$99/i],
   ['How much is pet treatment and how long to dry?',/\$149.*dries much faster/i],
   ['What furniture do I move and when will it dry?',/heavy furniture.*dries quickly/i],
   ['What hours can I book?',/Monday through Friday.*future time/i],
@@ -107,5 +112,12 @@ const compound=[
   ['please canel it',/Manage Appointment/i]
 ];
 compound.forEach(([input,expected])=>assert.match(one(input).text,expected,input));
+
+assert.equal(one('Do you serve Derby?').booking,true);
+assert.equal(one('come to Haysville').booking,true);
+assert.equal(one('are you in Park City').booking,true);
+assert.ok(!one('Do you serve Newton?').booking);
+assert.ok(!one('do you clean on base').booking);
+assert.ok(!one('Do you serve McConnell AFB?').booking);
 
 console.log(`Stress matrix passed (${matrixCount} paraphrases + ${journeys.length} multi-turn journeys + ${compound.length} compound/typo cases).`);
