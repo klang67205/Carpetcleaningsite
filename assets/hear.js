@@ -3,6 +3,8 @@
  * One regex never covers live chat. Many independent families do.
  */
 
+import { asksAboutChecks, asksServiceDiscount } from "./book-lines.js";
+
 const TYPOS = [
   [/gonna/g, "going to"],
   [/wanna/g, "want to"],
@@ -266,6 +268,10 @@ const PAYMENT_PATTERNS = [
   /\bcard\b/,
   /deposit/,
   /apple pay/,
+  /\b(?:take|accept) (?:a )?(?:personal )?che(?:ck|que)s?\b/,
+  /\bpay (?:by|with|via) (?:a )?che(?:ck|que)s?\b/,
+  /\bwrite (?:a |you a )?che(?:ck|que)\b/,
+  /\bwhat about (?:a )?che(?:ck|que)s?\b/,
 ];
 const HOURS_PATTERNS = [
   /what time/,
@@ -351,7 +357,7 @@ export function primaryJob(heard) {
   const paymentQuestion =
     /cash or card|how do i pay|how does payment|what do you take|do you take (?:cash|card)|forms of payment|venmo|paypal|is there a deposit/.test(
       spoken,
-    );
+    ) || asksAboutChecks(spoken);
   const homeQuestion =
     /(?:need|have) to be (?:home|there|present)|do i (?:need|have) to be|can i (?:leave|go to work)|garage code|hide a key/.test(
       spoken,
@@ -361,6 +367,7 @@ export function primaryJob(heard) {
     spoken,
   );
 
+  if (asksServiceDiscount(spoken)) return "service-discount";
   if (paymentQuestion) return "payment";
   if (homeQuestion && !heard.hold && !/can you come|hold|pencil/.test(spoken)) return "home";
   if (priceQuestion && !heard.hold && !dayLockAsk) return "price";

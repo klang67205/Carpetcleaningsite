@@ -52,7 +52,7 @@ export function wantsHouseJob(state, spoken, intents = []) {
  * Returns null when the regular brain should handle a standalone FAQ.
  */
 function fillingScope(spoken, intents = []) {
-  if (intents.includes("payment") || intents.includes("home") || intents.includes("hours") || intents.includes("last-slot")) {
+  if (intents.includes("payment") || intents.includes("home") || intents.includes("hours") || intents.includes("last-slot") || intents.includes("service-discount") || intents.includes("coupon")) {
     return false;
   }
   if (intents.includes("cancel") || intents.includes("human") || intents.includes("prep")) return false;
