@@ -126,6 +126,7 @@ const OTHER_JOB = new Set([
   "who-comes",
   "duration",
   "coupon",
+  "service-discount",
   "commercial",
   "specialized",
   "closing",

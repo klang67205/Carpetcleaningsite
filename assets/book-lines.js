@@ -81,6 +81,25 @@ export const WOOL_LINE =
 export const RUG_NOTES =
   "Put the rug — or anything else that isn’t normally in the package — in the notes if you’re substituting it.";
 
+export const DISCOUNT_LINE =
+  "We would love to honor that. It’s 15 percent for military, first responders, and teachers — when you book, put that in the notes so we can apply it.";
+
+export const DISCOUNT_NOTES =
+  "Put military, first responder, or teacher in the notes when you book so we can apply the 15 percent.";
+
+/** Only when they ask for this discount. Never volunteer it. Not on-base housing. */
+export function asksServiceDiscount(spoken) {
+  const s = String(spoken || "").toLowerCase();
+  if (/on[\s-]?base|military\s+housing|mcconnell(?:\s+afb)?|base housing/.test(s)) return false;
+  const group =
+    /\b(?:military|veterans?|\bvets?\b|active duty|first responders?|firefighters?|fire fighters?|police(?: officers?)?|sheriff|deputy|emts?\b|paramedics?|teachers?|educators?)\b/;
+  const ask = /\b(?:discount|deal|percent|% off|off for|rate for|price break)\b/;
+  if (group.test(s) && ask.test(s)) return true;
+  if (/\bdiscount for (?:the )?(?:military|veterans?|teachers?|first respond)/.test(s)) return true;
+  if (/\b(?:military|veteran|teacher|first.?respond)\w* (?:discount|deal|rate)\b/.test(s)) return true;
+  return false;
+}
+
 export const CANCEL_LINE =
   "We would love to make that easy. If you give us 24 hours’ notice there’s no fee. Same-day cancellation has a $25 fee. Text (316) 209-2176 or message us here and we’ll take care of it.";
 
@@ -96,7 +115,10 @@ export const LIVE_TIMES =
 export const LEAD_TIMES = LIVE_TIMES;
 
 export function howToBook(state) {
-  const extra = state?.rug ? ` ${RUG_NOTES}` : "";
+  const extras = [];
+  if (state?.rug) extras.push(RUG_NOTES);
+  if (state?.serviceDiscount) extras.push(DISCOUNT_NOTES);
+  const extra = extras.length ? ` ${extras.join(" ")}` : "";
   return [`We’d love to help — click this link. ${LIVE_TIMES}${extra}`, bookingUrl];
 }
 

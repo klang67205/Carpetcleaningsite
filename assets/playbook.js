@@ -221,6 +221,19 @@ export const situations = [
     ],
   },
   {
+    id: "service-discount",
+    canonical: "do you have a military discount",
+    cues: [
+      "military discount",
+      "teacher discount",
+      "first responder discount",
+      "veteran discount",
+      "discount for teachers",
+      "discount for military",
+      "discount for first responders",
+    ],
+  },
+  {
     id: "human",
     canonical: "talk to a person",
     cues: ["real person", "talk to someone", "call me", "phone number"],

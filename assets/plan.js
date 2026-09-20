@@ -11,7 +11,9 @@ import {
   MOVE_LINE,
   ODOR_LINE,
   PAY_LINE,
+  DISCOUNT_LINE,
   asksAboutChecks,
+  asksServiceDiscount,
   paymentSpeech,
   PHONE,
   TEXT_PHOTO,
@@ -168,6 +170,30 @@ export function planTurn({ text, original = "", intents = [], heard = null, stat
       ],
       sendLink: false,
       linkOnly: false,
+    };
+    return finish(plan, extras, spoken);
+  }
+
+  if (/on[\s-]?base|military\s+housing|mcconnell(?:\s+afb)?|base housing/.test(spoken)) {
+    plan = {
+      job: "area",
+      constraint: "on_base",
+      want: "a visit on base",
+      cannot: "we just don’t service on-base military housing",
+      offer: "",
+      bubbles: ["We would love to help where we can — we just don’t service on-base military housing."],
+      sendLink: false,
+    };
+    return finish(plan, extras, spoken);
+  }
+
+  if (asksServiceDiscount(spoken)) {
+    plan = {
+      job: "service-discount",
+      want: "the military, first responder, or teacher discount",
+      cannot: "",
+      offer: DISCOUNT_LINE,
+      bubbles: [DISCOUNT_LINE],
     };
     return finish(plan, extras, spoken);
   }

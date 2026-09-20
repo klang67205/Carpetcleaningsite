@@ -3,7 +3,7 @@
  * One regex never covers live chat. Many independent families do.
  */
 
-import { asksAboutChecks } from "./book-lines.js";
+import { asksAboutChecks, asksServiceDiscount } from "./book-lines.js";
 
 const TYPOS = [
   [/gonna/g, "going to"],
@@ -367,6 +367,7 @@ export function primaryJob(heard) {
     spoken,
   );
 
+  if (asksServiceDiscount(spoken)) return "service-discount";
   if (paymentQuestion) return "payment";
   if (homeQuestion && !heard.hold && !/can you come|hold|pencil/.test(spoken)) return "home";
   if (priceQuestion && !heard.hold && !dayLockAsk) return "price";

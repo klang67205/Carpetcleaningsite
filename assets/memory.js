@@ -42,6 +42,7 @@ export function syncMemory(state) {
     inArea: state.inArea,
     sentLink: Boolean(state.sentLink),
     homeAnswered: Boolean(state.homeAnswered),
+    serviceDiscount: Boolean(state.serviceDiscount),
     stage: state.stage || null,
   };
   const facts = [];
@@ -56,6 +57,7 @@ export function syncMemory(state) {
   if (state.weekday) facts.push(state.weekday);
   if (state.homeAnswered) facts.push("access notes");
   if (state.sentLink) facts.push("booking link sent");
+  if (state.serviceDiscount) facts.push("15 percent service discount — notes when they book");
   if (state.inArea === false) facts.push("out of area");
   memory.facts = facts;
   memory.firstName = state.firstName || memory.firstName || null;

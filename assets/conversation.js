@@ -1,7 +1,7 @@
 /** Wichita Carpet Cleaning — conversation brain. Facts only. No invented promises. */
 
 import { afterMove, composeJob, conversionLead, dropKnownQuestions, mentionsRug, mentionsWoolRug, QUIET, readyToBook } from "./agenda.js";
-import { bookingUrl, CANCEL_LINE, howToBook, LIVE_TIMES, NO_CONFIRM_MAIL, RUG_NOTES, TEXT_PHOTO, TEXT_US, WOOL_LINE, paymentSpeech } from "./book-lines.js";
+import { bookingUrl, CANCEL_LINE, DISCOUNT_LINE, howToBook, LIVE_TIMES, NO_CONFIRM_MAIL, RUG_NOTES, TEXT_PHOTO, TEXT_US, WOOL_LINE, asksServiceDiscount, paymentSpeech } from "./book-lines.js";
 import { ground } from "./ground.js";
 import { hear } from "./hear.js";
 import { emptyMemory, guessFirstName, rememberPlan, syncMemory } from "./memory.js";
@@ -108,7 +108,7 @@ const clean = (text) =>
 const titleCase = (text) => text.replace(/\b\w/g, (char) => char.toUpperCase());
 const cityLabel = (city) => cityAliases[city] || titleCase(city);
 const isMilitaryHousing = (text) =>
-  /on[\s-]?base|military(?:\s+housing)?|mcconnell(?:\s+afb)?|base housing/.test(text);
+  /on[\s-]?base|military\s+housing|mcconnell(?:\s+afb)?|base housing/.test(text);
 
 function findZip(text) {
   const match = text.match(/\b(\d{5})\b/);
@@ -377,6 +377,7 @@ function intentSet(text) {
   add("soon", /how soon|next available|earliest|first opening|when can you|how far (?:ahead|in advance)/);
   add("included", /what(?:'s| is) included|what do i get|what(?:'s| is) in the|what(?:'s| is) (?:in )?the \$ ?99/);
   add("coupon", /coupon|discount|deal|promo|special/);
+  if (asksServiceDiscount(text)) intents.push("service-discount");
   add("bot", /are you (?:a )?bot|is this (?:a )?bot|automated|real or/);
   add("duration", /how long (?:does|will|is) (?:the )?(?:job|visit|clean|appointment)|how long (?:are you|will you be)|time does it take/);
   add("who-comes", /who (?:comes|shows)|how many (?:people|techs|guys)|just you|do you come yourself/);
@@ -573,6 +574,7 @@ function applySlots(state, text) {
   if (area === true) state.inArea = true;
   if (area === false) state.inArea = false;
   if (isMilitaryHousing(text)) state.inArea = false;
+  if (asksServiceDiscount(text)) state.serviceDiscount = true;
   const name = guessFirstName(text);
   if (name) state.firstName = name;
   syncMemory(state);
@@ -728,6 +730,8 @@ export function createConversation(seed = {}) {
         intents.includes("correction") ||
         intents.includes("upholstery") ||
         intents.includes("payment") ||
+        intents.includes("service-discount") ||
+        intents.includes("coupon") ||
         intents.includes("hours") ||
         intents.includes("last-slot") ||
         intents.includes("home") ||
@@ -924,6 +928,12 @@ export function createConversation(seed = {}) {
       return reply(state, "spanish", `We write in English here. ${TEXT_US}`, {
         phone: true,
       });
+    }
+    if (isMilitaryHousing(text) && (intents.includes("coupon") || intents.includes("service-discount") || intents.includes("area"))) {
+      return reply(state, "area", "We would love to help where we can — we just don’t service on-base military housing.");
+    }
+    if (intents.includes("service-discount")) {
+      return withHouseQuote(state, "service-discount", DISCOUNT_LINE);
     }
     if (intents.includes("coupon")) {
       return reply(
