@@ -213,6 +213,11 @@ export const situations = [
       "is there a deposit",
       "venmo",
       "paypal",
+      "do you take checks",
+      "do you accept checks",
+      "pay with a check",
+      "pay by check",
+      "what about checks",
     ],
   },
   {

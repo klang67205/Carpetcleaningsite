@@ -15,6 +15,48 @@ export const MOVE_LINE =
 export const PAY_LINE =
   "We would love to make payment easy. After the job is completed we can send a link. The link provides an invoice and accepts all major cards. If you choose to pay with cash we can accept that at the same time as the service.";
 
+export const CHECK_NO = "That’s the list — we don’t currently accept checks.";
+
+/** Payment checks only — never “check the ZIP / schedule / availability”. */
+export function asksAboutChecks(spoken) {
+  const s = String(spoken || "").toLowerCase();
+  if (!/\bche(?:ck|que)s?\b/.test(s)) return false;
+  if (
+    /\bcheck(?:ing)? (?:the |our |your )?(?:zip|schedule|availability|calendar|times?|hours|area|map|website|link|notes|inbox)\b/.test(
+      s,
+    )
+  ) {
+    return false;
+  }
+  if (/\b(?:let me|i(?:'ll| will)|please) check\b/.test(s) && !/\b(?:pay|payment|cash|card)\b/.test(s)) {
+    return false;
+  }
+  return (
+    /\b(?:take|accept) (?:a )?(?:personal )?che(?:ck|que)s?\b/.test(s) ||
+    /\bpay (?:by|with|via) (?:a )?che(?:ck|que)s?\b/.test(s) ||
+    /\bche(?:ck|que)s? (?:ok|okay|fine|accepted|alright|work)\??\b/.test(s) ||
+    /\bwrite (?:a |you a )?che(?:ck|que)\b/.test(s) ||
+    /\bwhat about (?:a )?che(?:ck|que)s?\b/.test(s) ||
+    /\bcan i (?:write|give|leave|pay) (?:a |you a )?che(?:ck|que)\b/.test(s) ||
+    /^che(?:ck|que)s?\??$/.test(s.trim()) ||
+    (/\b(?:personal )?che(?:ck|que)s?\b/.test(s) && /\b(?:pay|payment|invoice|cash|card)\b/.test(s))
+  );
+}
+
+export function paymentSpeech(spoken) {
+  const s = String(spoken || "").toLowerCase();
+  if (/venmo|paypal|zelle|cash app/.test(s)) {
+    return `${PAY_LINE} That’s the list — we don’t take Venmo or PayPal.`;
+  }
+  if (asksAboutChecks(s)) {
+    return `${PAY_LINE} ${CHECK_NO}`;
+  }
+  if (/deposit/.test(s)) {
+    return `${PAY_LINE} There’s no deposit to set up ahead of time.`;
+  }
+  return PAY_LINE;
+}
+
 export const ODOR_LINE =
   "We can’t promise in every case that odor that has set in can always be removed if it has worked into the padding or the subfloor, but we do promise to do the best job possible trying.";
 
@@ -48,8 +90,15 @@ export const NO_CONFIRM_MAIL =
 export const LEAD_SCOPE =
   "If you’d like to get it scheduled, about how many rooms should we count?";
 
-export const LEAD_TIMES =
-  "All of the availabilities and times are up to the minute on the link.";
+export const LIVE_TIMES =
+  "All of the availabilities and times are current to the minute.";
+
+export const LEAD_TIMES = LIVE_TIMES;
+
+export function howToBook(state) {
+  const extra = state?.rug ? ` ${RUG_NOTES}` : "";
+  return [`We’d love to help — click this link. ${LIVE_TIMES}${extra}`, bookingUrl];
+}
 
 export function loveCannot(cannot) {
   return `We’d love to help — ${cannot}.`;

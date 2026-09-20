@@ -7,6 +7,11 @@ import { bookingUrl } from "./book-lines.js";
 
 const FORBIDDEN = [
   { re: /venmo|paypal/i, unless: /don'?t take venmo|do not take venmo/i, why: "named a payment we do not take" },
+  {
+    re: /(?:take|accept) (?:a )?(?:personal )?che(?:ck|que)s?/i,
+    unless: /don'?t currently accept checks|do not currently accept checks|don'?t take checks/i,
+    why: "said we take checks",
+  },
   { re: /current availabilities/i, unless: /how do i book|send the/i, why: "stacked the generic book dump on a reasoned reply" },
   { re: /happy to|the right place|keith with/i, why: "banned voice" },
   { re: /text a photo to|photo to \(316|photo to 316/i, why: "asked them to text a photo to the phone" },

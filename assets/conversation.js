@@ -1,7 +1,7 @@
 /** Wichita Carpet Cleaning — conversation brain. Facts only. No invented promises. */
 
 import { afterMove, composeJob, conversionLead, dropKnownQuestions, mentionsRug, mentionsWoolRug, QUIET, readyToBook } from "./agenda.js";
-import { bookingUrl, CANCEL_LINE, NO_CONFIRM_MAIL, PAY_LINE, RUG_NOTES, TEXT_PHOTO, TEXT_US, WOOL_LINE } from "./book-lines.js";
+import { bookingUrl, CANCEL_LINE, howToBook, LIVE_TIMES, NO_CONFIRM_MAIL, RUG_NOTES, TEXT_PHOTO, TEXT_US, WOOL_LINE, paymentSpeech } from "./book-lines.js";
 import { ground } from "./ground.js";
 import { hear } from "./hear.js";
 import { emptyMemory, guessFirstName, rememberPlan, syncMemory } from "./memory.js";
@@ -232,15 +232,7 @@ function homeLine(text, original = "") {
 }
 
 function paymentLine(text, original = "") {
-  const spoken = `${text} ${original}`.toLowerCase();
-  const book = PAY_LINE;
-  if (/venmo|paypal|zelle|cash app/.test(spoken)) {
-    return `${book} That’s the list — we don’t take Venmo or PayPal.`;
-  }
-  if (/deposit/.test(spoken)) {
-    return `${book} There’s no deposit to set up ahead of time.`;
-  }
-  return book;
+  return paymentSpeech(`${text} ${original}`.toLowerCase());
 }
 
 function odorHonesty() {
@@ -375,7 +367,7 @@ function intentSet(text) {
   add("safety", /allerg|chemical|sensitive|safe for|child|baby|kids?/);
   add(
     "payment",
-    /payment|\bpay\b|paid|card|cash|invoice|receipt|deposit|venmo|paypal|zelle|credit|debit|apple pay|how do i pay|what do you take/,
+    /payment|\bpay\b|paid|card|cash|invoice|receipt|deposit|venmo|paypal|zelle|credit|debit|apple pay|how do i pay|what do you take|take checks|accept checks|pay (?:by|with|via) (?:a )?che(?:ck|que)|write (?:a )?che(?:ck|que)|what about (?:a )?che(?:ck|que)s?/,
   );
   add("method", /how.*clean|process|equipment|steam|encapsulation|low.moisture|what do you use/);
   add("guarantee", /guarantee|promise|definitely.*remove|will.*come out/);
@@ -429,16 +421,7 @@ function bookNote(state) {
 }
 
 function bookNowLine() {
-  return "We’d love to help — click this link.";
-}
-
-function howToBook(state) {
-  const avail = "All of the availabilities and times on there are up to the minute.";
-  return [
-    bookNowLine(),
-    bookingUrl,
-    state?.rug ? `${avail} ${RUG_NOTES}` : avail,
-  ];
+  return `We’d love to help — click this link. ${LIVE_TIMES}`;
 }
 
 function offerBookLine() {
@@ -815,8 +798,8 @@ export function createConversation(seed = {}) {
       return reply(
         state,
         "same-day",
-        "We would love to get it cleaned for you — we just don’t do same-day. The link has all of the up-to-the-minute availabilities.",
-        { stage: "offered" },
+        `We would love to get it cleaned for you — we just don’t do same-day. ${LIVE_TIMES}`,
+        { stage: "offered", linkOnly: true },
       );
     }
 
@@ -824,7 +807,9 @@ export function createConversation(seed = {}) {
       intents.includes("home") &&
       /3\s*:?\s*30|10\s*:?\s*30|\b8\s*a|what time|when do you/.test(text)
     ) {
-      return reply(state, "home", `${homeLine(text, state.lastUser)} ${hoursLine(text, state.lastUser)}`.trim());
+      return reply(state, "home", `${homeLine(text, state.lastUser)} ${hoursLine(text, state.lastUser)}`.trim(), {
+        linkOnly: true,
+      });
     }
 
     if (intents.includes("home") && !intents.includes("hours")) {
@@ -837,7 +822,7 @@ export function createConversation(seed = {}) {
     }
 
     if (intents.includes("soon") && !intents.includes("same-day") && !schedulingWins(text, state.lastUser, intents)) {
-      return reply(state, "soon", soonLine(), { stage: "offered" });
+      return reply(state, "soon", soonLine(), { stage: "offered", linkOnly: true });
     }
 
     if (
@@ -846,9 +831,9 @@ export function createConversation(seed = {}) {
       !intents.includes("send-link")
     ) {
       if (intents.includes("soon") && !/10\s*:?\s*30|3\s*:?\s*30|8\s*a|morning|afternoon|last|first|what time|hours|schedule/.test(text)) {
-        return reply(state, "soon", soonLine(), { stage: "offered" });
+        return reply(state, "soon", soonLine(), { stage: "offered", linkOnly: true });
       }
-      return reply(state, "hours", hoursLine(text, state.lastUser), { stage: "offered" });
+      return reply(state, "hours", hoursLine(text, state.lastUser), { stage: "offered", linkOnly: true });
     }
 
     if (intents.includes("pet-loss")) {
@@ -1216,7 +1201,7 @@ export function createConversation(seed = {}) {
     }
 
     if (intents.includes("hours") && !intents.includes("how-book") && !intents.includes("send-link")) {
-      return reply(state, "hours", hoursLine(text, state.lastUser));
+      return reply(state, "hours", hoursLine(text, state.lastUser), { linkOnly: true });
     }
     if (intents.includes("drying") && !intents.includes("pet-treat")) {
       return reply(
@@ -1325,7 +1310,7 @@ export function createConversation(seed = {}) {
     }
 
     if (schedulingWins(text, state.lastUser, intents)) {
-      return reply(state, "hours", hoursLine(text, state.lastUser), { stage: "offered" });
+      return reply(state, "hours", hoursLine(text, state.lastUser), { stage: "offered", linkOnly: true });
     }
 
     if (state.rooms) {

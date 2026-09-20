@@ -3,6 +3,8 @@
  * Daily starts: Mon–Fri 8, 10:30, 1, 3:30. Last start 3:30. Closed Sat/Sun.
  */
 
+import { LIVE_TIMES } from "./book-lines.js";
+
 export const SLOT_LINE =
   "We would love to get you on the schedule. Our normal appointment times are Monday through Friday at 8, 10:30, 1, and 3:30.";
 export const LAST_LINE = "We would love to get you on the schedule. Our last daily appointment is at 3:30.";
@@ -29,7 +31,13 @@ function hasOurClock(spoken) {
 }
 
 function blocked(spoken) {
-  if (/\bpay\b|invoice|venmo|paypal|card|cash|deposit/.test(spoken) && !hasOurClock(spoken) && !/\bappointment times\b|what time do you/.test(spoken)) {
+  if (
+    (/\bpay\b|invoice|venmo|paypal|card|cash|deposit/.test(spoken) ||
+      /\b(?:take|accept) (?:a )?che(?:ck|que)s?\b/.test(spoken) ||
+      /\bpay (?:by|with|via) (?:a )?che(?:ck|que)s?\b/.test(spoken)) &&
+    !hasOurClock(spoken) &&
+    !/\bappointment times\b|what time do you/.test(spoken)
+  ) {
     return true;
   }
   if (/how long (?:does|will|is) (?:the )?(?:job|visit|clean)|how long (?:are you|will you be)|time does it take/.test(spoken)) {
@@ -133,17 +141,17 @@ export function schedulingWins(text, original, intents = []) {
 export function hoursLine(text, original = "") {
   const { kind } = schedulingScore(text, original);
   if (kind === "last") {
-    return `${LAST_LINE} That’s the last start we take.`;
+    return `${LAST_LINE} That’s the last start we take. ${LIVE_TIMES}`;
   }
   if (kind === "first") {
-    return `${FIRST_LINE} After that we have 10:30, 1, and 3:30, Monday through Friday.`;
+    return `${FIRST_LINE} After that we have 10:30, 1, and 3:30, Monday through Friday. ${LIVE_TIMES}`;
   }
   if (kind === "named") {
-    return SLOT_LINE;
+    return `${SLOT_LINE} ${LIVE_TIMES}`;
   }
-  return `${SLOT_LINE} ${DAYS_LINE}`;
+  return `${SLOT_LINE} ${DAYS_LINE} ${LIVE_TIMES}`;
 }
 
 export function soonLine() {
-  return `We would love to get you on the schedule. We just don’t do same-day. ${SLOT_LINE} The booking list will show what’s still open.`;
+  return `We would love to get you on the schedule. We just don’t do same-day. ${LIVE_TIMES}`;
 }

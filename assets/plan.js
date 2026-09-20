@@ -7,9 +7,12 @@ import {
   CLOSE_OFFER,
   HOLD_OFFER,
   LAST_LINE,
+  LIVE_TIMES,
   MOVE_LINE,
   ODOR_LINE,
   PAY_LINE,
+  asksAboutChecks,
+  paymentSpeech,
   PHONE,
   TEXT_PHOTO,
   TEXT_US,
@@ -111,7 +114,7 @@ export function planTurn({ text, original = "", intents = [], heard = null, stat
   const paymentQuestion =
     /cash or card|how do (?:i|yall|you all|you) (?:get )?pay|how does payment|what do you take|do you take (?:cash|card)|forms of payment|venmo|paypal|apple pay|is there a deposit|get paid/.test(
       spoken,
-    );
+    ) || asksAboutChecks(spoken);
   const homeQuestion =
     /(?:need|have) to be (?:home|there|present)|do i (?:need|have) to be|can i (?:leave|go to work)|won'?t be (?:home|there)|will not be (?:home|there)|not be (?:home|there)/.test(
       spoken,
@@ -208,7 +211,8 @@ export function planTurn({ text, original = "", intents = [], heard = null, stat
       want: "the last start we take",
       cannot: "we don’t start after 3:30",
       offer: LAST_LINE,
-      bubbles: [LAST_LINE],
+      bubbles: [`${LAST_LINE} ${LIVE_TIMES}`],
+      sendLink: true,
     };
     if (h.closingStory && !h.firmWeekday) extras.push(CLOSE_OFFER);
     return finish(plan, extras, spoken);
@@ -218,13 +222,17 @@ export function planTurn({ text, original = "", intents = [], heard = null, stat
     plan = {
       job: "human",
       want: paymentQuestion ? "a person, and how to pay" : "a person",
-      cannot: /venmo|paypal/.test(spoken) ? "we don’t take Venmo or PayPal" : "",
+      cannot: /venmo|paypal/.test(spoken)
+        ? "we don’t take Venmo or PayPal"
+        : asksAboutChecks(spoken)
+          ? "we don’t currently accept checks"
+          : "",
       offer: TEXT_US,
       phone: true,
       bubbles: [TEXT_US],
     };
-    if (paymentQuestion || /venmo|paypal/.test(spoken)) {
-      extras.push(/venmo|paypal/.test(spoken) ? `${PAY_LINE} That’s the list — we don’t take Venmo or PayPal.` : PAY_LINE);
+    if (paymentQuestion || /venmo|paypal/.test(spoken) || asksAboutChecks(spoken)) {
+      extras.push(paymentSpeech(spoken));
     }
     return finish(plan, extras, spoken);
   }
@@ -233,9 +241,13 @@ export function planTurn({ text, original = "", intents = [], heard = null, stat
     plan = {
       job: "payment",
       want: "how to pay",
-      cannot: /venmo|paypal/.test(spoken) ? "we don’t take Venmo or PayPal" : "",
+      cannot: /venmo|paypal/.test(spoken)
+        ? "we don’t take Venmo or PayPal"
+        : asksAboutChecks(spoken)
+          ? "we don’t currently accept checks"
+          : "",
       offer: PAY_LINE,
-      bubbles: [/venmo|paypal/.test(spoken) ? `${PAY_LINE} That’s the list — we don’t take Venmo or PayPal.` : PAY_LINE],
+      bubbles: [paymentSpeech(spoken)],
     };
     return finish(plan, extras, spoken);
   }
@@ -407,7 +419,7 @@ export function planTurn({ text, original = "", intents = [], heard = null, stat
         constraint: "same-day",
         want: "today or tomorrow",
         cannot: "we just don’t do same-day",
-        offer: "The link has all of the up-to-the-minute availabilities.",
+        offer: LIVE_TIMES,
         bubbles: [sameDayLead()],
         sendLink: false,
       };
