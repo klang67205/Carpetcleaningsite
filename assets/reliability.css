@@ -54,3 +54,10 @@ body * { letter-spacing: 0; }
   .concierge-notice { padding: 4px 12px; }
   .concierge-form { padding: 6px; }
 }
+@media (max-height: 300px) {
+  .concierge-panel { display: block; overflow-y: auto; }
+  .concierge-panel header { position: sticky; top: 0; z-index: 2; }
+  .concierge-identity svg, .concierge-kicker { display: none; }
+  .concierge-messages { max-height: none; overflow: visible; }
+  .concierge-form { position: sticky; bottom: 0; background: #fff; }
+}
