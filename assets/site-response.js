@@ -6,16 +6,18 @@ export function forWebsite(result) {
     throw new Error('Invalid assistant response');
   }
   const handoff = Boolean(result.phone || result.messenger);
+  const furniture = result.bubbles.some(text => /^Furniture cleaning, plus applicable tax:|^The Complete Seating Package/.test(text));
   const bubbles = result.bubbles
     .filter(text => !handoff || !/about how many rooms should we count|click this link|current to the minute|^https:\/\/book\./i.test(text))
     .map(text => text
+      .replace(furniture ? /^.*about how many rooms should we count.*$/i : /$^/, 'For furniture, choose the Furniture Cleaning category in the booking catalog. Contact the company if you need help selecting the scope.')
       .replace(/keep talking here in Messenger/gi, 'open Messenger to contact the company')
       .replace(/here in Messenger/gi, 'in Messenger using the link below')
       .replace(/message us here/gi, 'contact the company in Messenger using the link below')
       .replace(/I[’']ll look at it myself\./gi, 'The company will need to review your request.')
     );
   if (handoff) bubbles.push('This website chat cannot send your request, receive photos, or change a booking. Open Messenger to contact the company.');
-  return { ...result, bubbles, handoff, sendLink: handoff ? false : result.sendLink, booking: handoff ? false : result.booking };
+  return { ...result, bubbles, handoff, sendLink: handoff ? false : furniture || result.sendLink, booking: handoff ? false : result.booking };
 }
 
 export async function requestReply(host, sessionId, text, reset = false, fetcher = fetch) {

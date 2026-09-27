@@ -5,14 +5,20 @@ export function furniturePrice(text) {
   const recliner = /\brecliners?\b|accent chairs?/.test(text);
   const chair = /\bchairs?\b/.test(text);
   const sectional = /\bsectionals?\b/.test(text);
+  const namedPackage = /complete seating/.test(text);
+  const pluralPieces = /\b(?:sofas|couches|love\s?seats|chairs|recliners|sectionals)\b/.test(text);
+  const repeatedPieces = [ /\b(?:sofas?|couch(?:es)?)\b/g, /\blove\s?seats?\b/g, /\brecliners?\b/g, /\bchairs?\b/g ].some(pattern => (text.match(pattern) || []).length > 1);
   const countedMultiple = /\b(?:\d{2,}|[2-9]|two|three|four|five|six|seven|eight|nine|ten|several|multiple)\s+(?:(?:standard|accent|dining|upholstered|small|large)\s+)*(?:sofas?|couches|love\s?seats?|chairs?|recliners?|sectionals?)\b/.test(text);
   const additionalChair = /\brecliners?\b/.test(text) && chair || /accent chairs?/.test(text) && /dining chairs?/.test(text);
   const limits = ' Specialty fabrics, heavy staining, or oversized pieces may require review.';
-  if (!countedMultiple && !sectional && !additionalChair && (sofa && loveseat && (recliner || chair) || /complete seating/.test(text))) {
+  const singleQuantities = !countedMultiple && !pluralPieces && !repeatedPieces && !/\b(?:extra|another|additional)\b/.test(text);
+  const oneSet = singleQuantities && !sectional && !additionalChair;
+  if (oneSet && (sofa && loveseat && (recliner || chair) || namedPackage && !sofa && !loveseat && !chair && !recliner)) {
     return 'The Complete Seating Package is $179 plus tax for one standard sofa, one loveseat, and one chair or recliner during the same visit.' + limits;
   }
   const items = [];
-  if (sofa && loveseat && !countedMultiple) items.push('one standard sofa and one loveseat together: $149');
+  if (namedPackage) items.push('Complete Seating Package (one standard sofa, one loveseat, and one chair or recliner): $179');
+  if (sofa && loveseat && singleQuantities && !namedPackage) items.push('one standard sofa and one loveseat together: $149');
   else {
     if (sofa) items.push('each standard sofa: $89');
     if (loveseat) items.push('each standard loveseat: $79');
@@ -27,5 +33,5 @@ export function furniturePrice(text) {
     : smallSectional && !largeSectional ? 'each small sectional, typically up to 5 seated sections: $119'
       : 'each small sectional (typically up to 5 seated sections): $119; each large sectional (typically 6 to 8 seated sections): $169');
   if (!items.length) return 'Furniture is priced by the piece. View the Furniture Cleaning category in our booking catalog for the matching service and scope.';
-  return `Furniture cleaning, plus applicable tax: ${items.join('; ')}.${countedMultiple || items.length > 1 ? ' These are item prices, not a confirmed combined total. Select each required service in the catalog or contact the company to check the full scope.' : ''}${limits}`;
+  return `Furniture cleaning, plus applicable tax: ${items.join('; ')}.${!oneSet || items.length > 1 ? ' These are item prices, not a confirmed combined total. Select each required service in the catalog or contact the company to check the full scope.' : ''}${limits}`;
 }

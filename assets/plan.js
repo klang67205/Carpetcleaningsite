@@ -384,6 +384,7 @@ export function planTurn({ text, original = "", intents = [], heard = null, stat
     /\b(couches|couch|sofas?|love\s?seats?|sectionals?|recliners?|chairs?|furniture)\b|complete seating/.test(spoken) &&
     /how much|price|pricing|cost/.test(spoken);
   if (furniturePrice && !h.askingWhatWeMove) {
+    const furnitureText = (original || text || spoken).toLowerCase();
     const rooms = (spoken.match(/\b(\d{1,2})\s*rooms?\b/) || spoken.match(/living room/)) 
       ? (spoken.match(/\b(\d{1,2})\s*rooms?\b/) ? Number(spoken.match(/\b(\d{1,2})\s*rooms?\b/)[1]) : 1)
       : null;
@@ -392,13 +393,13 @@ export function planTurn({ text, original = "", intents = [], heard = null, stat
         ? `We would love to help. Unfortunately our furniture cleaning process is priced differently than our carpet cleaning, but with just ${rooms} room${rooms === 1 ? "" : "s"} we could certainly cover that for our minimum charge of $75 plus tax.`
         : rooms
           ? `We would love to help. Unfortunately our furniture cleaning process is priced differently than our carpet cleaning. The carpet for those rooms would be $${99 + Math.max(0, rooms - 5) * 15} plus tax.`
-          : quoteFurniture(spoken);
+          : quoteFurniture(furnitureText);
     plan = {
       job: "other-services",
       want: "a furniture and carpet price",
       cannot: "furniture is not the carpet book",
       offer: carpet,
-      bubbles: rooms ? [carpet, quoteFurniture(spoken)] : [carpet],
+      bubbles: rooms ? [carpet, quoteFurniture(furnitureText)] : [carpet],
     };
     if (/not be home|won'?t be|aren't there|vacant/.test(spoken)) {
       extras.push(

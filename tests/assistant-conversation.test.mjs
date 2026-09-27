@@ -66,9 +66,13 @@ for (const [input, expected] of [
   ['How much for two loveseats?', [/loveseat: \$79/, /not a confirmed combined total/]],
   ['How much for a small sectional and six dining chairs?', [/small sectional.*\$119/, /dining chair: \$19/]],
   ['How much for a small sectional and large sofa?', [/small sectional.*\$119/, /sofa: \$89/]],
+  ['How much for a sofa and loveseats?', [/sofa: \$89/, /loveseat: \$79/, /not a confirmed combined total/]],
+  ['How much for complete seating and an extra sofa?', [/Complete Seating Package.*\$179/, /sofa: \$89/, /not a confirmed combined total/]],
 ]) test(`Complete furniture scope: ${input}`, () => {
   const result = createWebsiteConversation().respond(input);
   for (const pattern of expected) assert.match(text(result), pattern);
+  assert.doesNotMatch(text(result), /about how many rooms should we count/);
+  assert.equal(result.sendLink, true);
 });
 test('Unrelated furniture sizes cannot upgrade a small sectional', () => {
   for (const input of ['How much for a small sectional and six dining chairs?', 'How much for a small sectional and large sofa?']) {
