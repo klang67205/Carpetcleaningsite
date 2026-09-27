@@ -64,9 +64,16 @@ for (const [input, expected] of [
   ['How much for 2 accent chairs?', [/accent chair: \$39/, /not a confirmed combined total/]],
   ['How much for two recliners?', [/recliner.*\$39/, /not a confirmed combined total/]],
   ['How much for two loveseats?', [/loveseat: \$79/, /not a confirmed combined total/]],
+  ['How much for a small sectional and six dining chairs?', [/small sectional.*\$119/, /dining chair: \$19/]],
+  ['How much for a small sectional and large sofa?', [/small sectional.*\$119/, /sofa: \$89/]],
 ]) test(`Complete furniture scope: ${input}`, () => {
   const result = createWebsiteConversation().respond(input);
   for (const pattern of expected) assert.match(text(result), pattern);
+});
+test('Unrelated furniture sizes cannot upgrade a small sectional', () => {
+  for (const input of ['How much for a small sectional and six dining chairs?', 'How much for a small sectional and large sofa?']) {
+    assert.doesNotMatch(text(createWebsiteConversation().respond(input)), /\$169|large sectional/);
+  }
 });
 for (const first of ['I need a human', 'You damaged my carpet', 'where is my receipt?', 'I texted you', 'cancel my appointment']) {
   test(`Support context is not a sales intake: ${first}`, () => {

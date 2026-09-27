@@ -20,9 +20,11 @@ export function furniturePrice(text) {
   if (recliner) items.push('each standard recliner or upholstered accent chair: $39');
   if (chair && /dining/.test(text)) items.push('each standard fabric dining chair: $19');
   else if (chair && (!recliner || additionalChair)) items.push('each fabric dining chair: $19; each upholstered accent chair: $39');
-  if (sectional) items.push(/large|big|six|seven|eight|[6-8]\s*(?:seat|section)/.test(text)
+  const smallSectional = /\bsmall\s+sectionals?\b|\bsectionals?\s+(?:is\s+)?small\b/.test(text);
+  const largeSectional = /\b(?:large|big)\s+sectionals?\b|\bsectionals?\s+(?:is\s+)?(?:large|big)\b|\b(?:six|seven|eight|[6-8])[- ](?:seat|seated section|section)s?\s+sectionals?\b/.test(text);
+  if (sectional) items.push(largeSectional && !smallSectional
     ? 'each large sectional, typically 6 to 8 seated sections: $169'
-    : /small/.test(text) ? 'each small sectional, typically up to 5 seated sections: $119'
+    : smallSectional && !largeSectional ? 'each small sectional, typically up to 5 seated sections: $119'
       : 'each small sectional (typically up to 5 seated sections): $119; each large sectional (typically 6 to 8 seated sections): $169');
   if (!items.length) return 'Furniture is priced by the piece. View the Furniture Cleaning category in our booking catalog for the matching service and scope.';
   return `Furniture cleaning, plus applicable tax: ${items.join('; ')}.${countedMultiple || items.length > 1 ? ' These are item prices, not a confirmed combined total. Select each required service in the catalog or contact the company to check the full scope.' : ''}${limits}`;
