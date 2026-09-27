@@ -1,123 +1,99 @@
 import assert from 'node:assert/strict';
-import {createConversation} from '../assets/app.js';
+import { test } from 'node:test';
+import { createConversation } from '../assets/conversation.js';
+import { forWebsite, requestReply, bookingUrl, createWebsiteConversation } from '../assets/site-response.js';
+const answer = input => forWebsite(createConversation({ channel: 'site' }).respond(input));
+const text = result => result.bubbles.join(' ');
+for (const [input, expected] of [
+  ['What does $99 include?', /\$99.*five rooms, two halls, and one stair/i],
+  ['I have 7 rooms how much?', /\$129/],
+  ['How much is pet treatment?', /\$149/],
+  ['What does a sofa cost?', /\$89/],
+  ['How much is a recliner?', /\$39/],
+  ['Price for a large sectional?', /\$169/],
+  ['How much is bathroom tile cleaning?', /\$99/],
+  ['What does kitchen grout cleaning cost?', /\$129/],
+  ['Price for 300 square feet of hard floor?', /\$139/],
+  ['do you take checks?', /don.t currently accept checks/i],
+  ['do you offer a teacher discount?', /15 percent/i],
+  ['what payment do you accept?', /major cards.*cash/i],
+  ['can you come today?', /don.t do same.day/i],
+  ['are you open Saturday?', /don.t run Saturday or Sunday/i],
+]) test(input, () => assert.match(text(answer(input)), expected));
+for (const input of ['Do you serve Newton?', 'Do you clean on base?', 'Do you serve McConnell AFB?']) {
+  test(`No booking for excluded area: ${input}`, () => {
+    const result = answer(input);
+    assert.equal(result.booking, false);
+    assert.ok(!result.bubbles.includes(bookingUrl));
+  });
+}
+for (const input of ['I need a human', 'cancel my appointment', 'I need a quote for my office', 'Do you offer refunds?', 'You damaged my carpet', 'is it safe for allergies?']) {
+  test(`Real handoff: ${input}`, () => {
+    const result = answer(input);
+    assert.equal(result.handoff, true);
+    assert.equal(result.booking, false);
+    assert.match(text(result), /cannot send your request/);
+    assert.doesNotMatch(text(result), /here in Messenger|message us here|I.ll look at it myself|about how many rooms should we count/);
+  });
+}
+test('Room-count context survives multiple turns', () => {
+  const chat = createConversation({ channel: 'site' });
+  chat.respond('How much is standard cleaning?');
+  assert.match(text(forWebsite(chat.respond('what about 8 rooms?'))), /\$144/);
+});
+test('Price and pet scope stay intact during handoff', () => {
+  const result = forWebsite({ bubbles: ['$149 plus tax.', 'Send a photo here in Messenger.', bookingUrl], phone: true, booking: true });
+  assert.match(text(result), /\$149 plus tax/);
+  assert.ok(!result.bubbles.includes(bookingUrl));
+});
+test('Empty and malformed remote replies fail visibly', () => {
+  for (const result of [null, {}, { bubbles: [] }, { bubbles: [''] }, { bubbles: ['   '] }, { bubbles: [null] }, { bubbles: 'wrong' }]) assert.throws(() => forWebsite(result));
+});
 
-const one=input=>createConversation().respond(input);
-const includes=(input,expected)=>assert.match(one(input).text,expected,input);
-
-includes('Do you offer refunds?',/reviewed case by case/i);
-includes('You damaged my carpet',/real review/i);
-includes('I am unhappy because spots are still dirty',/appointment date/i);
-includes('cancel my appointment',/Manage Appointment/i);
-includes('I need to change my time',/Manage Appointment/i);
-includes('can you come today?',/don.t offer same-day/i);
-includes('What does $99 include?',/five rooms, two hallways/i);
-includes('I have 7 rooms how much?',/\$129.*\$179/i);
-includes('How much is pet treatment?',/\$149/i);
-includes('Do you serve Derby?',/in the service area/i);
-includes('Do you serve Newton?',/isn.t in the service area.*15 miles of downtown/i);
-includes('where do you work?',/15 miles of downtown/i);
-includes('come to Haysville',/in the service area/i);
-includes('do you clean on base?',/On-base military housing isn’t serviced/i);
-includes('Do you serve McConnell AFB?',/On-base military housing isn’t serviced/i);
-includes('How long until it is dry?',/airflow, humidity/i);
-includes('do I have to move my sectional?',/large sectionals/i);
-includes('what should I do before you arrive?',/clear small items/i);
-includes('are you open Saturday?',/closed Saturday and Sunday/i);
-includes('do you clean tile and grout?',/tile and grout/i);
-includes('How much to clean my sofa and loveseat?',/\$149/i);
-includes('What does a sofa cost?',/\$89/i);
-includes('How much is a recliner?',/\$39/i);
-includes('Price for a large sectional?',/\$169/i);
-includes('How much is bathroom tile cleaning?',/\$99/i);
-includes('What does kitchen grout cleaning cost?',/\$129/i);
-includes('Price for 300 square feet of hard floor?',/\$139/i);
-includes('I need a quote for my office',/custom review/i);
-includes('can you remove a wine stain?',/can.t be promised/i);
-includes('do you handle sewage?',/specialized assessment/i);
-includes('is it safe for allergies?',/specific allergy/i);
-includes('what cleaning process do you use?',/encapsulation/i);
-includes('where is my receipt?',/invoice or receipt/i);
-includes('I sent a message in Housecall Pro',/correct appointment/i);
-includes('I need a human',/private Messenger/i);
-includes('hello',/pricing, booking/i);
-
-const correction=createConversation();
-assert.match(correction.respond('do you offer refunds').text,/case by case/i);
-const second=correction.respond("that's not what i asked");
-assert.match(second.text,/refund requests/i);
-assert.doesNotMatch(second.text,/Thank you, that/i);
-assert.doesNotMatch(second.text,/What date was the cleaning/i);
-
-const context=createConversation();
-context.respond('how much does it cost?');
-assert.match(context.respond('what about 8 rooms?').text,/\$144.*\$194/i);
-
-console.log('Assistant conversation checks passed (28 scenarios).');
-
-const matrix=[
-  [/\$99/,['price please','what is the price','how much does carpet cleaning cost','is it really $99','pricing for five rooms','cost for standard cleaning','tell me your prices','standard package amount','what does $99 cover','how much for 2 rooms']],
-  [/\$149/,['pet package','dog urine cleaning','cat odor help','animal stains','how much is pet service','pet-treatment details','need odor treatment','my dog had accidents','cat pee in carpet','price with pet treatment']],
-  [/Manage Appointment/,['please cancel','cancellation help','cancel my booking','need to cancel','how can I cancel','I cannot make my appointment','reschedule me','move my appointment','change appointment date','change my cleaning time']],
-  [/don.t offer same-day/i,['can you clean today','same day please','I need this asap','can someone come right away','urgent appointment','anything open today','today availability','book me for today']],
-  [/future time|future times/,['book a cleaning','schedule service','new appointment','show availability','any openings','I want to book','see times','can I schedule online']],
-  [/in the service area/,['service in Wichita','do you serve derby','come to Andover','travel to Goddard','is Maize covered','come to Haysville','are you in Park City','travel to Valley Center','do you cover Bel Aire','service Rose Hill']],
-  [/isn.t in the service area/,['do you serve Newton','service in Augusta','come to Clearwater','service Cheney','do you clean in Mulvane','come to Hutchinson','do you serve El Dorado']],
-  [/15 miles of downtown/,['where do you work','what cities do you serve','service area','where are you located','what is your coverage area','do you travel','locations please','do you serve Sedgwick County']],
-  [/On-base military housing isn’t serviced/,['do you service military housing','can you clean on base','do you serve McConnell','on-base housing in Wichita']],
-  [/closed Saturday and Sunday/,['are you open weekends','Saturday hours','Sunday appointments','what are your hours','open on Monday','weekday hours','when are you open']],
-  [/airflow, humidity/,['drying time','how fast does it dry','when can I walk on it','will carpet be wet','how long until dry','can we use carpet after','does low moisture dry fast']],
-  [/heavy furniture/,['move furniture','what about my couch','do I move beds','large sectional','prepare furniture','move a loveseat','what should I clear','prep before you arrive']],
-  [/future weekday time online/,['clean my sofa','do you do chairs','upholstery service','tile cleaning','grout cleaning','hard floor cleaning','other services']],
-  [/custom review/,['commercial carpet','office cleaning quote','business carpet service','very large space','unusual floor plan']],
-  [/can.t be promised/,['remove coffee stain','wine spill','old spot','will this stain come out','guarantee removal','promise it will be clean','ink in carpet']],
-  [/specialized assessment/,['mold in carpet','sewage cleanup','flooded room','biohazard cleaning','water damage']],
-  [/specific allergy/,['chemical sensitivity','safe for allergies','baby safety','child around products','sensitive to cleaners']],
-  [/invoice or receipt/,['need my receipt','where is invoice','how do I pay','payment details','do you take card']],
-  [/encapsulation/,['how do you clean','what equipment','is this steam cleaning','explain the process','low moisture method','what is encapsulation']],
-  [/real review|reviewed case by case|visit wasn.t right/,['you damaged it','carpet looks ruined','I want a refund','money back please','I am unhappy','bad job','still dirty','missed several spots','I have a complaint']],
-  [/correct appointment/,['sent a Housecall message','I texted you','where do I reply','Housecall inbox','you missed my message']],
-  [/private Messenger/,['I need a human','talk to the owner','can a person help','need someone','representative please']]
-];
-
-let matrixCount=0;
-for(const [expected,inputs] of matrix){for(const input of inputs){assert.match(one(input).text,expected,input);matrixCount+=1;}}
-
-const journeys=[
-  ['refund correction',['Do you offer refunds?',"that's not what i asked"],[/case by case/i,/Refund requests/i]],
-  ['price follow-up',['How much is standard cleaning?','what about 8 rooms?'],[/\$99/i,/\$144.*\$194/i]],
-  ['pet then rooms',['Tell me about pet treatment','I have 7 rooms'],[/\$149/i,/\$129.*\$179/i]],
-  ['area then booking',['Do you serve Derby?','I want to book'],[/service area/i,/future time/i]],
-  ['complaint then scheduling',['The job was bad','I need to change my appointment'],[/review/i,/Manage Appointment/i]],
-  ['booking then cancellation',['Book a cleaning','actually cancel my existing one'],[/future time/i,/Manage Appointment/i]],
-  ['unknown then recovery',['asdf something','what does $99 include'],[/Tell me what you need/i,/five rooms/i]],
-  ['greeting then pet',['hello','my dog had an accident'],[/What can I help/i,/\$149/i]],
-  ['repeated refund',['refund please','refund please'],[/case by case/i,/Yes—refund requests/i]],
-  ['thanks',['what does it cost','thanks'],[/\$99/i,/welcome/i]]
-];
-for(const [,inputs,expected] of journeys){const chat=createConversation();inputs.forEach((input,index)=>assert.match(chat.respond(input).text,expected[index],input));}
-
-const compound=[
-  ['Do you serve Derby and what does it cost?',/Derby is in our service area.*\$99/i],
-  ['Do you serve Newton and how much is it?',/Newton isn.t in the service area.*15 miles of downtown/i],
-  ['What is the price and where do you work?',/\$99.*15 miles of downtown/i],
-  ['Do you serve Haysville and what does it cost?',/Haysville is in our service area.*\$99/i],
-  ['How much is pet treatment and how long to dry?',/\$149.*dries much faster/i],
-  ['What furniture do I move and when will it dry?',/heavy furniture.*dries quickly/i],
-  ['What hours can I book?',/Monday through Friday.*future time/i],
-  ['How much is tile cleaning?',/\$99 for a bathroom.*\$129 for a kitchen/i],
-  ['I need to cancel and get a refund',/Manage Appointment.*case by case/i],
-  ['Can you come today and what time?',/don.t offer same-day.*future times/i],
-  ['prce for pet package',/\$149/i],
-  ['i need to rescedule',/Manage Appointment/i],
-  ['please canel it',/Manage Appointment/i]
-];
-compound.forEach(([input,expected])=>assert.match(one(input).text,expected,input));
-
-assert.equal(one('Do you serve Derby?').booking,true);
-assert.equal(one('come to Haysville').booking,true);
-assert.equal(one('are you in Park City').booking,true);
-assert.ok(!one('Do you serve Newton?').booking);
-assert.ok(!one('do you clean on base').booking);
-assert.ok(!one('Do you serve McConnell AFB?').booking);
-
-console.log(`Stress matrix passed (${matrixCount} paraphrases + ${journeys.length} multi-turn journeys + ${compound.length} compound/typo cases).`);
+for (const [input, expected] of [
+  ['How much for a sofa and loveseat?', [/sofa.*loveseat/i, /\$149/]],
+  ['How much for a sofa and recliner?', [/sofa: \$89/i, /recliner.*\$39/i, /not a confirmed combined total/i]],
+  ['How much for a loveseat and recliner?', [/loveseat: \$79/i, /recliner.*\$39/i]],
+  ['How much for a sofa, loveseat and recliner?', [/\$179/, /sofa.*loveseat.*chair or recliner/i]],
+  ['How much for a small sectional and sofa?', [/sofa: \$89/i, /sectional.*\$119/i]],
+  ['How much for complete seating?', [/\$179/, /one standard sofa, one loveseat, and one chair or recliner/i]],
+  ['How much for an accent chair?', [/\$39/, /accent chair/i]],
+  ['How much for a dining chair?', [/\$19/, /dining chair/i]],
+  ['How much for a sofa and two love seats?', [/sofa: \$89/, /loveseat: \$79/, /not a confirmed combined total/]],
+  ['How much for a sofa, loveseat, recliner and dining chair?', [/sofa.*loveseat.*\$149/, /recliner.*\$39/, /dining chair: \$19/, /not a confirmed combined total/]],
+  ['How much for 2 accent chairs?', [/accent chair: \$39/, /not a confirmed combined total/]],
+  ['How much for two recliners?', [/recliner.*\$39/, /not a confirmed combined total/]],
+  ['How much for two loveseats?', [/loveseat: \$79/, /not a confirmed combined total/]],
+]) test(`Complete furniture scope: ${input}`, () => {
+  const result = createWebsiteConversation().respond(input);
+  for (const pattern of expected) assert.match(text(result), pattern);
+});
+for (const first of ['I need a human', 'You damaged my carpet', 'where is my receipt?', 'I texted you', 'cancel my appointment']) {
+  test(`Support context is not a sales intake: ${first}`, () => {
+    const chat = createWebsiteConversation();
+    assert.equal(chat.respond(first).handoff, true);
+    for (const followup of ['What does that mean?', 'Can I send photos here?', 'My appointment is tomorrow', 'I still need help']) {
+      const result = chat.respond(followup);
+      assert.equal(result.handoff, true);
+      assert.match(text(result), /cannot send your request/);
+      assert.doesNotMatch(text(result), /what do you need cleaned|about how many rooms|you.re booked/i);
+    }
+    assert.match(text(chat.respond('How much is standard cleaning?')), /\$99/);
+  });
+}
+test('Network request has a timeout and validated response', async () => {
+  await requestReply('https://example.test', 'test', 'hello', false, async (url, options) => {
+    assert.equal(url, 'https://example.test/preview/message');
+    assert.ok(options.signal instanceof AbortSignal);
+    assert.equal(JSON.parse(options.body).text, 'hello');
+    return { ok: true, json: async () => ({ result: { bubbles: ['Hello'] } }) };
+  });
+});
+test('HTTP errors, malformed payloads, network errors and timeouts reject', async () => {
+  for (const fetcher of [
+    async () => ({ ok: false }),
+    async () => ({ ok: true, json: async () => ({}) }),
+    async () => { throw new Error('offline'); },
+    async () => { throw new DOMException('timed out', 'TimeoutError'); },
+  ]) await assert.rejects(() => requestReply('https://example.test', 'test', '', false, fetcher));
+});

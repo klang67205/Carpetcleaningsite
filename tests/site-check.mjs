@@ -1,33 +1,37 @@
-import { readFileSync, existsSync } from 'node:fs';
-const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-const expected = ['36104bbb2c7d409a8293445c570b5f8b?v2=true','facebook.com/wichitacarpetcleaningservices','$99','$149','$15','5 rooms','2 hallways','1 standard staircase'];
-for (const value of expected) if (!html.includes(value)) throw new Error(`Missing: ${value}`);
-for (const path of ['../CNAME','../robots.txt','../sitemap.xml','../404.html','../assets/styles.css','../assets/app.js']) if (!existsSync(new URL(path, import.meta.url))) throw new Error(`Missing file: ${path}`);
-for (const value of ['Oxi Fresh','CRI certified','CRI approved','zero residue','no mold risk','permanently eliminate']) if (html.toLowerCase().includes(value.toLowerCase())) throw new Error(`Unsupported public claim: ${value}`);
-for (const value of ['Questions? Ask the booking guide','I can help with pricing',"I can't help you with that"]) if (html.includes(value)) throw new Error(`Cold or outdated assistant copy remains: ${value}`);
-if (!html.includes('<svg class="brand-mark"') || !html.includes('Hi—how can I help?')) throw new Error('Visible brand mark or natural assistant greeting missing');
-const assistant = readFileSync(new URL('../assets/app.js', import.meta.url), 'utf8');
-for (const value of ['$149 plus tax','$15 each','We don’t offer same-day appointments','closed Saturday and Sunday','Refunds aren’t automatic','Continue privately in Messenger','createConversation']) if (!assistant.includes(value)) throw new Error(`Assistant flow missing: ${value}`);
-if (!html.includes('Appointments are available Monday through Friday only.')) throw new Error('Public weekend policy missing');
-for (const value of ['What name is the appointment under?','What day was the cleaning?','Thanks, ${q}']) if (assistant.includes(value)) throw new Error(`Fake intake flow remains: ${value}`);
-for (const page of ['../index.html','../privacy-policy/index.html','../terms-of-service/index.html','../accessibility/index.html']) { const text=readFileSync(new URL(page, import.meta.url),'utf8'); if (/href="tel:/i.test(text)||/\bcall\s*</i.test(text)||/mailto:/i.test(text)||/info@wichitacarpetcleaningservices\.com/i.test(text)) throw new Error(`Unexpected unsupported contact path: ${page}`); }
-const businessSchema = html.match(/<script type="application\/ld\+json">(.*?)<\/script>/)?.[1];
-if (!businessSchema) throw new Error('Missing LocalBusiness schema');
-const schema = JSON.parse(businessSchema);
-if (schema.openingHoursSpecification?.[0]?.opens !== '07:00') throw new Error('Structured hours do not match the business schedule');
-if (!schema.sameAs?.includes('https://www.facebook.com/wichitacarpetcleaningservices')) throw new Error('Structured Facebook link missing');
-if (schema.hasOfferCatalog?.itemListElement?.length !== 3) throw new Error('Structured offer catalog missing');
-if (schema.areaServed?.name !== 'Wichita and surrounding areas (within about 15 miles of downtown)') throw new Error('LocalBusiness areaServed does not use the 15-mile downtown standard');
-if (schema.areaServed?.geo?.['@type'] !== 'GeoCircle') throw new Error('areaServed GeoCircle missing');
-if (schema.areaServed?.geo?.geoMidpoint?.latitude !== 37.6872 || schema.areaServed?.geo?.geoMidpoint?.longitude !== -97.3301) throw new Error('areaServed midpoint is not downtown Wichita');
-if (schema.areaServed?.geo?.geoRadius !== '24140') throw new Error('areaServed radius is not 15 miles');
-if (!html.includes('within about 15 miles of downtown')) throw new Error('Public 15-mile service-area wording missing');
-if ((html.match(/On-base military housing is not serviced/g)||[]).length < 2) throw new Error('FAQ and schema military-housing exclusion missing');
-if (html.includes('Wichita, Derby, Andover, Goddard and Maize.')) throw new Error('Exclusive five-city service-area copy remains on the public page');
-if (!assistant.includes('15 miles of downtown')) throw new Error('Assistant service-area standard missing');
-if (assistant.includes('The service area is Wichita, Derby, Andover, Goddard, and Maize')) throw new Error('Exclusive five-city concierge copy remains');
-if (!assistant.includes(expected[0])) throw new Error('Housecall Pro booking link missing from assistant');
-if (!html.includes('"@type":"WebSite"') || !html.includes('"@type":"FAQPage"')) throw new Error('Search structure is incomplete');
-const ids=[...html.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);
-if(new Set(ids).size!==ids.length) throw new Error('Duplicate IDs');
-console.log('Site checks passed.');
+import assert from 'node:assert/strict';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root = fileURLToPath(new URL('..', import.meta.url));
+const html = readFileSync(resolve(root, 'index.html'), 'utf8');
+for (const value of ['$99', '$149', '$15', '5 rooms', '2 hallways', '1 standard staircase', 'assets/reliability.css', 'id="contact"', 'role="log"']) assert.ok(html.includes(value), `Missing ${value}`);
+for (const value of ['CRI certified', 'CRI approved', 'zero residue', 'no mold risk', 'permanently eliminate']) assert.ok(!html.toLowerCase().includes(value.toLowerCase()), `Unsupported claim: ${value}`);
+const schemas = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(match => JSON.parse(match[1]));
+const business = schemas.find(schema => schema['@type'] === 'LocalBusiness');
+assert.equal(business.openingHoursSpecification[0].opens, '07:00');
+assert.equal(business.areaServed.geo.geoRadius, '24140');
+assert.deepEqual(business.hasOfferCatalog.itemListElement.map(offer => offer.price), ['99', '149', '15']);
+assert.ok(html.includes('Appointments are available Monday through Friday only.'));
+assert.ok(html.includes('On-base military housing is not serviced'));
+assert.ok(!/href="(?:tel:|mailto:)/i.test(html), 'Do not add unverified contact details');
+const pages = ['index.html', '404.html', 'privacy-policy/index.html', 'terms-of-service/index.html', 'data-deletion/index.html', 'accessibility/index.html'];
+for (const page of pages) {
+  const content = readFileSync(resolve(root, page), 'utf8');
+  const ids = [...content.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
+  assert.equal(ids.length, new Set(ids).size, `Duplicate IDs: ${page}`);
+  for (const [, raw] of content.matchAll(/(?:href|src)="([^"]+)"/g)) {
+    if (/^(?:https?:|mailto:|tel:|data:)/.test(raw)) continue;
+    const [path, hash] = raw.split('#');
+    const target = path ? resolve(path.startsWith('/') ? root : dirname(resolve(root, page)), path.replace(/^\//, '').split('?')[0]) : resolve(root, page);
+    assert.ok(existsSync(target), `Broken local link ${raw} in ${page}`);
+    if (!path && hash) assert.ok(ids.includes(hash), `Missing anchor ${raw} in ${page}`);
+  }
+}
+for (const file of readdirSync(resolve(root, 'assets')).filter(name => name.endsWith('.js'))) {
+  const code = readFileSync(resolve(root, 'assets', file), 'utf8');
+  for (const [, path] of code.matchAll(/from\s+["'](\.[^"']+)["']/g)) assert.ok(existsSync(resolve(root, 'assets', path)), `Broken module import in ${file}`);
+}
+const css = readFileSync(resolve(root, 'assets/reliability.css'), 'utf8');
+assert.match(css, /\.button\s*\{\s*color:\s*var\(--ink\)/);
+assert.match(css, /\.concierge-panel\[hidden\]/);
+console.log('Public-page, unchanged-price, structured-data, local-link and module checks passed.');

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><meta name="concierge-api" content="https://fixture.invalid"><title>Assistant recovery test</title><link rel="stylesheet" href="../assets/styles.css"><link rel="stylesheet" href="../assets/concierge.css"><link rel="stylesheet" href="../assets/reliability.css"></head><body>
+<main><h1>Assistant recovery test</h1><button id="fail">Next reply fails</button><button id="empty">Next reply is blank</button><button id="hang">Next reply hangs</button><button id="delay">Next reply is delayed</button><output id="requests">0 requests</output></main>
+<section class="concierge" aria-label="Customer assistant"><button class="concierge-launch" aria-expanded="false">How can we help?</button><div class="concierge-panel" hidden><header><h2>Test assistant</h2><button class="concierge-close" aria-label="Close customer assistant">X</button></header><div class="concierge-messages" role="log"></div><form class="concierge-form"><label class="sr-only" for="message">Write a message</label><input id="message" required><button>Send</button></form></div></section>
+<script>
+let mode = 'success';
+document.getElementById('fail').onclick = () => { mode = 'failure'; };
+document.getElementById('empty').onclick = () => { mode = 'empty'; };
+document.getElementById('hang').onclick = () => { mode = 'hang'; };
+document.getElementById('delay').onclick = () => { mode = 'delay'; };
+let requests = 0;
+window.fetch = async (url, options) => {
+  document.getElementById('requests').textContent = `${++requests} requests`;
+  const selected = mode; mode = 'success';
+  if (selected === 'failure') throw new Error('Simulated outage');
+  if (selected === 'hang') await new Promise((resolve, reject) => {
+    options.signal.addEventListener('abort', () => reject(options.signal.reason), { once: true });
+  });
+  if (selected === 'delay') await new Promise(resolve => setTimeout(resolve, 5000));
+  return { ok: true, json: async () => ({ result: { bubbles: selected === 'empty' ? [] : ['Test reply received.'] } }) };
+};
+</script><script type="module" src="../assets/app.js"></script></body></html>

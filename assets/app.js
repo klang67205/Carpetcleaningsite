@@ -3,7 +3,8 @@
  * with <meta name="concierge-api" content="https://YOUR-HOST"> so talk goes
  * through the language model. Without that, this file uses the local book only.
  */
-import { bookingUrl, createConversation, delayFor } from "./conversation.js";
+import { bookingUrl, delayFor } from "./conversation.js";
+import { createWebsiteConversation, requestReply, messengerUrl } from "./site-response.js";
 
 function linkify(text) {
   const p = document.createElement("p");
@@ -13,7 +14,7 @@ function linkify(text) {
     a.href = bookingUrl;
     a.target = "_blank";
     a.rel = "noreferrer";
-    a.textContent = bookingUrl;
+    a.textContent = "See available appointments in Housecall Pro";
     a.style.cssText = "color:#102b22;word-break:break-all;font-weight:600;text-decoration:underline";
     p.append(a);
     return p;
@@ -45,9 +46,11 @@ function initializePage() {
   const prompts = concierge.querySelector(".concierge-prompts");
   const form = concierge.querySelector(".concierge-form");
   const input = concierge.querySelector("input");
-  if (prompts) prompts.remove();
+  prompts?.querySelectorAll('button').forEach(button => {
+    button.addEventListener('click', () => ask(button.dataset.prompt));
+  });
 
-  const conversation = createConversation({ channel: "site" });
+  const conversation = createWebsiteConversation();
   let busy = false;
 
   const addVisitor = (text) => {
@@ -63,6 +66,7 @@ function initializePage() {
       const typing = document.createElement("p");
       typing.className = "concierge-message typing";
       typing.textContent = "•••";
+      typing.setAttribute('aria-hidden', 'true');
       messages.append(typing);
       messages.scrollTop = messages.scrollHeight;
       await new Promise((resolve) => setTimeout(resolve, delayFor(text)));
@@ -70,38 +74,69 @@ function initializePage() {
       messages.append(linkify(text));
       messages.scrollTop = messages.scrollHeight;
     }
+    if (result.handoff) {
+      const link = document.createElement('a');
+      link.className = 'concierge-book';
+      link.href = messengerUrl;
+      link.textContent = 'Contact the company in Messenger';
+      messages.append(link);
+      messages.scrollTop = messages.scrollHeight;
+    }
   };
 
   const askRemote = async (text, reset = false) => {
-    const path = reset ? "/preview/reset" : "/preview/message";
-    const response = await fetch(`${apiHost}${path}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId, text }),
-    });
-    const data = await response.json();
-    return data.result;
+    return requestReply(apiHost, sessionId, text, reset);
+  };
+
+  const setBusy = value => {
+    busy = value;
+    form.querySelector('button').disabled = value;
+    prompts?.querySelectorAll('button').forEach(button => { button.disabled = value; });
+    messages.setAttribute('aria-busy', String(value));
+  };
+  const recover = () => {
+    messages.querySelectorAll('.typing').forEach(node => node.remove());
+    messages.append(linkify('The assistant could not respond. Your appointment has not been changed. You can still book through Housecall Pro or contact the company in Messenger.'));
+    for (const [href, label] of [[bookingUrl, 'Book in Housecall Pro'], [messengerUrl, 'Contact the company in Messenger']]) {
+      const link = document.createElement('a');
+      link.href = href;
+      link.className = 'concierge-book';
+      link.textContent = label;
+      messages.append(link);
+    }
+    messages.scrollTop = messages.scrollHeight;
   };
 
   const ask = async (q) => {
     if (busy || !q) return;
-    busy = true;
+    setBusy(true);
     addVisitor(q);
     input.value = "";
-    const result = apiHost ? await askRemote(q) : conversation.respond(q);
-    await play(result);
-    busy = false;
-    input.focus();
+    try {
+      const result = apiHost ? await askRemote(q) : conversation.respond(q);
+      await play(result);
+    } catch {
+      recover();
+    } finally {
+      setBusy(false);
+    }
   };
 
   const open = async () => {
     panel.hidden = false;
     launch.setAttribute("aria-expanded", "true");
-    if (!messages.children.length) {
-      const result = apiHost ? await askRemote("", true) : conversation.start();
-      await play(result);
-    }
     input.focus();
+    if (!messages.children.length && !busy) {
+      setBusy(true);
+      try {
+        const result = apiHost ? await askRemote("", true) : conversation.start();
+        await play(result);
+      } catch {
+        recover();
+      } finally {
+        setBusy(false);
+      }
+    }
   };
   const shut = () => {
     panel.hidden = true;
@@ -111,6 +146,9 @@ function initializePage() {
 
   launch.addEventListener("click", () => (panel.hidden ? open() : shut()));
   close.addEventListener("click", shut);
+  concierge.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !panel.hidden) { event.preventDefault(); shut(); }
+  });
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     ask(input.value.trim());
