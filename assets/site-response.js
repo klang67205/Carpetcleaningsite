@@ -17,6 +17,7 @@ export function forWebsite(result) {
       .replace(/I[’']ll look at it myself\./gi, 'The company will need to review your request.')
     );
   if (handoff) bubbles.push('This website chat cannot send your request, receive photos, or change a booking. Open Messenger to contact the company.');
+  else if (furniture && !bubbles.includes(bookingUrl)) bubbles.push(bookingUrl);
   return { ...result, bubbles, handoff, sendLink: handoff ? false : furniture || result.sendLink, booking: handoff ? false : result.booking };
 }
 

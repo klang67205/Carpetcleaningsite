@@ -73,6 +73,7 @@ for (const [input, expected] of [
   for (const pattern of expected) assert.match(text(result), pattern);
   assert.doesNotMatch(text(result), /about how many rooms should we count/);
   assert.equal(result.sendLink, true);
+  assert.ok(result.bubbles.includes(bookingUrl));
 });
 test('Unrelated furniture sizes cannot upgrade a small sectional', () => {
   for (const input of ['How much for a small sectional and six dining chairs?', 'How much for a small sectional and large sofa?']) {
