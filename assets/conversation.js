@@ -166,6 +166,7 @@ function carpetAmount(rooms) {
 }
 
 function petAmount(rooms) {
+  if (rooms && rooms <= 3) return 85;
   return 149 + Math.max(0, (rooms || 5) - 5) * 15;
 }
 
@@ -253,19 +254,25 @@ function withHouseQuote(state, intent, speech, extra = {}) {
 function quoteLine(state) {
   const rooms = state.rooms;
   const extras = rooms ? Math.max(0, rooms - 5) : 0;
-  const standard = carpetAmount(rooms);
-  const pet = petAmount(rooms);
+  const extraHalls = Math.max(0, (state.halls || 0) - 2);
+  const extraStairs = Math.max(0, (state.stairs || 0) - 1);
+  const layoutExtras = (extraHalls + extraStairs) * 15;
+  const standard = carpetAmount(rooms) + layoutExtras;
+  const pet = petAmount(rooms) + layoutExtras;
   const namedAreas = rooms != null || state.halls != null || state.stairs != null;
   if (!namedAreas) {
-    return "We would love to get it cleaned for you. Our pricing is $75 plus tax up to three rooms, and $99 plus tax for five rooms, two halls, and one stair. Pets are $149 for that five-room size.";
+    return "Our pricing is $75 plus tax for up to three areas, and $99 plus tax for up to five rooms, two halls, and one staircase. Pet treatment is $85 for up to three rooms or $149 for the larger package, plus tax. Each additional area, room, hallway, or staircase beyond the package is $15 plus tax.";
+  }
+  if (rooms && rooms <= 3 && ((state.halls || 0) > 0 || (state.stairs || 0) > 0)) {
+    return "The small-job price is $75 for up to three areas, or $85 for up to three rooms with pet treatment, plus tax. Your hallway or staircase needs to be counted in the scope before confirming that small-package total. Each additional area, room, hallway, or staircase is $15 plus tax. Contact the company to confirm which package fits.";
   }
   if (state.pet) {
     if (rooms && rooms <= 3) {
-      return `We would love to get those rooms cleaned for you. Our pricing is $75 plus tax for the carpet, and pet treatment is $149 plus tax for the five-room size.`;
+      return "Pet-treatment cleaning for up to three rooms is $85 plus tax. The small pet-treatment option is not currently listed in the online booking menu; contact the company to arrange it.";
     }
     let line = `We would love to get it cleaned for you. Our pricing is $${pet} plus tax with the pet treatment, and that would cover those areas.`;
-    if ((state.halls != null && state.halls > 2) || (state.stairs != null && state.stairs > 1)) {
-      line += " Two halls and one stair are in that price; extra beyond that I’ll look at on site.";
+    if (layoutExtras) {
+      line += ` This includes $${layoutExtras} for ${extraHalls + extraStairs} additional hallway or staircase areas at $15 each beyond the two halls and one staircase in the package.`;
     }
     return line;
   }
@@ -273,8 +280,8 @@ function quoteLine(state) {
   if (extras) {
     line = `We would love to get it cleaned for you. Our pricing is $${standard} plus tax, and that would cover those areas — five are in the $99, then $${extras * 15} for the extra room${extras === 1 ? "" : "s"}.`;
   }
-  if ((state.halls != null && state.halls > 2) || (state.stairs != null && state.stairs > 1)) {
-    line += " Two halls and one stair are in that price; extra beyond that I’ll look at on site.";
+  if (layoutExtras) {
+    line += ` This includes $${layoutExtras} for ${extraHalls + extraStairs} additional hallway or staircase areas at $15 each beyond the two halls and one staircase in the package.`;
   }
   return line;
 }
@@ -285,6 +292,9 @@ function lovePrice(detail) {
 
 function otherServicePrice(text) {
   const has = (pattern) => pattern.test(text);
+  if (has(/hard.?floor|hardwood|wood floor/) && !has(/tile|grout/)) {
+    return lovePrice("$79 up to 150 square feet for sealed hard-floor cleaning, $139 up to 300 for cleaning and polishing, or $239 up to 600 for deep cleaning and polishing, plus tax. No sanding or refinishing is included. Areas over 600 square feet, staircases, specialty surfaces, or damaged finishes need individual review; these prices are not a confirmed total for those jobs.");
+  }
   if (has(/sofa.*loveseat|loveseat.*sofa/)) return lovePrice("$149 plus tax for a sofa and loveseat together.");
   if (has(/complete seating|all (?:my )?(?:seating|furniture)/))
     return lovePrice("$179 plus tax for complete seating.");
@@ -295,18 +305,15 @@ function otherServicePrice(text) {
   if (has(/\brecliner\b/)) return lovePrice("$39 plus tax for a recliner.");
   if (has(/\bchair\b/) && !has(/high chair/)) return lovePrice("$19 plus tax for a chair.");
   if (has(/bathroom.*(?:tile|grout)|(?:tile|grout).*bathroom/))
-    return lovePrice("$99 plus tax for bathroom tile and grout.");
+    return lovePrice("$99 plus tax for bathroom tile and grout, up to 100 square feet total across no more than two standard bathrooms. Larger areas, showers, walls, natural stone, or heavy buildup need review before a total is confirmed.");
   if (has(/kitchen.*(?:tile|grout)|(?:tile|grout).*kitchen/))
-    return lovePrice("$129 plus tax for kitchen tile and grout.");
-  if (has(/whole (?:home|house)|(?:tile|grout).*whole/))
-    return lovePrice("$259 plus tax for whole-home tile and grout.");
-  if (has(/\b150\s*(?:sq|square|ft)/)) return lovePrice("$79 plus tax for hard floor up to 150 square feet.");
-  if (has(/\b300\s*(?:sq|square|ft)/)) return lovePrice("$139 plus tax for hard floor up to 300 square feet.");
-  if (has(/\b600\s*(?:sq|square|ft)/)) return lovePrice("$239 plus tax for hard floor up to 600 square feet.");
+    return lovePrice("$129 plus tax for kitchen tile and grout, up to 150 square feet of standard ceramic or porcelain floor tile. Larger areas, natural stone, sealing, or heavy buildup need review before a total is confirmed.");
+  if (has(/(?:whole (?:home|house|floor).*(?:tile|grout)|(?:tile|grout).*whole)/))
+    return lovePrice("$259 plus tax for whole-floor tile cleaning, up to 400 square feet of standard ceramic or porcelain, with standard grout sealant where suitable. This is not an unlimited whole-home price; larger areas, natural stone, or specialty surfaces need review.");
   if (has(/tile|grout/))
-    return lovePrice("$99 a bathroom, $129 a kitchen, or $259 a whole home for tile and grout, plus tax.");
+    return lovePrice("$99 for up to 100 square feet across no more than two standard bathrooms, $129 for a kitchen up to 150 square feet, or $259 for whole-floor tile cleaning up to 400 square feet with standard grout sealant where suitable, plus tax. Larger areas, natural stone, or specialty surfaces need review.");
   if (has(/hard.?floor/))
-    return lovePrice("$79 up to 150 square feet, $139 to 300, or $239 to 600 for hard floor, plus tax.");
+    return lovePrice("$79 up to 150 square feet for sealed hard-floor cleaning, $139 up to 300 for cleaning and polishing, or $239 up to 600 for deep cleaning and polishing, plus tax. No sanding or refinishing is included; larger areas, staircases, specialty surfaces, or damaged finishes need review.");
   if (has(/upholstery|sofa|couch|seating/))
     return lovePrice("$19 a chair, $39 a recliner, $79 a loveseat, $89 a sofa, $119 a small sectional, $169 a large one, or $179 for complete seating, plus tax.");
   return null;
@@ -360,7 +367,7 @@ function intentSet(text) {
     /prepare|prep|get ready|getting ready|to get ready|ready for (?:you|us|the clean)|what (?:do i|should i|to) do before|before you (?:come|arrive|get here)|need to move|do i move|do you move|will you move|move (?:the )?(?:couch|couches|sofa|bed|furniture)|clean under|underneath|\bvacuum\b|\bclear\b/,
   );
   add("upholstery", /clean(?:ing)? (?:the )?(?:sofa|couch|loveseat|sectional|recliner|furniture)|how much.*(?:sofa|couch|loveseat|chair|recliner|sectional|furniture)|upholstery/);
-  add("other-services", /tile|grout|hard.?floor/);
+  add("other-services", /tile|grout|hard.?floor|hardwood|wood floor/);
   add("commercial", /commercial|(?<!home )office|business|large space|unusual|warehouse/);
   add("stain", /stain|spot|spill|wine|coffee|ink|grape|juice/);
   add("specialized", /mold|sewage|flood|biohazard|water damage|paint/);
@@ -662,6 +669,11 @@ export function createConversation(seed = {}) {
     const intents = intentSet(text);
     const estimate = roomEstimate(text);
     const heard = hear(text, original);
+    const protectedIntents = ["damage", "refund", "complaint", "cancel", "reschedule", "safety", "commercial", "human"];
+    if (intents.includes("other-services") && intents.includes("price") && !intents.some(intent => protectedIntents.includes(intent)) && !/\bcarpet|\bpet|\bsofa|\bcouch|\bfurniture|\bchair|\brecliner|\bloveseat/.test(text)) {
+      const floorPrice = otherServicePrice(text);
+      if (floorPrice) return reply(state, "other-services", floorPrice);
+    }
     if (!state._fromPlaybook) {
       state.lastUser = original;
       state.lastHeard = {
@@ -848,7 +860,7 @@ export function createConversation(seed = {}) {
         /odor|smell|stink|urine|pee/.test(text);
       if (odor) {
         bubbles.push(
-          `For the odor, pet treatment is $${petAmount(state.rooms)} plus tax for the five-room size. ${odorHonesty()}`,
+          `For the odor, pet treatment is $${petAmount(state.rooms)} plus tax for ${state.rooms && state.rooms <= 3 ? "up to three rooms; contact the company because this option is not currently listed in the online booking menu" : "up to five rooms, two halls, and one staircase; additional areas are $15 each"}. ${odorHonesty()}`,
         );
       } else {
         bubbles.push("Whenever you’re ready, we would love to help with the house.");
@@ -939,7 +951,7 @@ export function createConversation(seed = {}) {
       return reply(
         state,
         "coupon",
-        "We would love to get it cleaned for you. Nothing extra running right now — our pricing is $75 up to three rooms, $99 up to five, $149 for pets on the five-room size, plus tax. Extra rooms $15 after five.",
+        "Our pricing is $75 for up to three areas, $85 for up to three rooms with pet treatment, $99 for up to five rooms with two halls and one staircase, or $149 for that larger package with pet treatment, plus tax. Each additional area, room, hallway, or staircase beyond the package is $15 plus tax.",
       );
     }
     if (intents.includes("review")) {
@@ -1049,7 +1061,7 @@ export function createConversation(seed = {}) {
         "included",
         state.rooms
           ? quoteLine(state)
-          : "We would love to get it cleaned for you. Our pricing is $75 plus tax up to three rooms, and $99 plus tax for five rooms, two halls, and one stair. Extra rooms are $15 after five. Pets are $149 for that five-room size.",
+          : "Our pricing is $75 plus tax for up to three areas, and $99 plus tax for five rooms, two halls, and one stair. Each additional area, room, hallway, or staircase beyond the package is $15 plus tax. Pet treatment is $85 for up to three rooms or $149 for that larger package, plus tax.",
       );
     }
     if (intents.includes("soon") && !intents.includes("same-day")) {
@@ -1289,7 +1301,7 @@ export function createConversation(seed = {}) {
         bubbles.push(odorHonesty());
       }
       if (intents.includes("pet-mention") && !state.pet && !state.petAnswered && !intents.includes("safety")) {
-        bubbles.push(`If you need pet treatment, we would love to take care of that too — our pricing is $${petAmount(state.rooms)} plus tax for the five-room size.`);
+        bubbles.push(`Pet treatment is $${petAmount(state.rooms)} plus tax for ${state.rooms && state.rooms <= 3 ? "up to three rooms; contact the company because this option is not currently listed in the online booking menu" : "up to five rooms, two halls, and one staircase; additional areas are $15 each"}.`);
       }
       return reply(state, intents.includes("pet-treat") ? "pet" : "price", bubbles, { stage: "quoted" });
     }

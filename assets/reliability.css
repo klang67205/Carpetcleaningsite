@@ -61,3 +61,14 @@ body * { letter-spacing: 0; }
   .concierge-messages { max-height: none; overflow: visible; }
   .concierge-form { position: sticky; bottom: 0; background: #fff; }
 }
+.catalog-prices { margin-top: 32px; max-width: 880px; }
+.catalog-prices h3 { font-size: 1.25rem; }
+.catalog-prices p { line-height: 1.6; }
+.catalog-prices details { border-top: 1px solid #cbd5cc; padding: 18px 0; }
+.catalog-prices summary { cursor: pointer; font-size: 1.05rem; font-weight: 700; }
+.catalog-prices dl > div { display: grid; grid-template-columns: minmax(130px, 1fr) minmax(0, 2fr); gap: 16px; padding: 8px 0; }
+.catalog-prices dt { font-weight: 600; }
+.catalog-prices dd { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 560px) {
+  .catalog-prices dl > div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+}

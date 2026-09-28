@@ -5,6 +5,43 @@ import { forWebsite, requestReply, bookingUrl, createWebsiteConversation } from 
 const answer = input => forWebsite(createConversation({ channel: 'site' }).respond(input));
 const text = result => result.bubbles.join(' ');
 for (const [input, expected] of [
+  ['How much for an extra hallway?', /hallway.*\$15/],
+  ['How much for an additional staircase?', /staircase.*\$15/],
+  ['I have 5 rooms and 3 halls how much?', /\$114 plus tax/],
+  ['I have 6 rooms, 4 hallways and 2 staircases how much?', /\$159 plus tax/],
+  ['I have 6 rooms, 4 hallways and 2 staircases with pet treatment how much?', /\$209 plus tax/],
+  ['How much for bathroom tile?', /100 square feet.*two standard bathrooms/],
+  ['How much for kitchen grout?', /150 square feet/],
+  ['How much for whole floor tile?', /400 square feet/],
+  ['How much for 700 square feet of hard floor?', /outside.*scope.*individual review/],
+  ['How much for hardwood cleaning?', /\$79.*150.*\$139.*300.*\$239.*600/],
+]) test(`Aligned pricing: ${input}`, () => assert.match(text(createWebsiteConversation().respond(input)), expected));
+
+for (const input of ['I have a complaint. How much for bathroom tile?', 'I want a human. How much for bathroom tile?', 'How much for 3 bathrooms, 90 square feet of tile?', 'How much for 700 square feet of hard floor?', 'How much for 1,000 square feet of tile?', 'How much for marble tile?']) {
+  test(`Pricing never overrides review: ${input}`, () => {
+    const result = createWebsiteConversation().respond(input);
+    assert.equal(result.handoff, true);
+    assert.equal(result.sendLink, false);
+    assert.equal(result.booking, false);
+    assert.ok(!result.bubbles.includes(bookingUrl));
+    assert.doesNotMatch(text(result), /how many rooms|\$75|\$99|\$149/);
+  });
+}
+
+test('Small pet package is $85 and cannot send customers to a missing booking option', () => {
+  const result = createWebsiteConversation().respond('I have 2 rooms with pet stains how much?');
+  assert.match(text(result), /\$85 plus tax/);
+  assert.equal(result.handoff, true);
+  assert.equal(result.sendLink, false);
+  assert.ok(!result.bubbles.includes(bookingUrl));
+});
+
+test('Small packages do not promise free halls and stairs', () => {
+  const result = createWebsiteConversation().respond('How much for 3 rooms and 2 hallways?');
+  assert.match(text(result), /scope before confirming/);
+  assert.equal(result.handoff, true);
+});
+for (const [input, expected] of [
   ['What does $99 include?', /\$99.*five rooms, two halls, and one stair/i],
   ['I have 7 rooms how much?', /\$129/],
   ['How much is pet treatment?', /\$149/],

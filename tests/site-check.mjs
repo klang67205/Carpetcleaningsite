@@ -11,6 +11,9 @@ const business = schemas.find(schema => schema['@type'] === 'LocalBusiness');
 assert.equal(business.openingHoursSpecification[0].opens, '07:00');
 assert.equal(business.areaServed.geo.geoRadius, '24140');
 assert.deepEqual(business.hasOfferCatalog.itemListElement.map(offer => offer.price), ['99', '149', '15']);
+assert.match(business.hasOfferCatalog.itemListElement[2].description, /area, room, hallway, or staircase/);
+for (const value of ['$75', '$85', '$19', '$39', '$79', '$89', '$119', '$169', '$179', '$129', '$259', '$139', '$239', '100 sq. ft.', '150 sq. ft.', '300 sq. ft.', '400 sq. ft.', '600 sq. ft.']) assert.ok(html.includes(value), `Missing verified catalog detail: ${value}`);
+assert.ok(!/hall(?:way)?s?[^.]{0,40}\$10/.test(html), 'Retired hallway price');
 assert.ok(html.includes('Appointments are available Monday through Friday only.'));
 assert.ok(html.includes('On-base military housing is not serviced'));
 assert.ok(!/href="(?:tel:|mailto:)/i.test(html), 'Do not add unverified contact details');
@@ -34,4 +37,4 @@ for (const file of readdirSync(resolve(root, 'assets')).filter(name => name.ends
 const css = readFileSync(resolve(root, 'assets/reliability.css'), 'utf8');
 assert.match(css, /\.button\s*\{\s*color:\s*var\(--ink\)/);
 assert.match(css, /\.concierge-panel\[hidden\]/);
-console.log('Public-page, unchanged-price, structured-data, local-link and module checks passed.');
+console.log('Public-page, approved pricing, catalog scope, structured-data, local-link and module checks passed.');

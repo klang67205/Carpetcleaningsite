@@ -326,11 +326,11 @@ export function planTurn({ text, original = "", intents = [], heard = null, stat
       job: "included",
       want: "what the $99 covers",
       cannot: extrasRooms ? "six rooms are not the five-room book" : "",
-      offer: "Five rooms, two halls, one stair are in the $99. Extra rooms $15. Closets stay in the room.",
+      offer: "Five rooms, two halls, one stair are in the $99. Each additional area, room, hallway, or staircase is $15 plus tax. Closets stay in the room.",
       bubbles: [
         extrasRooms
-          ? "We would love to get it cleaned for you. Our pricing is $99 plus tax for five rooms, two halls, and one stair, then $15 for the extra room — so six rooms is $114 plus tax. Two halls and one stair are in that price; extra beyond that I’ll look at on site. Closets are included in the room and do not count as an additional area."
-          : "We would love to get it cleaned for you. Our pricing is $75 plus tax up to three rooms, and $99 plus tax for five rooms, two halls, and one stair. Extra rooms are $15 after five. Closets are included in the room and do not count as an additional area.",
+          ? "Our pricing is $99 plus tax for five rooms, two halls, and one stair, then $15 for each additional area, room, hallway, or staircase. Six rooms with no more than two halls and one staircase is $114 plus tax. Closets are included in the room and do not count as an additional area."
+          : "Our pricing is $75 plus tax for up to three areas, and $99 plus tax for five rooms, two halls, and one stair. Each additional area, room, hallway, or staircase beyond the package is $15 plus tax. Closets are included in the room and do not count as an additional area.",
       ],
     };
     return finish(plan, extras, spoken);
