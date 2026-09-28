@@ -5,7 +5,7 @@ export function forWebsite(result) {
   if (!result || !Array.isArray(result.bubbles) || !result.bubbles.length || !result.bubbles.every(text => typeof text === 'string' && text.trim().length > 0)) {
     throw new Error('Invalid assistant response');
   }
-  const handoff = Boolean(result.phone || result.messenger);
+  const handoff = Boolean(result.phone || result.messenger) || result.bubbles.some(text => /^I do not have a verified catalog price/.test(text));
   const furniture = result.bubbles.some(text => /^Furniture cleaning, plus applicable tax:|^The Complete Seating Package/.test(text));
   const bubbles = result.bubbles
     .filter(text => !handoff || !/about how many rooms should we count|click this link|current to the minute|^https:\/\/book\./i.test(text))

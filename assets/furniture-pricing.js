@@ -1,5 +1,8 @@
 // Existing Housecall Pro catalog, verified September 27, 2026. No price changes.
 export function furniturePrice(text) {
+  text = text.replace(/\b(?:no|not|without|exclude)\s+(?:the\s+|a\s+|any\s+)?(?:recliners?|sofas?|couch(?:es)?|love\s?seats?|(?:accent |dining )?chairs?|sectionals?)\b/g, '');
+  const unmatched = text.match(/\b(?:ottomans?|benches|bench|pianos?|futons?)\b/g);
+  if (unmatched) return `I do not have a verified catalog price for ${[...new Set(unmatched)].join(' and ')}. Please have a person review the full furniture list before choosing a package; I have not priced the complete request.`;
   const sofa = /\b(?:sofas?|couch(?:es)?)\b/.test(text);
   const loveseat = /\blove\s?seats?\b/.test(text);
   const recliner = /\brecliners?\b|accent chairs?/.test(text);

@@ -80,6 +80,20 @@ test('Unrelated furniture sizes cannot upgrade a small sectional', () => {
     assert.doesNotMatch(text(createWebsiteConversation().respond(input)), /\$169|large sectional/);
   }
 });
+test('Excluded furniture is not added to a package', () => {
+  const reply = text(createWebsiteConversation().respond('How much for a sofa and loveseat, no recliner?'));
+  assert.match(reply, /\$149/);
+  assert.doesNotMatch(reply, /\$179|one chair or recliner/);
+});
+test('Unpriced furniture is acknowledged and referred without a partial-package quote', () => {
+  const result = createWebsiteConversation().respond('How much for a sofa, loveseat and ottoman?');
+  assert.match(text(result), /ottoman/);
+  assert.match(text(result), /cannot send your request/);
+  assert.doesNotMatch(text(result), /\$149|about how many rooms/);
+  assert.equal(result.handoff, true);
+  assert.equal(result.sendLink, false);
+  assert.ok(!result.bubbles.includes(bookingUrl));
+});
 for (const first of ['I need a human', 'You damaged my carpet', 'where is my receipt?', 'I texted you', 'cancel my appointment']) {
   test(`Support context is not a sales intake: ${first}`, () => {
     const chat = createWebsiteConversation();
