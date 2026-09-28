@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { bookingUrl } from "../assets/book-lines.js";
-import { bookingUrlForVisit, facebookBookingUrl, isFacebookVisit } from "../assets/booking-attribution.js";
+import { bookingUrlForVisit, facebookBookingUrl, isFacebookVisit, websiteBookingUrl } from "../assets/booking-attribution.js";
 
-test("ordinary visitors keep the standard booking URL", () => {
-  assert.equal(bookingUrlForVisit({ search: "?utm_source=google" }), bookingUrl);
+test("ordinary visitors receive the HCP website attribute", () => {
+  assert.equal(bookingUrlForVisit({ search: "?utm_source=google" }), websiteBookingUrl);
+  assert.equal(websiteBookingUrl, `${bookingUrl}&attr=10858`);
 });
 
 test("Facebook UTM visitors receive the HCP Facebook attribute", () => {

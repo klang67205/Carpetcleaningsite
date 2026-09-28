@@ -1,5 +1,6 @@
 import { bookingUrl } from "./book-lines.js";
 
+export const websiteBookingUrl = `${bookingUrl}&attr=10858`;
 export const facebookBookingUrl = `${bookingUrl}&attr=10856`;
 
 export function isFacebookVisit(search = "", referrer = "") {
@@ -18,7 +19,7 @@ export function isFacebookVisit(search = "", referrer = "") {
 export function bookingUrlForVisit({ search = "", referrer = "", rememberedSource = "" } = {}) {
   return isFacebookVisit(search, referrer) || rememberedSource === "facebook"
     ? facebookBookingUrl
-    : bookingUrl;
+    : websiteBookingUrl;
 }
 
 export function applyBookingAttribution(root = document) {
@@ -38,7 +39,7 @@ export function applyBookingAttribution(root = document) {
     referrer: document.referrer,
     rememberedSource,
   });
-  root.querySelectorAll(`a[href="${bookingUrl}"]`).forEach((link) => {
+  root.querySelectorAll(`a[href="${bookingUrl}"], a[href="${websiteBookingUrl}"]`).forEach((link) => {
     link.href = destination;
   });
   return destination;
