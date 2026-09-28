@@ -16,6 +16,8 @@ assert.equal(business.openingHoursSpecification[0].opens, '07:00');
 assert.equal(business.areaServed.geo.geoRadius, '24140');
 assert.equal(business.priceRange, '$75–$149+');
 assert.equal(business.telephone, '+13162328111');
+assert.equal(business.address, undefined, 'Private business address must not be published in structured data');
+assert.equal(business.email, undefined, 'Broken domain email must not be published in structured data');
 assert.equal(business.logo, 'https://www.wichitacarpetcleaningservices.com/assets/brand-mark.svg');
 assert.deepEqual(business.hasOfferCatalog.itemListElement.map(offer => offer.price), ['75', '85', '99', '149', '15']);
 assert.match(business.hasOfferCatalog.itemListElement[4].description, /area, room, hallway, or staircase/);
@@ -37,6 +39,9 @@ const pages = ['index.html', '404.html', 'booking-confirmed/index.html', 'privac
 for (const page of pages) {
   const content = readFileSync(resolve(root, page), 'utf8');
   assert.doesNotMatch(content, /Manage Appointment/i, `Unsupported Housecall Pro management link claim in ${page}`);
+  assert.doesNotMatch(content, /info@wichitacarpetcleaningservices\.com/i, `Broken domain email exposed in ${page}`);
+  assert.doesNotMatch(content, /href="mailto:/i, `Email link exposed in ${page}`);
+  assert.doesNotMatch(content, /streetAddress|PostalAddress/i, `Private business address metadata exposed in ${page}`);
   const ids = [...content.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
   assert.equal(ids.length, new Set(ids).size, `Duplicate IDs: ${page}`);
   for (const [, raw] of content.matchAll(/(?:href|src)="([^"]+)"/g)) {
