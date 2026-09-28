@@ -42,6 +42,11 @@ for (const page of pages) {
   assert.doesNotMatch(content, /info@wichitacarpetcleaningservices\.com/i, `Broken domain email exposed in ${page}`);
   assert.doesNotMatch(content, /href="mailto:/i, `Email link exposed in ${page}`);
   assert.doesNotMatch(content, /streetAddress|PostalAddress/i, `Private business address metadata exposed in ${page}`);
+  assert.doesNotMatch(content, /(?:\+?1[ .-]?)?\(?316\)?[ .-]?209[ .-]?2176/, `Private owner phone exposed in ${page}`);
+  for (const [, scheme, phone] of content.matchAll(/href="(sms:|tel:)([^"?]+)/gi)) {
+    assert.equal(scheme.toLowerCase(), 'sms:', `Unapproved phone-call link in ${page}`);
+    assert.equal(phone, '+13162328111', `Unmanaged customer phone link in ${page}`);
+  }
   const ids = [...content.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
   assert.equal(ids.length, new Set(ids).size, `Duplicate IDs: ${page}`);
   for (const [, raw] of content.matchAll(/(?:href|src)="([^"]+)"/g)) {
