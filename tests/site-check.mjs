@@ -46,6 +46,13 @@ for (const page of pages) {
 const confirmation = readFileSync(resolve(root, 'booking-confirmed/index.html'), 'utf8');
 assert.ok(confirmation.includes('sms:+13162328111'));
 assert.ok(confirmation.includes('(316) 232-8111'));
+assert.ok(confirmation.includes('../assets/year.js'), 'Confirmation page must use the lightweight year helper');
+assert.ok(!confirmation.includes('../assets/app.js'), 'Confirmation page must not load the full assistant');
+assert.ok(!readFileSync(resolve(root, '404.html'), 'utf8').includes('assets/app.js'), '404 page must not load the full assistant');
+assert.match(readFileSync(resolve(root, 'sitemap.xml'), 'utf8'), /<lastmod>2026-09-28<\/lastmod>/);
+const confirmationCss = readFileSync(resolve(root, 'assets/confirmation.css'), 'utf8');
+assert.ok(confirmationCss.includes('.confirmation-page *{letter-spacing:0}'), 'Confirmation page must use normal letter spacing');
+assert.ok(confirmationCss.includes('.confirmation-actions .button{color:var(--ink)}'), 'Confirmation primary button must keep dark text on lime');
 for (const file of readdirSync(resolve(root, 'assets')).filter(name => name.endsWith('.js'))) {
   const code = readFileSync(resolve(root, 'assets', file), 'utf8');
   for (const [, path] of code.matchAll(/from\s+["'](\.[^"']+)["']/g)) assert.ok(existsSync(resolve(root, 'assets', path)), `Broken module import in ${file}`);
