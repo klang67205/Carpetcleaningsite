@@ -36,6 +36,7 @@ assert.ok(!/href="(?:tel:|mailto:)/i.test(html), 'Do not add unverified contact 
 const pages = ['index.html', '404.html', 'booking-confirmed/index.html', 'privacy-policy/index.html', 'terms-of-service/index.html', 'data-deletion/index.html', 'accessibility/index.html'];
 for (const page of pages) {
   const content = readFileSync(resolve(root, page), 'utf8');
+  assert.doesNotMatch(content, /Manage Appointment/i, `Unsupported Housecall Pro management link claim in ${page}`);
   const ids = [...content.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
   assert.equal(ids.length, new Set(ids).size, `Duplicate IDs: ${page}`);
   for (const [, raw] of content.matchAll(/(?:href|src)="([^"]+)"/g)) {
@@ -46,6 +47,9 @@ for (const page of pages) {
     if (!path && hash) assert.ok(ids.includes(hash), `Missing anchor ${raw} in ${page}`);
   }
 }
+const deletion = readFileSync(resolve(root, 'data-deletion/index.html'), 'utf8');
+assert.ok(deletion.includes('reply to the Housecall Pro text or text <strong>(316) 232-8111</strong>'));
+assert.ok(deletion.includes('does not change or cancel an appointment until the company confirms it'));
 const confirmation = readFileSync(resolve(root, 'booking-confirmed/index.html'), 'utf8');
 assert.ok(confirmation.includes('sms:+13162328111'));
 assert.ok(confirmation.includes('(316) 232-8111'));
