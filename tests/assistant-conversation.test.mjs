@@ -28,18 +28,21 @@ for (const input of ['I have a complaint. How much for bathroom tile?', 'I want 
   });
 }
 
-test('Small pet package is $85 and cannot send customers to a missing booking option', () => {
+test('Small pet package is $85 and sends customers to the live booking option', () => {
   const result = createWebsiteConversation().respond('I have 2 rooms with pet stains how much?');
   assert.match(text(result), /\$85 plus tax/);
-  assert.equal(result.handoff, true);
-  assert.equal(result.sendLink, false);
-  assert.ok(!result.bubbles.includes(bookingUrl));
+  assert.match(text(result), /choose that package directly in the online booking calculator/i);
+  assert.equal(result.handoff, false);
+  assert.equal(result.sendLink, true);
+  assert.ok(result.bubbles.includes(bookingUrl));
 });
 
 test('Small packages do not promise free halls and stairs', () => {
   const result = createWebsiteConversation().respond('How much for 3 rooms and 2 hallways?');
-  assert.match(text(result), /scope before confirming/);
-  assert.equal(result.handoff, true);
+  assert.match(text(result), /each area, room, hallway, or staircase beyond the package is \$15/i);
+  assert.match(text(result), /add each extra area/i);
+  assert.equal(result.handoff, false);
+  assert.equal(result.sendLink, true);
 });
 for (const [input, expected] of [
   ['What does $99 include?', /\$99.*five rooms, two halls, and one stair/i],

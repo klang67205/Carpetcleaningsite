@@ -10,8 +10,11 @@ const schemas = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/
 const business = schemas.find(schema => schema['@type'] === 'LocalBusiness');
 assert.equal(business.openingHoursSpecification[0].opens, '07:00');
 assert.equal(business.areaServed.geo.geoRadius, '24140');
-assert.deepEqual(business.hasOfferCatalog.itemListElement.map(offer => offer.price), ['99', '149', '15']);
-assert.match(business.hasOfferCatalog.itemListElement[2].description, /area, room, hallway, or staircase/);
+assert.equal(business.priceRange, '$75–$149+');
+assert.deepEqual(business.hasOfferCatalog.itemListElement.map(offer => offer.price), ['75', '85', '99', '149', '15']);
+assert.match(business.hasOfferCatalog.itemListElement[4].description, /area, room, hallway, or staircase/);
+assert.ok(html.includes('Both smaller packages are available in online booking.'));
+assert.ok(!html.includes('not currently listed in online booking'));
 for (const value of ['$75', '$85', '$19', '$39', '$79', '$89', '$119', '$169', '$179', '$129', '$259', '$139', '$239', '100 sq. ft.', '150 sq. ft.', '300 sq. ft.', '400 sq. ft.', '600 sq. ft.']) assert.ok(html.includes(value), `Missing verified catalog detail: ${value}`);
 assert.ok(!/hall(?:way)?s?[^.]{0,40}\$10/.test(html), 'Retired hallway price');
 assert.ok(html.includes('Appointments are available Monday through Friday only.'));

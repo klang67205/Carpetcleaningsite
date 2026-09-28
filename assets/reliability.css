@@ -15,6 +15,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 .final-price { font-size: 6rem; }
 body * { letter-spacing: 0; }
 .hero .micro { margin-bottom: 0; }
+.hero-art { background-image: linear-gradient(90deg, #102b22 0%, rgba(16,43,34,.98) 6%, rgba(16,43,34,.52) 31%, rgba(16,43,34,.04) 63%), url("carpet-contours.webp"); }
 .contact-options { display: flex; gap: 20px; flex-wrap: wrap; }
 .concierge { display: flex; flex-direction: column; align-items: flex-end; }
 .concierge-panel { order: -1; display: flex; flex-direction: column; width: min(400px, calc(100vw - 48px)); max-height: calc(100dvh - 110px); border-radius: 8px; }
@@ -30,9 +31,10 @@ body * { letter-spacing: 0; }
 .concierge-form button:disabled, .concierge-prompts button:disabled { opacity: .65; cursor: wait; }
 @media (max-width: 850px) {
   .hero { padding: 40px 24px; }
-  .hero-art { inset: 0; height: auto; opacity: .25; }
+  .hero-art { inset: 0; height: auto; opacity: .25; background-image: linear-gradient(180deg, #102b22 0%, rgba(16,43,34,.05) 40%), url("carpet-contours.webp"); }
   .hero h1 { font-size: 3rem; }
   .concierge { bottom: calc(78px + env(safe-area-inset-bottom)); }
+  .concierge-launch[aria-expanded="true"] { display: none; }
   .concierge-panel { max-height: calc(100dvh - 145px - env(safe-area-inset-bottom)); }
   .mobile-bar { padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
   .start-here h2, .section-heading h2, .split h2, .final-cta h2 { font-size: 2rem; }

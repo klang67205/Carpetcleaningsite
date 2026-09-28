@@ -264,11 +264,11 @@ function quoteLine(state) {
     return "Our pricing is $75 plus tax for up to three areas, and $99 plus tax for up to five rooms, two halls, and one staircase. Pet treatment is $85 for up to three rooms or $149 for the larger package, plus tax. Each additional area, room, hallway, or staircase beyond the package is $15 plus tax.";
   }
   if (rooms && rooms <= 3 && ((state.halls || 0) > 0 || (state.stairs || 0) > 0)) {
-    return "The small-job price is $75 for up to three areas, or $85 for up to three rooms with pet treatment, plus tax. Your hallway or staircase needs to be counted in the scope before confirming that small-package total. Each additional area, room, hallway, or staircase is $15 plus tax. Contact the company to confirm which package fits.";
+    return "The small-job price is $75 for up to three areas, or $85 for up to three rooms with pet treatment, plus tax. Each area, room, hallway, or staircase beyond the package is $15 plus tax. Choose the small package in online booking and add each extra area there.";
   }
   if (state.pet) {
     if (rooms && rooms <= 3) {
-      return "Pet-treatment cleaning for up to three rooms is $85 plus tax. The small pet-treatment option is not currently listed in the online booking menu; contact the company to arrange it.";
+      return "Pet-treatment cleaning for up to three rooms is $85 plus tax. Choose that package directly in the online booking calculator.";
     }
     let line = `We would love to get it cleaned for you. Our pricing is $${pet} plus tax with the pet treatment, and that would cover those areas.`;
     if (layoutExtras) {
@@ -860,7 +860,7 @@ export function createConversation(seed = {}) {
         /odor|smell|stink|urine|pee/.test(text);
       if (odor) {
         bubbles.push(
-          `For the odor, pet treatment is $${petAmount(state.rooms)} plus tax for ${state.rooms && state.rooms <= 3 ? "up to three rooms; contact the company because this option is not currently listed in the online booking menu" : "up to five rooms, two halls, and one staircase; additional areas are $15 each"}. ${odorHonesty()}`,
+          `For the odor, pet treatment is $${petAmount(state.rooms)} plus tax for ${state.rooms && state.rooms <= 3 ? "up to three rooms; choose the small pet-treatment package in online booking" : "up to five rooms, two halls, and one staircase; additional areas are $15 each"}. ${odorHonesty()}`,
         );
       } else {
         bubbles.push("Whenever you’re ready, we would love to help with the house.");
@@ -1301,7 +1301,7 @@ export function createConversation(seed = {}) {
         bubbles.push(odorHonesty());
       }
       if (intents.includes("pet-mention") && !state.pet && !state.petAnswered && !intents.includes("safety")) {
-        bubbles.push(`Pet treatment is $${petAmount(state.rooms)} plus tax for ${state.rooms && state.rooms <= 3 ? "up to three rooms; contact the company because this option is not currently listed in the online booking menu" : "up to five rooms, two halls, and one staircase; additional areas are $15 each"}.`);
+        bubbles.push(`Pet treatment is $${petAmount(state.rooms)} plus tax for ${state.rooms && state.rooms <= 3 ? "up to three rooms; choose the small pet-treatment package in online booking" : "up to five rooms, two halls, and one staircase; additional areas are $15 each"}.`);
       }
       return reply(state, intents.includes("pet-treat") ? "pet" : "price", bubbles, { stage: "quoted" });
     }
