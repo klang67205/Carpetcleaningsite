@@ -65,6 +65,13 @@ for (const file of readdirSync(resolve(root, 'assets')).filter(name => name.ends
   assert.doesNotMatch(code, /(?:\$25|24-hour).{0,40}cancell|cancell.{0,40}(?:\$25|24-hour)/i, `Retired cancellation fee policy in ${file}`);
   for (const [, path] of code.matchAll(/from\s+["'](\.[^"']+)["']/g)) assert.ok(existsSync(resolve(root, 'assets', path)), `Broken module import in ${file}`);
 }
+for (const page of pages) {
+  const content = readFileSync(resolve(root, page), 'utf8');
+  assert.doesNotMatch(content, /(?:\$25|24-hour).{0,80}cancell|cancell.{0,80}(?:\$25|24-hour)/i, `Retired cancellation fee policy in ${page}`);
+  for (const url of content.matchAll(/href="(https:\/\/book\.housecallpro\.com\/book\/Wichita-Carpet-Cleaning-Services\/36104bbb2c7d409a8293445c570b5f8b\?[^"#]+)"/g)) {
+    assert.match(url[1], /(?:&|&amp;)attr=10858(?:&|$)/, `Unattributed Housecall Pro booking link in ${page}`);
+  }
+}
 assert.match(readFileSync(resolve(root, 'assets/book-lines.js'), 'utf8'), /There is no cancellation fee/);
 const css = readFileSync(resolve(root, 'assets/reliability.css'), 'utf8');
 for (const value of ['--radius: 8px', 'body * { letter-spacing: 0 !important; }', '.choice { border-radius: 8px; }', '.concierge-form input, .concierge-form button { border-radius: 8px; }']) {
