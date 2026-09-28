@@ -69,6 +69,7 @@ assert.ok(!readFileSync(resolve(root, '404.html'), 'utf8').includes('assets/app.
 const recoveryPage = readFileSync(resolve(root, '404.html'), 'utf8');
 const recoveryScript = readFileSync(resolve(root, 'assets/recover-missing-route.js'), 'utf8');
 assert.ok(recoveryPage.includes('src="/assets/recover-missing-route.js"'), '404 page must recover obsolete public links');
+assert.ok(recoveryPage.includes('http-equiv="refresh" content="2; url=/"'), '404 page must recover even when scripts are unavailable');
 assert.ok(recoveryPage.includes('href="/assets/styles.css"'), '404 assets must work at nested obsolete paths');
 assert.ok(recoveryPage.includes('src="/assets/brand-mark.svg"'), '404 logo must work at nested obsolete paths');
 assert.match(recoveryScript, /new URL\("\/", current\.origin\)/, 'Missing-route recovery must return to the public homepage');
