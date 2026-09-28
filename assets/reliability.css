@@ -1,4 +1,7 @@
 /* Explicit contrast and viewport constraints for the existing visual identity. */
+:root { --muted: #4d5a55; }
+.eyebrow { color: #405b50; }
+.steps span { color: #4f5d57; }
 .button { color: var(--ink); text-align: center; }
 .button-secondary, .button-dark, .button-outline { color: #fff; }
 section[id], main[id] { scroll-margin-top: 90px; }
