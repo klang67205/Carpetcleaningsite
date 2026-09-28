@@ -959,7 +959,7 @@ export function createConversation(seed = {}) {
       return reply(
         state,
         "review",
-        "We would love for you to read what’s really there. We don’t paste ratings in chat — search Wichita Carpet Cleaning Services on Google or the Facebook page.",
+        "Wichita Carpet Cleaning Services has a 4.9 out of 5 rating from 229 customer reviews on Housecall Pro. The website links to the complete, unfiltered review history so you can read it directly.",
       );
     }
     if (intents.includes("insured")) {

@@ -16,6 +16,13 @@ a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visibl
 body * { letter-spacing: 0; }
 .hero .micro { margin-bottom: 0; }
 .hero-art { background-image: linear-gradient(90deg, #102b22 0%, rgba(16,43,34,.98) 6%, rgba(16,43,34,.52) 31%, rgba(16,43,34,.04) 63%), url("carpet-contours.webp"); }
+.review-proof { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 28px; padding: 24px max(24px,calc((100vw - 1180px)/2)); background: #fff; border-bottom: 1px solid var(--line); }
+.review-proof div { display: flex; align-items: baseline; gap: 12px; white-space: nowrap; }
+.review-proof strong { font-size: 2rem; line-height: 1; }
+.review-proof strong span { font-size: .55em; color: var(--muted); }
+.review-proof div > span, .review-proof p { color: var(--muted); }
+.review-proof p { margin: 0; }
+.review-proof a { font-weight: 850; }
 .contact-options { display: flex; gap: 20px; flex-wrap: wrap; }
 .concierge { display: flex; flex-direction: column; align-items: flex-end; }
 .concierge-panel { order: -1; display: flex; flex-direction: column; width: min(400px, calc(100vw - 48px)); max-height: calc(100dvh - 110px); border-radius: 8px; }
@@ -38,6 +45,8 @@ body * { letter-spacing: 0; }
   .concierge-panel { max-height: calc(100dvh - 145px - env(safe-area-inset-bottom)); }
   .mobile-bar { padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
   .start-here h2, .section-heading h2, .split h2, .final-cta h2 { font-size: 2rem; }
+  .review-proof { grid-template-columns: 1fr auto; gap: 10px 20px; }
+  .review-proof p { grid-column: 1 / -1; grid-row: 2; }
 }
 @media (max-width: 560px) {
   .hero h1 { font-size: 2.25rem; }
@@ -46,6 +55,9 @@ body * { letter-spacing: 0; }
   .service-list b { align-self: flex-start; }
   .concierge-kicker { font-size: .65rem; }
   .concierge-panel h2 { font-size: 1.05rem; }
+  .review-proof { grid-template-columns: 1fr; }
+  .review-proof p { grid-column: auto; grid-row: auto; }
+  .review-proof a { justify-self: start; }
 }
 @media (max-height: 550px) {
   .concierge { bottom: calc(8px + env(safe-area-inset-bottom)); }
