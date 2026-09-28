@@ -51,6 +51,9 @@ for (const file of readdirSync(resolve(root, 'assets')).filter(name => name.ends
   for (const [, path] of code.matchAll(/from\s+["'](\.[^"']+)["']/g)) assert.ok(existsSync(resolve(root, 'assets', path)), `Broken module import in ${file}`);
 }
 const css = readFileSync(resolve(root, 'assets/reliability.css'), 'utf8');
+for (const value of ['--radius: 8px', 'body * { letter-spacing: 0 !important; }', '.choice { border-radius: 8px; }', '.concierge-form input, .concierge-form button { border-radius: 8px; }']) {
+  assert.ok(css.includes(value), `Missing presentation safeguard: ${value}`);
+}
 assert.match(css, /\.button\s*\{\s*color:\s*var\(--ink\)/);
 assert.match(css, /\.concierge-panel\[hidden\]/);
 console.log('Public-page, approved pricing, catalog scope, structured-data, local-link and module checks passed.');
