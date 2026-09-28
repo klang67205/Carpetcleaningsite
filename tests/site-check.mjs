@@ -4,6 +4,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('..', import.meta.url));
 const html = readFileSync(resolve(root, 'index.html'), 'utf8');
+const styles = readFileSync(resolve(root, 'assets/styles.css'), 'utf8');
 for (const value of ['$99', '$149', '$15', '5 rooms', '2 hallways', '1 standard staircase', 'assets/reliability.css', 'id="contact"', 'role="log"']) assert.ok(html.includes(value), `Missing ${value}`);
 for (const value of ['CRI certified', 'CRI approved', 'zero residue', 'no mold risk', 'permanently eliminate']) assert.ok(!html.toLowerCase().includes(value.toLowerCase()), `Unsupported claim: ${value}`);
 const schemas = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(match => JSON.parse(match[1]));
@@ -16,6 +17,9 @@ assert.equal(business.logo, 'https://www.wichitacarpetcleaningservices.com/asset
 assert.deepEqual(business.hasOfferCatalog.itemListElement.map(offer => offer.price), ['75', '85', '99', '149', '15']);
 assert.match(business.hasOfferCatalog.itemListElement[4].description, /area, room, hallway, or staircase/);
 for (const value of ['og:site_name', 'og:image:width', 'og:image:height', 'og:image:alt', 'twitter:card', 'twitter:image:alt']) assert.ok(html.includes(`property="${value}"`) || html.includes(`name="${value}"`), `Missing social metadata: ${value}`);
+assert.ok(html.includes('rel="preload" as="image" href="assets/carpet-contours.webp"'), 'Hero preload must use the optimized WebP asset');
+assert.match(styles, /url\("carpet-contours\.webp"\)/, 'Hero background must use the optimized WebP asset');
+assert.doesNotMatch(styles, /url\("carpet-contours\.png"\)/, 'Stylesheet must not download the 2.35 MB PNG hero');
 assert.ok(html.includes('Both smaller packages are available in online booking.'));
 assert.ok(!html.includes('not currently listed in online booking'));
 assert.ok(html.includes('sms:+13162328111'));
