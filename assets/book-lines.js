@@ -101,7 +101,7 @@ export function asksServiceDiscount(spoken) {
 }
 
 export const CANCEL_LINE =
-  `We would love to make that easy. If you give us 24 hours’ notice there’s no fee. Same-day cancellation has a $25 fee. Text ${PHONE} or message us here and we’ll take care of it.`;
+  `We understand plans change. There is no cancellation fee, but please give as much notice as possible. For an existing appointment, reply to your Housecall Pro text or text ${PHONE}. The change is not final until we confirm it.`;
 
 export const NO_CONFIRM_MAIL =
   "We would love to keep that simple — after booking, watch for the confirmation text from our scheduling system. Reply to that text or message us here if you need something changed.";

@@ -62,8 +62,10 @@ assert.ok(confirmationCss.includes('.confirmation-page *{letter-spacing:0}'), 'C
 assert.ok(confirmationCss.includes('.confirmation-actions .button{color:var(--ink)}'), 'Confirmation primary button must keep dark text on lime');
 for (const file of readdirSync(resolve(root, 'assets')).filter(name => name.endsWith('.js'))) {
   const code = readFileSync(resolve(root, 'assets', file), 'utf8');
+  assert.doesNotMatch(code, /(?:\$25|24-hour).{0,40}cancell|cancell.{0,40}(?:\$25|24-hour)/i, `Retired cancellation fee policy in ${file}`);
   for (const [, path] of code.matchAll(/from\s+["'](\.[^"']+)["']/g)) assert.ok(existsSync(resolve(root, 'assets', path)), `Broken module import in ${file}`);
 }
+assert.match(readFileSync(resolve(root, 'assets/book-lines.js'), 'utf8'), /There is no cancellation fee/);
 const css = readFileSync(resolve(root, 'assets/reliability.css'), 'utf8');
 for (const value of ['--radius: 8px', 'body * { letter-spacing: 0 !important; }', '.choice { border-radius: 8px; }', '.concierge-form input, .concierge-form button { border-radius: 8px; }']) {
   assert.ok(css.includes(value), `Missing presentation safeguard: ${value}`);

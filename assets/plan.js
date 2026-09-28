@@ -283,7 +283,7 @@ export function planTurn({ text, original = "", intents = [], heard = null, stat
     plan = {
       job: "cancel",
       want: "to cancel",
-      cannot: "same-day cancellation has a $25 fee",
+      cannot: "an appointment change is not final until the company confirms it",
       offer: CANCEL_LINE,
       phone: true,
       bubbles: [CANCEL_LINE],
