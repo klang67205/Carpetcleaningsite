@@ -36,6 +36,9 @@ for (const page of pages) {
     if (!path && hash) assert.ok(ids.includes(hash), `Missing anchor ${raw} in ${page}`);
   }
 }
+const confirmation = readFileSync(resolve(root, 'booking-confirmed/index.html'), 'utf8');
+assert.ok(confirmation.includes('sms:+13162328111'));
+assert.ok(confirmation.includes('(316) 232-8111'));
 for (const file of readdirSync(resolve(root, 'assets')).filter(name => name.endsWith('.js'))) {
   const code = readFileSync(resolve(root, 'assets', file), 'utf8');
   for (const [, path] of code.matchAll(/from\s+["'](\.[^"']+)["']/g)) assert.ok(existsSync(resolve(root, 'assets', path)), `Broken module import in ${file}`);
