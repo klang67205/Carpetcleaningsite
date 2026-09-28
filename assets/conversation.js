@@ -11,7 +11,8 @@ import { hoursLine, schedulingWins, soonLine } from "./scheduling.js";
 
 export { bookingUrl };
 export const messengerUrl = "https://m.me/wichitacarpetcleaningservices";
-export const phoneDisplay = "(316) 209-2176";
+export const smsUrl = "sms:+13162328111";
+export const phoneDisplay = "(316) 232-8111";
 export const phoneTel = "tel:3162092176";
 export const phoneSms = "sms:3162092176";
 

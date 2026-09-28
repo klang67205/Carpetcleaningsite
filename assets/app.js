@@ -4,7 +4,7 @@
  * through the language model. Without that, this file uses the local book only.
  */
 import { bookingUrl, delayFor } from "./conversation.js";
-import { createWebsiteConversation, requestReply, messengerUrl } from "./site-response.js";
+import { createWebsiteConversation, requestReply, messengerUrl, smsUrl } from "./site-response.js";
 import { applyBookingAttribution } from "./booking-attribution.js";
 
 let activeBookingUrl = bookingUrl;
@@ -81,9 +81,14 @@ function initializePage() {
     if (result.handoff) {
       const link = document.createElement('a');
       link.className = 'concierge-book';
-      link.href = messengerUrl;
-      link.textContent = 'Contact the company in Messenger';
+      link.href = smsUrl;
+      link.textContent = 'Text the company';
       messages.append(link);
+      const messengerLink = document.createElement('a');
+      messengerLink.className = 'concierge-book';
+      messengerLink.href = messengerUrl;
+      messengerLink.textContent = 'Open Messenger';
+      messages.append(messengerLink);
       messages.scrollTop = messages.scrollHeight;
     }
   };
@@ -100,8 +105,8 @@ function initializePage() {
   };
   const recover = () => {
     messages.querySelectorAll('.typing').forEach(node => node.remove());
-    messages.append(linkify('The assistant could not respond. Your appointment has not been changed. You can still book through Housecall Pro or contact the company in Messenger.'));
-    for (const [href, label] of [[activeBookingUrl, 'Book in Housecall Pro'], [messengerUrl, 'Contact the company in Messenger']]) {
+    messages.append(linkify('The assistant could not respond. Your appointment has not been changed. You can still book through Housecall Pro, text the company, or open Messenger.'));
+    for (const [href, label] of [[activeBookingUrl, 'Book in Housecall Pro'], [smsUrl, 'Text the company'], [messengerUrl, 'Open Messenger']]) {
       const link = document.createElement('a');
       link.href = href;
       link.className = 'concierge-book';

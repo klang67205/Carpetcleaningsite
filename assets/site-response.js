@@ -1,4 +1,4 @@
-import { bookingUrl, messengerUrl, createConversation } from './conversation.js';
+import { bookingUrl, messengerUrl, smsUrl, createConversation } from './conversation.js';
 
 // The website cannot deliver messages to the company or modify appointments.
 export function forWebsite(result) {
@@ -16,7 +16,7 @@ export function forWebsite(result) {
       .replace(/message us here/gi, 'contact the company in Messenger using the link below')
       .replace(/I[’']ll look at it myself\./gi, 'The company will need to review your request.')
     );
-  if (handoff) bubbles.push('This website chat cannot send your request, receive photos, or change a booking. Open Messenger to contact the company.');
+  if (handoff) bubbles.push('This website chat cannot send your request, receive photos, or change a booking. Text (316) 232-8111 or open Messenger to contact the company.');
   else if (furniture && !bubbles.includes(bookingUrl)) bubbles.push(bookingUrl);
   return { ...result, bubbles, handoff, sendLink: handoff ? false : furniture || result.sendLink, booking: handoff ? false : result.booking };
 }
@@ -32,7 +32,7 @@ export async function requestReply(host, sessionId, text, reset = false, fetcher
   return forWebsite((await response.json()).result);
 }
 
-export { bookingUrl, messengerUrl };
+export { bookingUrl, messengerUrl, smsUrl };
 
 export function createWebsiteConversation() {
   const conversation = createConversation({ channel: 'site' });

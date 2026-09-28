@@ -15,6 +15,9 @@ assert.deepEqual(business.hasOfferCatalog.itemListElement.map(offer => offer.pri
 assert.match(business.hasOfferCatalog.itemListElement[4].description, /area, room, hallway, or staircase/);
 assert.ok(html.includes('Both smaller packages are available in online booking.'));
 assert.ok(!html.includes('not currently listed in online booking'));
+assert.ok(html.includes('sms:+13162328111'));
+assert.ok(html.includes('(316) 232-8111'));
+assert.ok(!html.includes('(316) 209-2176'));
 for (const value of ['$75', '$85', '$19', '$39', '$79', '$89', '$119', '$169', '$179', '$129', '$259', '$139', '$239', '100 sq. ft.', '150 sq. ft.', '300 sq. ft.', '400 sq. ft.', '600 sq. ft.']) assert.ok(html.includes(value), `Missing verified catalog detail: ${value}`);
 assert.ok(!/hall(?:way)?s?[^.]{0,40}\$10/.test(html), 'Retired hallway price');
 assert.ok(html.includes('Appointments are available Monday through Friday only.'));
@@ -26,7 +29,7 @@ for (const page of pages) {
   const ids = [...content.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
   assert.equal(ids.length, new Set(ids).size, `Duplicate IDs: ${page}`);
   for (const [, raw] of content.matchAll(/(?:href|src)="([^"]+)"/g)) {
-    if (/^(?:https?:|mailto:|tel:|data:)/.test(raw)) continue;
+    if (/^(?:https?:|mailto:|tel:|sms:|data:)/.test(raw)) continue;
     const [path, hash] = raw.split('#');
     const target = path ? resolve(path.startsWith('/') ? root : dirname(resolve(root, page)), path.replace(/^\//, '').split('?')[0]) : resolve(root, page);
     assert.ok(existsSync(target), `Broken local link ${raw} in ${page}`);

@@ -63,7 +63,7 @@ export const ODOR_LINE =
 export const LAST_LINE =
   "We would love to get you on the schedule. Our last daily appointment is at 3:30 — that’s the last start we take.";
 
-export const PHONE = "(316) 209-2176";
+export const PHONE = "(316) 232-8111";
 
 export const TEXT_US = `We would love to talk — text ${PHONE} or keep talking here in Messenger and we’ll take care of you.`;
 
@@ -101,7 +101,7 @@ export function asksServiceDiscount(spoken) {
 }
 
 export const CANCEL_LINE =
-  "We would love to make that easy. If you give us 24 hours’ notice there’s no fee. Same-day cancellation has a $25 fee. Text (316) 209-2176 or message us here and we’ll take care of it.";
+  `We would love to make that easy. If you give us 24 hours’ notice there’s no fee. Same-day cancellation has a $25 fee. Text ${PHONE} or message us here and we’ll take care of it.`;
 
 export const NO_CONFIRM_MAIL =
   "We would love to keep that simple — after booking, watch for the confirmation text from our scheduling system. Reply to that text or message us here if you need something changed.";
