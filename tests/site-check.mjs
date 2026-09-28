@@ -17,7 +17,7 @@ assert.ok(!/hall(?:way)?s?[^.]{0,40}\$10/.test(html), 'Retired hallway price');
 assert.ok(html.includes('Appointments are available Monday through Friday only.'));
 assert.ok(html.includes('On-base military housing is not serviced'));
 assert.ok(!/href="(?:tel:|mailto:)/i.test(html), 'Do not add unverified contact details');
-const pages = ['index.html', '404.html', 'privacy-policy/index.html', 'terms-of-service/index.html', 'data-deletion/index.html', 'accessibility/index.html'];
+const pages = ['index.html', '404.html', 'booking-confirmed/index.html', 'privacy-policy/index.html', 'terms-of-service/index.html', 'data-deletion/index.html', 'accessibility/index.html'];
 for (const page of pages) {
   const content = readFileSync(resolve(root, page), 'utf8');
   const ids = [...content.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);

@@ -5,13 +5,16 @@
  */
 import { bookingUrl, delayFor } from "./conversation.js";
 import { createWebsiteConversation, requestReply, messengerUrl } from "./site-response.js";
+import { applyBookingAttribution } from "./booking-attribution.js";
+
+let activeBookingUrl = bookingUrl;
 
 function linkify(text) {
   const p = document.createElement("p");
   p.className = "concierge-message guide";
   if (text === bookingUrl) {
     const a = document.createElement("a");
-    a.href = bookingUrl;
+    a.href = activeBookingUrl;
     a.target = "_blank";
     a.rel = "noreferrer";
     a.textContent = "See available appointments in Housecall Pro";
@@ -24,6 +27,7 @@ function linkify(text) {
 }
 
 function initializePage() {
+  activeBookingUrl = applyBookingAttribution();
   const apiHost = (document.querySelector('meta[name="concierge-api"]')?.content || "").replace(/\/$/, "");
   const sessionId = "site-" + Math.random().toString(36).slice(2, 10);
   const year = document.getElementById("year");
@@ -97,7 +101,7 @@ function initializePage() {
   const recover = () => {
     messages.querySelectorAll('.typing').forEach(node => node.remove());
     messages.append(linkify('The assistant could not respond. Your appointment has not been changed. You can still book through Housecall Pro or contact the company in Messenger.'));
-    for (const [href, label] of [[bookingUrl, 'Book in Housecall Pro'], [messengerUrl, 'Contact the company in Messenger']]) {
+    for (const [href, label] of [[activeBookingUrl, 'Book in Housecall Pro'], [messengerUrl, 'Contact the company in Messenger']]) {
       const link = document.createElement('a');
       link.href = href;
       link.className = 'concierge-book';

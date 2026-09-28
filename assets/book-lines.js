@@ -104,7 +104,7 @@ export const CANCEL_LINE =
   "We would love to make that easy. If you give us 24 hours’ notice there’s no fee. Same-day cancellation has a $25 fee. Text (316) 209-2176 or message us here and we’ll take care of it.";
 
 export const NO_CONFIRM_MAIL =
-  "We would love to keep that simple — we don’t send a confirmation email. The booking on the link is your reservation. Text (316) 209-2176 or message us here if you need something changed.";
+  "We would love to keep that simple — after booking, watch for the confirmation text from our scheduling system. Reply to that text or message us here if you need something changed.";
 
 export const LEAD_SCOPE =
   "If you’d like to get it scheduled, about how many rooms should we count?";
