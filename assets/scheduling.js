@@ -1,14 +1,14 @@
 /**
  * Scheduling failsafe. Phrase lists miss. Score the meaning, then answer the book.
- * Daily starts: Mon–Fri 8, 10:30, 1, 3:30. Last start 3:30. Closed Sat/Sun.
+ * Weekday start times vary by day. Housecall Pro is the source of truth.
  */
 
 import { LIVE_TIMES } from "./book-lines.js";
 
 export const SLOT_LINE =
-  "We would love to get you on the schedule. Our normal appointment times are Monday through Friday at 8, 10:30, 1, and 3:30.";
-export const LAST_LINE = "We would love to get you on the schedule. Our last daily appointment is at 3:30.";
-export const FIRST_LINE = "We would love to get you on the schedule. Our first daily appointment is at 8.";
+  "Appointment times vary by weekday. The booking page shows every opening currently available.";
+export const LAST_LINE = "The last opening varies by weekday and the appointments already scheduled.";
+export const FIRST_LINE = "The first opening varies by weekday and the appointments already scheduled.";
 export const DAYS_LINE = "We’re closed Saturday and Sunday.";
 
 function spokenOf(...parts) {
@@ -141,16 +141,18 @@ export function schedulingWins(text, original, intents = []) {
 
 export function hoursLine(text, original = "") {
   const { kind } = schedulingScore(text, original);
+  const spoken = spokenOf(text, original);
   if (kind === "last") {
-    return `${LAST_LINE} That’s the last start we take. ${LIVE_TIMES}`;
+    return `${LAST_LINE} ${LIVE_TIMES}`;
   }
   if (kind === "first") {
-    return `${FIRST_LINE} After that we have 10:30, 1, and 3:30, Monday through Friday. ${LIVE_TIMES}`;
+    return `${FIRST_LINE} ${LIVE_TIMES}`;
   }
   if (kind === "named") {
-    return `${SLOT_LINE} ${LIVE_TIMES}`;
+    return SLOT_LINE;
   }
-  return `${SLOT_LINE} ${DAYS_LINE} ${LIVE_TIMES}`;
+  if (/\b(?:monday|tuesday|wednesday|thursday|friday)\b/.test(spoken)) return SLOT_LINE;
+  return `${SLOT_LINE} ${DAYS_LINE}`;
 }
 
 export function soonLine() {

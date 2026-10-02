@@ -236,7 +236,7 @@ export function planTurn({ text, original = "", intents = [], heard = null, stat
       job: "hours",
       constraint: "last",
       want: "the last start we take",
-      cannot: "we don’t start after 3:30",
+      cannot: "we only offer the start times shown on the live booking page",
       offer: LAST_LINE,
       bubbles: [`${LAST_LINE} ${LIVE_TIMES}`],
       sendLink: true,

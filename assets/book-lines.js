@@ -61,7 +61,7 @@ export const ODOR_LINE =
   "We can’t promise in every case that odor that has set in can always be removed if it has worked into the padding or the subfloor, but we do promise to do the best job possible trying.";
 
 export const LAST_LINE =
-  "We would love to get you on the schedule. Our last daily appointment is at 3:30 — that’s the last start we take.";
+  "The last opening varies by weekday and the appointments already scheduled. The booking page shows every opening currently available.";
 
 export const PHONE = "(316) 232-8111";
 
@@ -110,7 +110,7 @@ export const LEAD_SCOPE =
   "If you’d like to get it scheduled, about how many rooms should we count?";
 
 export const LIVE_TIMES =
-  "All of the availabilities and times are current to the minute.";
+  "The booking page shows every available time currently open.";
 
 export const LEAD_TIMES = LIVE_TIMES;
 
