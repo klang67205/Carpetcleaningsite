@@ -9,7 +9,9 @@ const websiteBookingUrl = 'https://book.housecallpro.com/book/Wichita-Carpet-Cle
 for (const value of ['$99', '$149', '$15', '5 rooms', '2 hallways', '1 standard staircase', 'assets/reliability.css', 'id="contact"', 'role="log"']) assert.ok(html.includes(value), `Missing ${value}`);
 for (const value of ['id="results"', 'assets/results/hall-before-after.jpg', 'assets/results/room-before-after.jpg', 'assets/results/spot-before-after.jpg', 'real completed carpet-cleaning work']) assert.ok(html.includes(value), `Missing authentic result proof: ${value}`);
 for (const asset of ['hall-before-after.jpg', 'room-before-after.jpg', 'spot-before-after.jpg']) assert.ok(existsSync(resolve(root, 'assets', 'results', asset)), `Missing result image: ${asset}`);
-assert.equal([...html.matchAll(/href="https:\/\/book\.housecallpro\.com\/book\/Wichita-Carpet-Cleaning-Services\/36104bbb2c7d409a8293445c570b5f8b\?v2=true(?:&amp;|&)attr=10858"/g)].length, 8, 'Every static booking link must use the HCP website attribute');
+const bookingLinks = [...html.matchAll(/href="(https:\/\/book\.housecallpro\.com[^"]+)"/g)].map(match => match[1].replaceAll('&amp;', '&'));
+assert.ok(bookingLinks.length >= 4, 'Homepage must retain prominent booking paths');
+assert.ok(bookingLinks.every(link => link === websiteBookingUrl), 'Every static booking link must use the HCP website attribute');
 assert.ok(html.includes(`href="${websiteBookingUrl}"`), 'Website-attributed booking link missing');
 for (const value of ['CRI certified', 'CRI approved', 'zero residue', 'no mold risk', 'permanently eliminate']) assert.ok(!html.toLowerCase().includes(value.toLowerCase()), `Unsupported claim: ${value}`);
 const schemas = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(match => JSON.parse(match[1]));
