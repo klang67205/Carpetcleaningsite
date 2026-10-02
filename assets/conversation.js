@@ -1237,7 +1237,7 @@ export function createConversation(seed = {}) {
       return reply(
         state,
         "method",
-        "We would love to walk you through it. We pretreat, use counter-rotating brushes, and encapsulate — we don’t flood the carpet. We’re not CRI-certified, and we won’t pretend otherwise.",
+        "We would love to walk you through it. We pretreat the carpet, work through the pile with counter-rotating brushes, and finish it with a low-moisture process — we don’t flood the carpet.",
       );
     }
     if (intents.includes("payment")) {

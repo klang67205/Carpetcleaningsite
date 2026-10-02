@@ -84,6 +84,8 @@ for (const page of guidePages) {
 const methodGuide = readFileSync(resolve(root, 'low-moisture-carpet-cleaning/index.html'), 'utf8');
 for (const value of ['1.5–2 hours', 'Counter-rotating', 'Permanent stain or odor removal cannot be promised', '$75', '$99', '$149', '$15']) assert.ok(methodGuide.includes(value), `Missing method-guide detail: ${value}`);
 for (const value of ['one-hour dry', '95% less water', 'safe for kids', 'safe for pets', 'zero residue', 'no mold']) assert.doesNotMatch(methodGuide, new RegExp(value, 'i'), `Unsupported method-guide claim: ${value}`);
+assert.doesNotMatch(methodGuide, /subsequent vacuum|later vacuum|carpet is vacuumed/i, 'Method guide must not imply that the customer receives unfinished carpet');
+assert.doesNotMatch(html, /subsequent vacuum|later vacuum|carpet is finished with professional vacuuming/i, 'Homepage must not imply that the customer receives unfinished carpet');
 const areaGuide = readFileSync(resolve(root, 'service-area/index.html'), 'utf8');
 for (const value of ['Wichita', 'Derby', 'Andover', 'Goddard', 'Maize', 'Newton is outside', 'On-base military housing is not serviced']) assert.ok(areaGuide.includes(value), `Missing service-area detail: ${value}`);
 assert.match(html, /<h1>Wichita-area carpet cleaning\./, 'Homepage must describe the broader Wichita-area coverage accurately');
