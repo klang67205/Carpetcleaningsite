@@ -3,11 +3,33 @@
  * with <meta name="concierge-api" content="https://YOUR-HOST"> so talk goes
  * through the language model. Without that, this file uses the local book only.
  */
-import { bookingUrl, delayFor } from "./conversation.js";
-import { createWebsiteConversation, requestReply, messengerUrl, smsUrl } from "./site-response.js";
 import { applyBookingAttribution } from "./booking-attribution.js";
 
-let activeBookingUrl = bookingUrl;
+let activeBookingUrl = "";
+let bookingUrl = "";
+let delayFor;
+let createWebsiteConversation;
+let requestReply;
+let messengerUrl = "https://m.me/wichitacarpetcleaningservices";
+let smsUrl = "sms:+13162328111";
+let assistantModulePromise;
+
+function loadAssistant() {
+  if (!assistantModulePromise) {
+    assistantModulePromise = Promise.all([
+      import("./conversation.js"),
+      import("./site-response.js"),
+    ]).then(([conversationModule, websiteModule]) => {
+      bookingUrl = conversationModule.bookingUrl;
+      delayFor = conversationModule.delayFor;
+      createWebsiteConversation = websiteModule.createWebsiteConversation;
+      requestReply = websiteModule.requestReply;
+      messengerUrl = websiteModule.messengerUrl;
+      smsUrl = websiteModule.smsUrl;
+    });
+  }
+  return assistantModulePromise;
+}
 
 function linkify(text) {
   const p = document.createElement("p");
@@ -54,7 +76,7 @@ function initializePage() {
     button.addEventListener('click', () => ask(button.dataset.prompt));
   });
 
-  const conversation = createWebsiteConversation();
+  let conversation;
   let busy = false;
 
   const addVisitor = (text) => {
@@ -122,6 +144,8 @@ function initializePage() {
     addVisitor(q);
     input.value = "";
     try {
+      await loadAssistant();
+      conversation ||= createWebsiteConversation();
       const result = apiHost ? await askRemote(q) : conversation.respond(q);
       await play(result);
     } catch {
@@ -138,6 +162,8 @@ function initializePage() {
     if (!messages.children.length && !busy) {
       setBusy(true);
       try {
+        await loadAssistant();
+        conversation ||= createWebsiteConversation();
         const result = apiHost ? await askRemote("", true) : conversation.start();
         await play(result);
       } catch {

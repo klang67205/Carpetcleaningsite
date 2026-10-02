@@ -18,7 +18,9 @@ assert.equal(business.priceRange, '$75–$149+');
 assert.equal(business.telephone, '+13162328111');
 assert.equal(business.address, undefined, 'Private business address must not be published in structured data');
 assert.equal(business.email, undefined, 'Broken domain email must not be published in structured data');
-assert.equal(business.logo, 'https://www.wichitacarpetcleaningservices.com/assets/brand-mark.svg');
+assert.equal(business.logo, 'https://wichitacarpetcleaningservices.com/assets/brand-mark.svg');
+assert.equal(business.url, 'https://wichitacarpetcleaningservices.com/');
+assert.equal(business['@id'], 'https://wichitacarpetcleaningservices.com/#business');
 assert.deepEqual(business.hasOfferCatalog.itemListElement.map(offer => offer.price), ['75', '85', '99', '149', '15']);
 assert.match(business.hasOfferCatalog.itemListElement[4].description, /area, room, hallway, or staircase/);
 for (const value of ['og:site_name', 'og:image:width', 'og:image:height', 'og:image:alt', 'twitter:card', 'twitter:image:alt']) assert.ok(html.includes(`property="${value}"`) || html.includes(`name="${value}"`), `Missing social metadata: ${value}`);
@@ -57,6 +59,10 @@ for (const page of pages) {
     if (!path && hash) assert.ok(ids.includes(hash), `Missing anchor ${raw} in ${page}`);
   }
 }
+
+assert.doesNotMatch(html, /https:\/\/www\.wichitacarpetcleaningservices\.com/i, 'Homepage metadata must use the canonical apex domain');
+assert.doesNotMatch(readFileSync(resolve(root, 'sitemap.xml'), 'utf8'), /https:\/\/www\.wichitacarpetcleaningservices\.com/i, 'Sitemap must use the canonical apex domain');
+assert.doesNotMatch(readFileSync(resolve(root, 'robots.txt'), 'utf8'), /https:\/\/www\.wichitacarpetcleaningservices\.com/i, 'Robots sitemap reference must use the canonical apex domain');
 const deletion = readFileSync(resolve(root, 'data-deletion/index.html'), 'utf8');
 assert.ok(deletion.includes('reply to the Housecall Pro text or text <strong>(316) 232-8111</strong>'));
 assert.ok(deletion.includes('does not change or cancel an appointment until the company confirms it'));
@@ -76,7 +82,7 @@ assert.match(recoveryScript, /new URL\("\/", current\.origin\)/, 'Missing-route 
 assert.match(recoveryScript, /destination\.search = current\.search/, 'Missing-route recovery must preserve campaign query parameters');
 assert.match(recoveryScript, /sessionStorage\.setItem\("booking-source", "facebook"\)/, 'Missing-route recovery must preserve Facebook attribution');
 assert.match(recoveryScript, /location\.replace\(destination\.href\)/, 'Missing-route recovery must replace the dead route');
-assert.match(readFileSync(resolve(root, 'sitemap.xml'), 'utf8'), /<lastmod>2026-09-28<\/lastmod>/);
+assert.match(readFileSync(resolve(root, 'sitemap.xml'), 'utf8'), /<lastmod>2026-10-01<\/lastmod>/);
 const confirmationCss = readFileSync(resolve(root, 'assets/confirmation.css'), 'utf8');
 assert.ok(confirmationCss.includes('.confirmation-page *{letter-spacing:0}'), 'Confirmation page must use normal letter spacing');
 assert.ok(confirmationCss.includes('.confirmation-actions .button{color:var(--ink)}'), 'Confirmation primary button must keep dark text on lime');
