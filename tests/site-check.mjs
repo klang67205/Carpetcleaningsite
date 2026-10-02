@@ -71,6 +71,13 @@ for (const page of pages) {
   }
 }
 
+for (const page of [...servicePages, ...guidePages]) {
+  const content = readFileSync(resolve(root, page), 'utf8');
+  for (const value of ['og:site_name', 'og:image', 'og:image:alt', 'twitter:card', 'twitter:title', 'twitter:description', 'twitter:image']) {
+    assert.ok(content.includes(value), `Missing branded social preview metadata (${value}) in ${page}`);
+  }
+}
+
 for (const page of guidePages) {
   const content = readFileSync(resolve(root, page), 'utf8');
   const pageSchemas = [...content.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(match => JSON.parse(match[1]));
