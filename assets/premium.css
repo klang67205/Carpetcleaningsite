@@ -1059,16 +1059,11 @@ body {
   max-width: 810px;
 }
 
-.service-list {
-  counter-reset: services;
-}
-
 .services .service-list a {
   position: relative;
   align-items: center;
   padding: 31px 0 31px 64px;
   overflow: hidden;
-  counter-increment: services;
   transition: color .22s ease, padding-left .22s ease;
 }
 
@@ -1076,11 +1071,17 @@ body {
   position: absolute;
   left: 2px;
   color: #778b83;
-  content: "0" counter(services);
+  content: "";
   font-family: Georgia, serif;
   font-size: 1.05rem;
   font-style: italic;
 }
+
+.services .service-list a:nth-child(1)::before { content: "01"; }
+.services .service-list a:nth-child(2)::before { content: "02"; }
+.services .service-list a:nth-child(3)::before { content: "03"; }
+.services .service-list a:nth-child(4)::before { content: "04"; }
+.services .service-list a:nth-child(5)::before { content: "05"; }
 
 .services .service-list a::after {
   position: absolute;
