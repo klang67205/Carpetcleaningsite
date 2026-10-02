@@ -13,8 +13,6 @@ export { bookingUrl };
 export const messengerUrl = "https://m.me/wichitacarpetcleaningservices";
 export const smsUrl = "sms:+13162328111";
 export const phoneDisplay = "(316) 232-8111";
-export const phoneTel = "tel:3162092176";
-export const phoneSms = "sms:3162092176";
 
 const cityAliases = { belaire: "Bel Aire", eldorado: "El Dorado" };
 const servedCities = [
@@ -449,6 +447,14 @@ function alreadySorry(bubbles) {
   return /so sorry|i.?m sorry|i am sorry/i.test(String(bubbles[0] || ""));
 }
 
+function naturalize(line) {
+  return String(line)
+    .replace(/^We would love to help(?:\.| —|,)\s*/i, "I can help with that. ")
+    .replace(/\bwe would love for you to\b/gi, "we want you to")
+    .replace(/\bwe would love to\b/gi, "we can")
+    .replace(/\bwe’d love to\b/gi, "we can");
+}
+
 function reply(state, intent, bubbles, extra = {}) {
   state.lastIntent = intent;
   if (extra.stage) state.stage = extra.stage;
@@ -482,7 +488,7 @@ function reply(state, intent, bubbles, extra = {}) {
     const beat = conversionLead(state, intent, list);
     if (beat) list.push(beat);
   }
-  const cleaned = dropKnownQuestions(state, list, { alreadyInvited });
+  const cleaned = dropKnownQuestions(state, list, { alreadyInvited }).map(naturalize);
   list.length = 0;
   list.push(...cleaned);
   return {
@@ -516,7 +522,7 @@ function weekdayWanted(text) {
 }
 
 function helloLine() {
-  return "Hey, we would love to help — what can we get cleaned for you?";
+  return "Hi, how can I help? What would you like cleaned?";
 }
 
 function scopeAsk() {

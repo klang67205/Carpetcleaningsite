@@ -137,6 +137,7 @@ assert.ok(confirmationCss.includes('.confirmation-actions .button{color:var(--in
 for (const file of readdirSync(resolve(root, 'assets')).filter(name => name.endsWith('.js'))) {
   const code = readFileSync(resolve(root, 'assets', file), 'utf8');
   assert.doesNotMatch(code, /(?:\$25|24-hour).{0,40}cancell|cancell.{0,40}(?:\$25|24-hour)/i, `Retired cancellation fee policy in ${file}`);
+  assert.doesNotMatch(code, /(?:\+?1[ .-]?)?\(?316\)?[ .-]?209[ .-]?2176/, `Private owner phone exposed in ${file}`);
   for (const [, path] of code.matchAll(/from\s+["'](\.[^"']+)["']/g)) assert.ok(existsSync(resolve(root, 'assets', path)), `Broken module import in ${file}`);
 }
 for (const page of pages) {

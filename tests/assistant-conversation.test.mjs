@@ -4,6 +4,15 @@ import { createConversation } from '../assets/conversation.js';
 import { forWebsite, requestReply, bookingUrl, createWebsiteConversation } from '../assets/site-response.js';
 const answer = input => forWebsite(createConversation({ channel: 'site' }).respond(input));
 const text = result => result.bubbles.join(' ');
+test('Customer-facing replies avoid repetitive sales-template language', () => {
+  const chat = createConversation({ channel: 'site' });
+  const outputs = [
+    ...chat.start().bubbles,
+    ...['How much is standard cleaning?', 'Do you serve Newton?', 'How does the cleaning work?', 'Can you come today?', 'I need a human'].flatMap(input => createConversation({ channel: 'site' }).respond(input).bubbles),
+  ].join(' ');
+  assert.doesNotMatch(outputs, /we would love to|we’d love to/i);
+  assert.doesNotMatch(outputs, /316[ .-]?209[ .-]?2176/);
+});
 for (const [input, expected] of [
   ['How much for an extra hallway?', /hallway.*\$15/],
   ['How much for an additional staircase?', /staircase.*\$15/],
