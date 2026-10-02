@@ -7,7 +7,9 @@ const html = readFileSync(resolve(root, 'index.html'), 'utf8');
 const styles = readFileSync(resolve(root, 'assets/styles.css'), 'utf8');
 const websiteBookingUrl = 'https://book.housecallpro.com/book/Wichita-Carpet-Cleaning-Services/36104bbb2c7d409a8293445c570b5f8b?v2=true&attr=10858';
 for (const value of ['$99', '$149', '$15', '5 rooms', '2 hallways', '1 standard staircase', 'assets/reliability.css', 'id="contact"', 'role="log"']) assert.ok(html.includes(value), `Missing ${value}`);
-assert.equal([...html.matchAll(/href="https:\/\/book\.housecallpro\.com\/book\/Wichita-Carpet-Cleaning-Services\/36104bbb2c7d409a8293445c570b5f8b\?v2=true(?:&amp;|&)attr=10858"/g)].length, 11, 'Every static booking link must use the HCP website attribute');
+for (const value of ['id="results"', 'assets/results/hall-before-after.jpg', 'assets/results/room-before-after.jpg', 'assets/results/spot-before-after.jpg', 'real completed carpet-cleaning work']) assert.ok(html.includes(value), `Missing authentic result proof: ${value}`);
+for (const asset of ['hall-before-after.jpg', 'room-before-after.jpg', 'spot-before-after.jpg']) assert.ok(existsSync(resolve(root, 'assets', 'results', asset)), `Missing result image: ${asset}`);
+assert.equal([...html.matchAll(/href="https:\/\/book\.housecallpro\.com\/book\/Wichita-Carpet-Cleaning-Services\/36104bbb2c7d409a8293445c570b5f8b\?v2=true(?:&amp;|&)attr=10858"/g)].length, 8, 'Every static booking link must use the HCP website attribute');
 assert.ok(html.includes(`href="${websiteBookingUrl}"`), 'Website-attributed booking link missing');
 for (const value of ['CRI certified', 'CRI approved', 'zero residue', 'no mold risk', 'permanently eliminate']) assert.ok(!html.toLowerCase().includes(value.toLowerCase()), `Unsupported claim: ${value}`);
 const schemas = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(match => JSON.parse(match[1]));
@@ -37,7 +39,13 @@ assert.ok(!/hall(?:way)?s?[^.]{0,40}\$10/.test(html), 'Retired hallway price');
 assert.ok(html.includes('Appointments are available Monday through Friday only.'));
 assert.ok(html.includes('On-base military housing is not serviced'));
 assert.ok(!/href="(?:tel:|mailto:)/i.test(html), 'Do not add unverified contact details');
-const pages = ['index.html', '404.html', 'booking-confirmed/index.html', 'privacy-policy/index.html', 'terms-of-service/index.html', 'data-deletion/index.html', 'accessibility/index.html'];
+const servicePages = [
+  'services/pet-treatment/index.html',
+  'services/upholstery-cleaning/index.html',
+  'services/tile-grout-cleaning/index.html',
+  'services/hard-floor-cleaning/index.html',
+];
+const pages = ['index.html', '404.html', 'booking-confirmed/index.html', 'privacy-policy/index.html', 'terms-of-service/index.html', 'data-deletion/index.html', 'accessibility/index.html', ...servicePages];
 for (const page of pages) {
   const content = readFileSync(resolve(root, page), 'utf8');
   assert.doesNotMatch(content, /Manage Appointment/i, `Unsupported Housecall Pro management link claim in ${page}`);
@@ -58,6 +66,22 @@ for (const page of pages) {
     assert.ok(existsSync(target), `Broken local link ${raw} in ${page}`);
     if (!path && hash) assert.ok(ids.includes(hash), `Missing anchor ${raw} in ${page}`);
   }
+}
+
+for (const page of servicePages) {
+  const content = readFileSync(resolve(root, page), 'utf8');
+  const pageSchemas = [...content.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(match => JSON.parse(match[1]));
+  const serviceSchema = pageSchemas.find(schema => schema['@type'] === 'Service');
+  assert.match(content, /<link rel="canonical" href="https:\/\/wichitacarpetcleaningservices\.com\/services\//, `Missing apex canonical in ${page}`);
+  assert.ok(content.includes('../../assets/service-pages.css'), `Missing service-page visual system in ${page}`);
+  assert.ok(content.includes('../../assets/app.js'), `Missing booking attribution in ${page}`);
+  assert.ok(content.includes(websiteBookingUrl), `Missing attributed booking path in ${page}`);
+  assert.match(content, /Owner-operated|owner-operated/, `Missing local ownership proof in ${page}`);
+  assert.match(content, /plus applicable tax/i, `Missing tax disclosure in ${page}`);
+  assert.ok(serviceSchema, `Missing Service structured data in ${page}`);
+  assert.equal(serviceSchema.provider['@id'], 'https://wichitacarpetcleaningservices.com/#business');
+  assert.equal(serviceSchema.offers.priceCurrency, 'USD');
+  assert.match(serviceSchema.url, /^https:\/\/wichitacarpetcleaningservices\.com\/services\//);
 }
 
 assert.doesNotMatch(html, /https:\/\/www\.wichitacarpetcleaningservices\.com/i, 'Homepage metadata must use the canonical apex domain');
