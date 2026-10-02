@@ -522,7 +522,7 @@ function weekdayWanted(text) {
 }
 
 function helloLine() {
-  return "Hi, how can I help? What would you like cleaned?";
+  return "Hi, how can I help with cleaning, pricing, or booking?";
 }
 
 function scopeAsk() {
