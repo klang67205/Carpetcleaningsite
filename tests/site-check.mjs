@@ -45,7 +45,8 @@ const servicePages = [
   'services/tile-grout-cleaning/index.html',
   'services/hard-floor-cleaning/index.html',
 ];
-const pages = ['index.html', '404.html', 'booking-confirmed/index.html', 'privacy-policy/index.html', 'terms-of-service/index.html', 'data-deletion/index.html', 'accessibility/index.html', ...servicePages];
+const guidePages = ['low-moisture-carpet-cleaning/index.html', 'service-area/index.html'];
+const pages = ['index.html', '404.html', 'booking-confirmed/index.html', 'privacy-policy/index.html', 'terms-of-service/index.html', 'data-deletion/index.html', 'accessibility/index.html', ...servicePages, ...guidePages];
 for (const page of pages) {
   const content = readFileSync(resolve(root, page), 'utf8');
   assert.doesNotMatch(content, /Manage Appointment/i, `Unsupported Housecall Pro management link claim in ${page}`);
@@ -67,6 +68,27 @@ for (const page of pages) {
     if (!path && hash) assert.ok(ids.includes(hash), `Missing anchor ${raw} in ${page}`);
   }
 }
+
+for (const page of guidePages) {
+  const content = readFileSync(resolve(root, page), 'utf8');
+  const pageSchemas = [...content.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map(match => JSON.parse(match[1]));
+  const serviceSchema = pageSchemas.find(schema => schema['@type'] === 'Service');
+  assert.ok(content.includes('../assets/service-pages.css'), `Missing guide-page visual system in ${page}`);
+  assert.ok(content.includes('../assets/app.js'), `Missing booking attribution in ${page}`);
+  assert.ok(content.includes(websiteBookingUrl), `Missing attributed booking path in ${page}`);
+  assert.match(content, /Owner-operated|owner-operated/, `Missing local ownership proof in ${page}`);
+  assert.ok(serviceSchema, `Missing Service structured data in ${page}`);
+  assert.equal(serviceSchema.provider['@id'], 'https://wichitacarpetcleaningservices.com/#business');
+  assert.match(serviceSchema.url, /^https:\/\/wichitacarpetcleaningservices\.com\//);
+}
+const methodGuide = readFileSync(resolve(root, 'low-moisture-carpet-cleaning/index.html'), 'utf8');
+for (const value of ['1.5–2 hours', 'Counter-rotating', 'Permanent stain or odor removal cannot be promised', '$75', '$99', '$149', '$15']) assert.ok(methodGuide.includes(value), `Missing method-guide detail: ${value}`);
+for (const value of ['one-hour dry', '95% less water', 'safe for kids', 'safe for pets', 'zero residue', 'no mold']) assert.doesNotMatch(methodGuide, new RegExp(value, 'i'), `Unsupported method-guide claim: ${value}`);
+const areaGuide = readFileSync(resolve(root, 'service-area/index.html'), 'utf8');
+for (const value of ['Wichita', 'Derby', 'Andover', 'Goddard', 'Maize', 'Newton is outside', 'On-base military housing is not serviced']) assert.ok(areaGuide.includes(value), `Missing service-area detail: ${value}`);
+assert.match(html, /<h1>Wichita-area carpet cleaning\./, 'Homepage must describe the broader Wichita-area coverage accurately');
+const sitemap = readFileSync(resolve(root, 'sitemap.xml'), 'utf8');
+for (const path of ['/low-moisture-carpet-cleaning/', '/service-area/']) assert.ok(sitemap.includes(`https://wichitacarpetcleaningservices.com${path}`), `Missing sitemap entry: ${path}`);
 
 for (const page of servicePages) {
   const content = readFileSync(resolve(root, page), 'utf8');
