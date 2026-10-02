@@ -109,6 +109,8 @@ for (const path of ['/low-moisture-carpet-cleaning/', '/service-area/', '/appoin
 const preparationGuide = readFileSync(resolve(root, 'appointment-preparation/index.html'), 'utf8');
 for (const value of ['Clear loose items', 'Protect breakables', 'Plan furniture', 'Keep pets comfortable', 'There is no cancellation fee']) assert.ok(preparationGuide.includes(value), `Missing preparation guidance: ${value}`);
 assert.doesNotMatch(preparationGuide, /must (?:crate|remove)|pets? away|required to vacuum/i, 'Preparation guide must remain helpful rather than bossy');
+const confirmationPage = readFileSync(resolve(root, 'booking-confirmed/index.html'), 'utf8');
+assert.doesNotMatch(confirmationPage, /Secure pets|Move heavy furniture/, 'Booking confirmation must keep preparation guidance calm and optional');
 
 for (const page of servicePages) {
   const content = readFileSync(resolve(root, page), 'utf8');
