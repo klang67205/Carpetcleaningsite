@@ -45,7 +45,7 @@ const servicePages = [
   'services/tile-grout-cleaning/index.html',
   'services/hard-floor-cleaning/index.html',
 ];
-const guidePages = ['low-moisture-carpet-cleaning/index.html', 'service-area/index.html'];
+const guidePages = ['low-moisture-carpet-cleaning/index.html', 'service-area/index.html', 'appointment-preparation/index.html'];
 const pages = ['index.html', '404.html', 'booking-confirmed/index.html', 'privacy-policy/index.html', 'terms-of-service/index.html', 'data-deletion/index.html', 'accessibility/index.html', ...servicePages, ...guidePages];
 for (const page of pages) {
   const content = readFileSync(resolve(root, page), 'utf8');
@@ -77,9 +77,15 @@ for (const page of guidePages) {
   assert.ok(content.includes('../assets/app.js'), `Missing booking attribution in ${page}`);
   assert.ok(content.includes(websiteBookingUrl), `Missing attributed booking path in ${page}`);
   assert.match(content, /Owner-operated|owner-operated/, `Missing local ownership proof in ${page}`);
-  assert.ok(serviceSchema, `Missing Service structured data in ${page}`);
-  assert.equal(serviceSchema.provider['@id'], 'https://wichitacarpetcleaningservices.com/#business');
-  assert.match(serviceSchema.url, /^https:\/\/wichitacarpetcleaningservices\.com\//);
+  assert.ok(pageSchemas.length, `Missing structured data in ${page}`);
+  if (serviceSchema) {
+    assert.equal(serviceSchema.provider['@id'], 'https://wichitacarpetcleaningservices.com/#business');
+    assert.match(serviceSchema.url, /^https:\/\/wichitacarpetcleaningservices\.com\//);
+  } else {
+    const webPageSchema = pageSchemas.find(schema => schema['@type'] === 'WebPage');
+    assert.ok(webPageSchema, `Missing WebPage structured data in ${page}`);
+    assert.equal(webPageSchema.about['@id'], 'https://wichitacarpetcleaningservices.com/#business');
+  }
 }
 const methodGuide = readFileSync(resolve(root, 'low-moisture-carpet-cleaning/index.html'), 'utf8');
 for (const value of ['1.5–2 hours', 'Counter-rotating', 'Permanent stain or odor removal cannot be promised', '$75', '$99', '$149', '$15']) assert.ok(methodGuide.includes(value), `Missing method-guide detail: ${value}`);
@@ -90,7 +96,10 @@ const areaGuide = readFileSync(resolve(root, 'service-area/index.html'), 'utf8')
 for (const value of ['Wichita', 'Derby', 'Andover', 'Goddard', 'Maize', 'Newton is outside', 'On-base military housing is not serviced']) assert.ok(areaGuide.includes(value), `Missing service-area detail: ${value}`);
 assert.match(html, /<h1>Wichita-area carpet cleaning\./, 'Homepage must describe the broader Wichita-area coverage accurately');
 const sitemap = readFileSync(resolve(root, 'sitemap.xml'), 'utf8');
-for (const path of ['/low-moisture-carpet-cleaning/', '/service-area/']) assert.ok(sitemap.includes(`https://wichitacarpetcleaningservices.com${path}`), `Missing sitemap entry: ${path}`);
+for (const path of ['/low-moisture-carpet-cleaning/', '/service-area/', '/appointment-preparation/']) assert.ok(sitemap.includes(`https://wichitacarpetcleaningservices.com${path}`), `Missing sitemap entry: ${path}`);
+const preparationGuide = readFileSync(resolve(root, 'appointment-preparation/index.html'), 'utf8');
+for (const value of ['Clear loose items', 'Protect breakables', 'Plan furniture', 'Keep pets comfortable', 'There is no cancellation fee']) assert.ok(preparationGuide.includes(value), `Missing preparation guidance: ${value}`);
+assert.doesNotMatch(preparationGuide, /must (?:crate|remove)|pets? away|required to vacuum/i, 'Preparation guide must remain helpful rather than bossy');
 
 for (const page of servicePages) {
   const content = readFileSync(resolve(root, page), 'utf8');
