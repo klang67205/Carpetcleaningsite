@@ -17,7 +17,7 @@ let assistantModulePromise;
 function loadAssistant() {
   if (!assistantModulePromise) {
     assistantModulePromise = Promise.all([
-      import("./conversation.js"),
+      import("./front-desk.js"),
       import("./site-response.js"),
     ]).then(([conversationModule, websiteModule]) => {
       bookingUrl = conversationModule.bookingUrl;

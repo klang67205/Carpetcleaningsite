@@ -1,4 +1,4 @@
-import { bookingUrl, messengerUrl, smsUrl, createConversation } from './conversation.js';
+import { bookingUrl, messengerUrl, smsUrl, createConversation } from './front-desk.js';
 
 // The website cannot deliver messages to the company or modify appointments.
 export function forWebsite(result) {
@@ -35,43 +35,11 @@ export async function requestReply(host, sessionId, text, reset = false, fetcher
 export { bookingUrl, messengerUrl, smsUrl };
 
 export function createWebsiteConversation() {
+  // The front-desk brain already speaks for the website (channel "site"): it never claims it
+  // notified anyone, and its handoffs point to the text line and Messenger.
   const conversation = createConversation({ channel: 'site' });
-  let support = false;
   return {
     start: () => forWebsite(conversation.start()),
-    respond: input => {
-      const needsPerson = /\b(?:complaint|refund)\b|\b(?:want|need|speak to|talk to) (?:a |an |the )?(?:human|person|manager|owner)\b/i.test(input);
-      if (needsPerson) {
-        support = true;
-        return forWebsite({ bubbles: ['A person needs to handle this request. Contact the company directly in Messenger.'], phone: true });
-      }
-      const spoken = String(input).toLowerCase().replace(/(\d),(?=\d{3}\b)/g, '$1');
-      const footage = spoken.match(/\b(\d+(?:\.\d+)?)\s*(?:square (?:feet|foot)|sq\.?\s*ft\.?|sqft|sf)\b/);
-      const size = footage ? Number(footage[1]) : null;
-      const bathroom = spoken.match(/\b(\d+|one|two|three|four|five|six)\s+bathrooms?\b/);
-      const counts = {one: 1, two: 2, three: 3, four: 4, five: 5, six: 6};
-      const bathrooms = bathroom ? counts[bathroom[1]] ?? Number(bathroom[1]) : null;
-      const tile = /\b(?:tile|grout)\b/.test(spoken);
-      const hard = /\bhard[ -]?(?:wood|floors?)\b|\bwood floors?\b/.test(spoken);
-      const whole = /\bwhole|\bfull[ -]?floor/.test(spoken);
-      const kitchen = /\bkitchen\b/.test(spoken);
-      const bath = /\bbathrooms?\b/.test(spoken);
-      const cap = tile ? whole || bath && kitchen ? 400 : bath ? 100 : kitchen ? 150 : 400 : 600;
-      const outsideFloorScope = (tile || hard) && (size !== null && (size <= 0 || size > cap) || tile && bath && !whole && !kitchen && bathrooms > 2 || /\b(?:natural stone|marble|unsealed|sanding|refinish)/.test(spoken));
-      if (outsideFloorScope && /\b(?:price|pricing|cost|how much|quote|package)\b/.test(spoken)) {
-        support = true;
-        return forWebsite({ bubbles: ['The floor area, bathroom count, or surface you described is outside the standard package scope and needs individual review before a price can be confirmed.'], phone: true });
-      }
-      const existingSupport = /\breceipt\b|where.{0,20}invoice|i (?:already )?(?:texted|messaged)|missed my message|sent (?:a |you a )?(?:housecall|message)|can i (?:send|upload).{0,15}photos?/i.test(input);
-      const newSales = /\b(?:new|another) (?:booking|cleaning|appointment)|\b(?:service area|hours|book a cleaning)\b/i.test(input)
-        || /\b(?:price|cost|how much)\b/i.test(input) && /\b(?:cleaning|carpet|pet|sofas?|couches?|love\s?seats?|chairs?|recliners?|sectionals?|furniture|tile|grout|floor)\b/i.test(input);
-      if (existingSupport || support && !newSales) {
-        support = true;
-        return forWebsite({ bubbles: ['For an existing visit, receipt, or follow-up, contact the company directly in Messenger. Do not enter appointment details or access codes in this website chat.'], phone: true });
-      }
-      const result = forWebsite(conversation.respond(input));
-      support = result.handoff;
-      return result;
-    },
+    respond: input => forWebsite(conversation.respond(input)),
   };
 }
