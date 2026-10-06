@@ -535,6 +535,11 @@ export function createConversation(init = {}) {
       return out("human", [reach(wantsText ? "Absolutely — I've passed your request to Keith, and he'll text you as soon as he can. He's usually on a job, but he'll reach out shortly." : "Absolutely — I've passed your callback request to Keith. He's usually on a job, but he'll reach out as soon as he can.", `Text Keith at ${TEXT_LINE} and he'll get back to you as soon as he can.`)], { phone: true });
     }
 
+    // "yes please ask him" / "can you ask Keith?" -> get Keith (site: point them to his text line)
+    if ((has(t, /\b(?:ask|check with|tell|message|have|get) keith\b/) && !has(t, /\b(?:i'?ll|i will|let me|i need to|i have to|i gotta|i'?m going to)\b/)) || /^(?:yes|yeah|yep|sure|ok|okay|please)\b[ ,!.]*(?:please )?(?:ask|check with) (?:him|keith)\b/.test(t)) {
+      return out("human", [reach("Sure — I've asked Keith, and he'll reply here as soon as he can.", `This chat can't message Keith directly — please text him at ${TEXT_LINE} and he'll get right back to you.`)], { phone: true });
+    }
+
     /* --- appointment times --- */
     const weekendWords = has(t, /\b(?:saturdays?|sundays?|weekends?|sat|sun)\b(?! ?(?:room|porch|down))/);
     const SLOT_LINE = "Our weekday start times are usually 8:00 AM, 10:30 AM, 1:00 PM and 3:30 PM (we're closed Saturday and Sunday). The live calendar shows what's open:";
@@ -1020,7 +1025,7 @@ export function createConversation(init = {}) {
     }
     if (asksPrice && topicIntent === "other-services" && has(t, /\b(?:tile|grout|hard ?wood|wood floors?|hard floors?|laminate|vinyl|lvp)\b/)) return out("other-services", [...notes]);
     if (asksPrice && (furnitureAsk || topicIntent === "rug")) return out(topicIntent || "price", [...notes, furnitureAsk ? "Want carpets done the same visit? " + ASK_ROOMS : askNext()]);
-    if (asksPrice) return out("price", [...notes, PACKAGE_SUMMARY + " " + ASK_ROOMS]);
+    if (asksPrice) return out("price", [...notes, notes.length && hasScope() ? askNext() : PACKAGE_SUMMARY + " " + ASK_ROOMS]);
     const followUp = alreadyBooked ? "Thanks for booking — see you then!" : ["area", "other-services", "special", "rug", "spanish", "apartment", "objection", "discount"].includes(topicIntent) ? askNext() : "";
     if (notes.length) return out(topicIntent || "info", [...notes, followUp]);
 
