@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node tests/site-check.mjs && node --test tests/booking-attribution.test.mjs && node tests/assistant-conversation.test.mjs",
-    "test": "node tests/site-check.mjs && node --test tests/booking-attribution.test.mjs && node tests/assistant-conversation.test.mjs"
+    "check": "node tests/site-check.mjs && node --test tests/booking-attribution.test.mjs && node tests/assistant-conversation.test.mjs && node --test tests/ai-understanding.test.mjs",
+    "test": "node tests/site-check.mjs && node --test tests/booking-attribution.test.mjs && node tests/assistant-conversation.test.mjs && node --test tests/ai-understanding.test.mjs"
   }
 }

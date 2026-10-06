@@ -20,7 +20,7 @@ const C = [
  ["I have pets", ["I have pets"], {has:["$149","$85"], not:["Keith"]}],
  ["pets then rooms", ["I have pets","3 bedrooms and living room, dog pee spots"], {has:["$149"], link:true}],
  ["see open times", ["See open times"], {link:true}],
- ["dog 3br saturday", ["hi i have 3 bedrooms and a dog, can you come saturday and whats the price"], {has:["$75","Keith"]}],
+ ["dog 3br saturday", ["hi i have 3 bedrooms and a dog, can you come saturday and whats the price"], {has:["$75","weekdays only (Monday–Friday) — we're closed Saturday and Sunday"], not:["Keith"], link:true}],
  ["speak to someone", ["I'm ready I would just like to speak to someone"], {}],
  ["phone number", ["do u have a phone number"], {has:["232-8111"]}],
  ["steam", ["Do you steam clean"], {has:["low-moisture","BrushPro"]}],
@@ -28,9 +28,9 @@ const C = [
  ["goddard", ["Do you service Goddard?"], {has:["Yes","Goddard"]}],
  ["6br 2h stairs", ["I have 6 bedrooms, 2 hallways and stairs, how much"], {has:["$99 + $15, plus tax"], link:true}],
  ["2 bedrooms", ["Just need 2 bedrooms done. price?"], {has:["$75"], link:true}],
- ["weekends?", ["Do you do weekends"], {has:["weekdays"]}],
+ ["weekends?", ["Do you do weekends"], {has:["weekdays only (Monday–Friday) — we're closed Saturday and Sunday"], not:["Keith","232-8111"]}],
  ["repeat customer", ["Hi! Just checking if you have availability to clean my carpets again","You have cleaned my house before and it was $170"], {not:["prep","vacuum"]}],
- ["couch", ["How much to clean a couch too?"], {has:["sofa $89"]}],
+ ["couch", ["How much to clean a couch too?"], {has:["sofa is $89"]}],
  ["move out 3br", ["Moving out next week need carpets done for deposit, 3 bedrooms"], {has:["move-out","$75"], link:true}],
  ["dry", ["how long until dry"], {has:["1.5"]}],
  ["base", ["I live on McConnell base housing"], {has:["on-base"]}],
@@ -79,10 +79,20 @@ for (const [name, msgs, chk] of C) {
 }
 
 test('Website chat never claims it notified Keith', () => {
-  for (const input of ['I need to talk to a real person', 'you guys came yesterday and it is still dirty, I want a refund', 'I need to reschedule my appointment', 'do you do commercial office building carpet', 'Can I book Saturday?', 'You cleaned my house last time and it was $170']) {
+  for (const input of ['I need to talk to a real person', 'you guys came yesterday and it is still dirty, I want a refund', 'I need to reschedule my appointment', 'do you do commercial office building carpet', 'You cleaned my house last time and it was $170']) {
     const result = createWebsiteConversation().respond(input);
     assert.doesNotMatch(text(result), /I've sent|I’ve sent|passing (?:this|your|it)|flagged this/i, input);
     assert.match(text(result), /232-8111|Messenger|Facebook/, input);
+  }
+});
+
+test('Weekend requests are a firm no: weekdays-only line and the weekday booking link, never Keith', () => {
+  for (const input of ['Can I book Saturday?', 'Can you come this Saturday?', 'can you ask keith if he can do sunday?']) {
+    const result = createWebsiteConversation().respond(input);
+    assert.ok(text(result).includes("weekdays only (Monday–Friday) — we're closed Saturday and Sunday"), input);
+    assert.ok(result.bubbles.includes(bookingUrl), `${input}: weekday booking link`);
+    assert.doesNotMatch(text(result), /Keith|232-8111|I've sent|I’ve sent|passing (?:this|your|it)/i, input);
+    assert.equal(Boolean(result.phone), false, `${input}: not a handoff`);
   }
 });
 
@@ -117,4 +127,88 @@ test('HTTP errors, malformed payloads, network errors and timeouts reject', asyn
     async () => { throw new Error('offline'); },
     async () => { throw new DOMException('timed out', 'TimeoutError'); },
   ]) await assert.rejects(() => requestReply('https://example.test', 'test', '', false, fetcher));
+});
+
+// Website chat UI safeguards (assets/app.js, index.html, reliability.css).
+import { readFileSync } from 'node:fs';
+import { mentionsContact, replyEntries } from '../assets/site-response.js';
+const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
+const homepage = read('index.html');
+const appCode = read('assets/app.js');
+const chatCss = read('assets/reliability.css');
+
+test('Every suggested prompt gets a sensible website reply', () => {
+  const prompts = [...homepage.matchAll(/data-prompt="([^"]+)"/g)].map(match => match[1]);
+  assert.ok(prompts.length >= 4);
+  assert.ok(prompts.includes('I need to change my appointment'), 'Change my appointment must ask about an existing appointment');
+  for (const prompt of prompts) createWebsiteConversation().respond(prompt);
+  const change = createWebsiteConversation().respond('I need to change my appointment');
+  assert.equal(change.handoff, true);
+  assert.ok(!change.bubbles.includes(bookingUrl), 'Existing-appointment changes must not get a new-booking link');
+  assert.match(text(change), /232-8111/);
+});
+
+test('Replies that send visitors to text or Messenger carry the contact buttons once', () => {
+  assert.equal(mentionsContact(['Text (316) 232-8111 anytime']), true);
+  assert.equal(mentionsContact(['Open Messenger to reach us']), true);
+  assert.equal(mentionsContact(['$99 plus tax']), false);
+  assert.equal(createWebsiteConversation().respond('do u have a phone number').contact, true);
+  assert.equal(createWebsiteConversation().respond('4 bedrooms and a hallway, how much?').contact, false);
+  assert.equal(createWebsiteConversation().respond('I need to talk to a real person').contact, true);
+  for (const q of ['do u have a phone number', 'I need to talk to a real person', '3 rooms, can I text you']) {
+    const entries = replyEntries(createWebsiteConversation().respond(q));
+    assert.equal(entries.filter(entry => entry[0] === 'a').length, 1, `${q}: one set of contact buttons`);
+  }
+  // a weekend request is answered here (weekdays only) with the booking button, not sent to text/Messenger
+  const weekend = replyEntries(createWebsiteConversation().respond('Can you come this Saturday?'));
+  assert.equal(weekend.filter(entry => entry[0] === 'a').length, 0, 'weekend: no contact buttons');
+  assert.equal(weekend.filter(entry => entry[0] === 'b').length, 1, 'weekend: one booking button');
+  assert.equal(replyEntries(createWebsiteConversation().respond('4 bedrooms and a hallway, how much?')).filter(entry => entry[0] === 'a').length, 0);
+  assert.match(appCode, /play\(replyEntries\(result\), entry\)/, 'Replies are laid out by replyEntries');
+});
+
+test('Each chat button sits next to the text it belongs to', () => {
+  const contact = '(316) 232-8111';
+  const layout = replyEntries({ bubbles: ['You can text us anytime at ' + contact + '.', 'For 3 rooms it is $75 plus tax.', 'Here are the open times:', bookingUrl], contact: true });
+  assert.deepEqual(layout.map(entry => entry[0]), ['g', 'a', 'g', 'g', 'b'], 'Text/Messenger right after the texting bubble, booking where its link was');
+  assert.deepEqual(layout[1][1].map(link => link[0]), ['Text the company', 'Open Messenger']);
+  const live = replyEntries(createWebsiteConversation().respond('3 rooms, can I text you'));
+  const kinds = live.map(entry => entry[0]);
+  assert.equal(kinds.at(-1), 'b', 'Booking button stays at the end, where the link was');
+  assert.match(live[kinds.indexOf('a') - 1][1], /232-8111|Messenger/i, 'Contact buttons follow the bubble that mentions texting');
+  assert.deepEqual(replyEntries({ bubbles: ['Weekdays only.'], handoff: true }).map(entry => entry[0]), ['g', 'a'], 'No mention: buttons go at the end');
+  assert.deepEqual(replyEntries({ bubbles: ['$99 plus tax', bookingUrl] }).map(entry => entry[0]), ['g', 'b']);
+});
+
+test('Chat survives a reload and the phone Back button', () => {
+  assert.match(appCode, /const entry = \["v", q, 1\]/, 'Visitor messages are saved as waiting until answered');
+  assert.match(appCode, /for \(const entry of unanswered\.splice\(0\)\) answer\(entry\)/, 'Messages left unanswered by a reload are answered once, in order, on reopen');
+  assert.match(appCode, /if \(saved && saved\.o\) open\(\)/, 'An open chat reopens after a reload in the same tab');
+  assert.match(appCode, /history\.pushState\(\{ \.\.\.state, wccsChat: true \}/, 'Phone sheet adds a history step');
+  assert.match(appCode, /addEventListener\("popstate"/, 'Back closes the chat');
+  assert.match(appCode, /hadStep && onChatStep\(\)\) history\.back\(\)/, 'Closing with × removes the history step');
+  assert.match(appCode, /\(max-width: 480px\), \(max-width: 850px\) and \(max-height: 560px\)/);
+  assert.match(chatCss, /\(max-width: 480px\), \(max-width: 850px\) and \(max-height: 560px\)/, 'JS and CSS agree on the phone sheet');
+});
+
+test('Chat UI keeps working while the assistant is typing', () => {
+  assert.doesNotMatch(appCode, /\.disabled = value/, 'Send and prompt buttons must stay usable while a reply plays');
+  assert.match(appCode, /const enqueue = /, 'Messages typed during a reply must be queued');
+  assert.match(appCode, /DOUBLE_TAP_MS/, 'A double tap must not send twice');
+  assert.match(appCode, /sessionStorage\.setItem/, 'The conversation should survive a reload in the same tab');
+  assert.match(appCode, /\(hover: hover\) and \(pointer: fine\)/, 'Only desktop pointers auto-focus the chat input');
+});
+
+test('Chat links open safely and buttons are easy to tap', () => {
+  assert.doesNotMatch(appCode, /break-all/, 'Booking link must not break mid-word');
+  assert.match(appCode, /link\.target = "_blank";\s*link\.rel = "noopener";/);
+  assert.match(homepage, /class="concierge-panel"[^>]*role="dialog"[^>]*aria-label="[^"]+"/);
+  assert.match(homepage, /<a href="https:\/\/m\.me\/wichitacarpetcleaningservices" target="_blank" rel="noopener">/);
+  assert.match(chatCss, /\.concierge-prompts button \{ min-height: 44px;/);
+  assert.match(chatCss, /\.concierge-notice a \{[^}]*line-height: 44px;/);
+  assert.match(chatCss, /\.concierge-book \{[^}]*min-height: 48px;/);
+  assert.match(chatCss, /\.concierge-message \{ overflow-wrap: anywhere; \}/);
+  assert.match(chatCss, /\.concierge-chatted \.concierge-prompts \{ display: none; \}/);
+  assert.match(chatCss, /@media \(max-width: 480px\), \(max-height: 700px\) \{\s*\.concierge-chatted \.concierge-prompts \{ display: none; \}/, 'Prompt buttons step aside after the first message on every phone');
+  assert.match(chatCss, /@media \(min-width: 851px\) \{\s*\.concierge-panel \{ max-height: max\(320px, calc\(100dvh - 190px\)\); \}/, 'Desktop chat stays below the header Book now button');
 });

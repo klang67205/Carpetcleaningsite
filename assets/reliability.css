@@ -53,10 +53,10 @@ body * { letter-spacing: 0 !important; }
 .concierge-messages { min-height: 0; flex: 1 1 auto; overscroll-behavior: contain; }
 .concierge-close { min-width: 44px; min-height: 44px; }
 .concierge-notice { margin: 0; padding: 10px 14px; background: #fff; color: #344a3f; font-size: .8rem; }
-.concierge-prompts { max-height: 100px; overflow-y: auto; flex-shrink: 0; padding: 8px 14px; }
-.concierge-prompts button { min-height: 36px; }
+.concierge-prompts { max-height: 124px; overflow-y: auto; flex-shrink: 0; padding: 8px 14px; }
+.concierge-prompts button { min-height: 44px; padding: 10px 14px; font-size: .82rem; }
 .concierge-form input { font-size: 16px; }
-.concierge-form button:disabled, .concierge-prompts button:disabled { opacity: .65; cursor: wait; }
+
 .start-here { padding-top: 72px; padding-bottom: 76px; }
 .section { padding-top: 88px; padding-bottom: 88px; }
 .price-card { box-shadow: none; }
@@ -139,6 +139,10 @@ footer { border-top: 1px solid #253c34; }
   .concierge-notice { padding: 4px 12px; }
   .concierge-form { padding: 6px; }
 }
+/* Desktop: the open chat stays below the header so "Book now" is never covered. */
+@media (min-width: 851px) {
+  .concierge-panel { max-height: max(320px, calc(100dvh - 190px)); }
+}
 @media (max-height: 300px) {
   .concierge-panel { display: block; overflow-y: auto; }
   .concierge-panel header { position: sticky; top: 0; z-index: 2; }
@@ -156,4 +160,49 @@ footer { border-top: 1px solid #253c34; }
 .catalog-prices dd { margin: 0; overflow-wrap: anywhere; }
 @media (max-width: 560px) {
   .catalog-prices dl > div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+}
+/* Chat assistant: bold action buttons, 44px tap targets, wrapping, phone sheet */
+.concierge-panel:focus { outline: none; }
+.concierge-message { overflow-wrap: anywhere; }
+.concierge-message.typing { width: auto; white-space: nowrap; overflow-wrap: normal; }
+.concierge-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.concierge-book { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 10px 18px; border-radius: 999px; background: #d8f04b; color: #0a1511; font-size: .95rem; font-weight: 850; line-height: 1.2; text-align: center; text-decoration: none; overflow-wrap: normal; word-break: normal; }
+@media (hover: hover) { .concierge-book:hover { background: #cde43c; } }
+.concierge-book:focus-visible, .concierge-notice a:focus-visible { outline: 3px solid #87a800; outline-offset: 2px; }
+.concierge-notice { display: flex; flex-wrap: wrap; align-items: center; column-gap: 18px; padding: 4px 14px; border-bottom: 1px solid #e2e4dc; line-height: 1.35; }
+.concierge-notice-text { flex: 1 1 100%; padding-top: 6px; }
+.concierge-notice-short { display: none; }
+.concierge-notice a { display: inline-block; line-height: 44px; white-space: nowrap; color: #102b22; font-weight: 800; text-underline-offset: 3px; }
+.concierge-panel header { align-items: center; }
+@media (max-width: 399px) {
+  .concierge-kicker { display: none; }
+  .concierge-identity { gap: 10px; }
+  .concierge-identity svg { width: 32px; height: 32px; }
+  .concierge-panel h2 { margin: 0; font-size: 1.2rem; white-space: nowrap; }
+}
+/* Phones and short (keyboard-open) screens: the chat becomes a full-screen sheet so the conversation gets the height. */
+@media (max-width: 480px), (max-width: 850px) and (max-height: 560px) {
+  .concierge-panel { position: fixed; left: 0; right: 0; top: var(--concierge-top, 0); width: 100%; height: var(--concierge-vh, 100%); max-height: none; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+  .concierge-panel header { padding: 8px 6px 8px 14px; }
+  .concierge-messages { max-height: none; padding: 14px; }
+  .concierge-message { max-width: 90%; font-size: 1rem; }
+  .concierge-form { padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); }
+  .concierge-form button { min-height: 48px; padding: 0 18px; font-size: 1rem; }
+  .concierge-prompts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-height: none; padding: 8px 14px 10px; }
+  .concierge-prompts button { padding: 8px 10px; line-height: 1.2; }
+}
+/* Phones and short screens: once the visitor has started, the suggestion buttons step aside. */
+@media (max-width: 480px), (max-height: 700px) {
+  .concierge-chatted .concierge-prompts { display: none; }
+}
+/* Phones and keyboard-open screens: one-line notice. */
+@media (max-width: 480px), (max-height: 560px) {
+  .concierge-notice { column-gap: 16px; }
+  .concierge-notice-text { flex: 0 1 auto; padding: 0; }
+  .concierge-notice-long { display: none; }
+  .concierge-notice-short { display: inline; }
+}
+/* Keyboard open: every pixel goes to the conversation. */
+@media (max-height: 560px) {
+  .concierge-prompts { display: none; }
 }
