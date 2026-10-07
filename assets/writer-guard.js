@@ -96,6 +96,13 @@ export function checkPolished(out, ctx) {
   if (/\bwith (?:the )?pet treatment\b|\bcon (?:el )?tratamiento\b/i.test(text) && !/\bwith (?:the )?pet treatment\b|\bpet[- ]treatment (?:special|version|package)\b/i.test(draft)) return { ok: false, reason: "new claim pet treatment" };
   // keep the line about Keith when the draft has one (an unanswered question, an offer to ask him)
   if (/\bkeith\b/i.test(draft) && /keith can answer|want me to ask (?:him|keith)|(?:i've|i have) asked keith|(?:text|message) (?:keith|him)|let keith know|keith (?:will|'ll|can) /i.test(draft) && !/\bkeith\b/i.test(text)) return { ok: false, reason: "dropped keith line" };
+  // ask only the draft's questions: a question of the writer's own ("Which one fits your situation?") pushes the customer
+  if ((text.match(/\?/g) || []).length > (draft.match(/\?/g) || []).length) return { ok: false, reason: "new question" };
+  { const qs = (x) => x.split(/(?<=[.!?])\s+/).filter((y) => /\?$/.test(y.trim()));
+    const dq = qs(draft);
+    if (dq.length && dq.every((y) => /\blink\b/i.test(y)) && qs(text).some((y) => !/\blink\b|\benlace\b/i.test(y))) return { ok: false, reason: "new question" }; }
+  // the gentle offer to send the booking link must survive
+  if (/send (?:you )?the booking link/i.test(draft) && !/\blink\b|\benlace\b/i.test(text)) return { ok: false, reason: "dropped link offer" };
   // every price in the draft must survive (quotes can't silently disappear)
   // (the customer's own quote and totals; an optional upsell like "the pet-treatment version is $149" may be dropped)
   const quoteSentences = draft.split(/(?<=[.!?])\s+/).filter((x) => /\$\d/.test(x) && !/^if you have pet/i.test(x) && (/\bfor (?:\d+|a|an|the|your)\b/i.test(x) || /^still\b/i.test(x) || /\bin all\b|\baltogether\b/i.test(x) || /\bis \$\d+ plus tax\b/i.test(x)));
@@ -124,6 +131,8 @@ export function explainGuard(reason = "") {
   if (/pet condition/.test(reason)) return "You mentioned the pet-treatment price without its condition. Keep \"if you have pet accidents or odor\" — having pets alone is the regular price.";
   if (/new yes\/no/.test(reason)) return "You started with Yes/No, but the draft doesn't answer yes or no. Don't add one.";
   if (/not spanish/.test(reason)) return "The customer writes in Spanish: write the whole reply in Spanish.";
+  if (reason === "new question") return "You asked a question the draft doesn't ask. Ask only the draft's question (if it has one) — don't add your own.";
+  if (reason === "dropped link offer") return "You left out the offer to send the booking link. Keep it as a gentle question at the end.";
   if (/dropped link pointer/.test(reason)) return "You left out the pointer to the booking link above. Keep it — that's where the open times are.";
   if (/dropped keith line/.test(reason)) return "You left out the sentence about Keith. Keep it.";
   if (/lead without link/.test(reason)) return "You ended with a \"pick a time here:\" lead-in, but no link follows this reply. Don't point to a link.";
