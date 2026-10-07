@@ -564,10 +564,12 @@ export function textHandoffStands(intent, text) {
 
 const PACKAGE_SUMMARY = `The ${money(PRICES.standard)} special covers ${COVER}, plus tax. With pet treatment it's ${money(PRICES.pet)}. Smaller jobs (up to 3 areas) are ${money(PRICES.minimum)}.`;
 const ASK_ROOMS = "How many rooms, hallways and stairs are we cleaning?";
+const THANKS_NO_LINK = "You're very welcome! Whenever you're ready, just say the word and I'll send the booking link. Feel free to message here with any questions.";
+const LINK_OFFER = "Would you like me to send the booking link so you can pick a time that works for you?";
 const BOOK_INTRO = "Here are the open weekday times — pick one and you'll get a confirmation text right away:";
 const DAY = "(?:mon|monday|tue|tues|tuesday|wed|weds|wednesday|thu|thur|thurs|thursday|fri|friday)";
 /* ---------- weekends: a firm no (owner policy). Never offered to Keith, never handed to Keith. ---------- */
-const WEEKEND_LINE = "We're weekdays only (Monday–Friday) — we're closed Saturday and Sunday.";
+const WEEKEND_LINE = "Sorry, we're weekdays only (Monday–Friday) — we're closed Saturday and Sunday.";
 // the same answer when the customer pushes right after hearing it (never the identical sentence twice in a row)
 const WEEKEND_AGAIN = "Sorry — weekends aren't an option. We work Monday through Friday only, and we're closed Saturday and Sunday.";
 // a weekend named as the day for the job ("ask Keith if he can do Saturday", "talk to Keith about a weekend appointment")
@@ -921,7 +923,9 @@ export function createConversation(init = {}) {
     if (bubbles.some((b) => /same-day service/.test(String(b || "")))) markSaid("sameday");
     if (bubbles.some((b) => /^Water damage is something Keith would want to look at personally/.test(String(b || "")))) { state.openIssue = "water"; state.openIssueTurn = state.turns; }
     let list = bubbles.filter(Boolean).map((b) => b.replace(/\s+/g, " ").trim()).filter(Boolean);
-    if (list.length && intent !== "stop" && SAD_RE.test(currentText) && !state.said.includes("sympathy")) { list[0] = `I'm so sorry to hear that. ${list[0].replace(/^I'm (?:so )?sorry(?: about that| to hear that)?[.!—–-]*\s*/i, "")}`; state.said.push("sympathy"); }
+    var sad = list.length && intent !== "stop" && SAD_RE.test(currentText);
+    if (sad) list = list.map((b) => b.replace(/ If you have pet accidents or odor, the pet-treatment version is [^.]*\.| Pet treatment is available if you need it\./g, ""));
+    if (list.length && intent !== "stop" && SAD_RE.test(currentText) && !state.said.includes("sympathy")) { list[0] = `${/passed|died|funeral|lost my|widow|falleci/i.test(currentText) ? "I'm so sorry for your loss." : "I'm so sorry to hear that."} ${list[0].replace(/^I'm (?:so )?sorry(?: about that| to hear that)?[.!—–-]*\s*/i, "")}`; state.said.push("sympathy"); }
     // never the same sentence twice in one reply (or one sentence that another already contains)
     {
       const keyOf = (x) => x.toLowerCase().replace(/[^a-z0-9$ ]/g, "").replace(/\s+/g, " ").trim();
@@ -965,6 +969,7 @@ export function createConversation(init = {}) {
     if (list.some((b) => /15% off/.test(b))) state.discountAsked = true;
     if (hasScope() && list.some((b) => /\$\d/.test(b))) state.lastQuoteKey = quoteKey();
     if (list.some((b) => /covers up to 5 rooms, two halls, and one staircase/.test(b) && /pet-treatment version|pet treatment|pet-treatment special/.test(b))) state.coverSaid = true;
+    if (list.length && state.turns === 1 && !sad && !state.greeted && /^(?:price|info|other-services|booking|included|rug|pet|tax|discount|location|area)$/.test(intent) && !/^(?:Hi|Thanks|Thank you|Sorry|I'm)/.test(list[0]) && list[0].length <= 290) list[0] = /^Happy to /.test(list[0]) ? list[0].replace(/^Happy to /, "Thanks for reaching out — happy to ") : `Thanks for reaching out! ${list[0]}`;
     return { bubbles: list, intent, ...extra };
   }
   const complaintReply = (comeBack) => out("complaint", [reach(
@@ -1003,6 +1008,9 @@ export function createConversation(init = {}) {
   }
   // after the link has gone out once, point back to it instead of re-sending it
   const linkOnce = (lines) => (state.linkSent ? [...lines, "Whenever you're ready, the booking link above shows the open weekday times."] : withLink(lines));
+  // a price answer offers the link instead of pushing it (owner: let the customer say when they're ready)
+  const WHEN_RE = /\bwhen (?:are|r|can|could) (?:you|u|y'?all)\b|\bavailab\w*|\bopenings?\b|\bwhat times?\b|\bhours\b|\bsoonest\b|\bnext (?:opening|available)\b|\bbook\w*\b|\bschedul\w*/;
+  const offerLink = (lines) => (state.linkSent ? linkOnce(lines) : WHEN_RE.test(currentText) ? [...lines, "Weekday start times are usually 8:00, 10:30, 1:00 and 3:30 (we're closed Saturday and Sunday). The live calendar shows what's open:", bookingUrl] : (lines.at(-1).length + LINK_OFFER.length < 300 ? [...lines.slice(0, -1), `${lines.at(-1)} ${LINK_OFFER}`] : [...lines, LINK_OFFER]));
   // stairs/halls with no rooms yet: what they cost on their own, and ask what goes with them
   const aloneLine = (halls, stairs, t = "") => {
     const what = describe({ rooms: 0, halls, stairs });
@@ -1024,7 +1032,7 @@ export function createConversation(init = {}) {
   // put a bubble that asks the customer something after the plain answers
   const qLast = (lines) => [...lines.filter((b) => !/\?$/.test(b)), ...lines.filter((b) => /\?$/.test(b))];
   let askedBefore = false, lastIntentBefore = "";
-  const askNext = () => (hasScope() ? "Want the link to pick a weekday time?" : askedBefore ? "" : ASK_ROOMS);
+  const askNext = () => (hasScope() ? LINK_OFFER : askedBefore ? "" : ASK_ROOMS);
 
   function handle(raw) {
     let t = norm(raw);
@@ -1043,7 +1051,7 @@ export function createConversation(init = {}) {
       if (String(raw || "").trim() && (state.greeted || state.turns > 1)) return state.lastIntent === "nudge" ? out("nudge", []) : out("nudge", ["What can I help with — a price, booking, or a question?"]);
       if (state.greeted || state.turns > 1) return out("greeting", []);
       state.greeted = true;
-      return out("greeting", ["Hi! What would you like cleaned?"]);
+      return out("greeting", ["Hi there, thanks for reaching out! What would you like cleaned?"]);
     }
     if (isStopMessage(t)) return out("stop", []);
     // water damage is with Keith: more details about it go to him, not into a room count or our dry time
@@ -1092,7 +1100,7 @@ export function createConversation(init = {}) {
     /* --- closings that should win outright --- */
     if (/^(?:(?:ok|okay|k|cool|great|perfect|awesome|sounds good)[,!. ]+)?(?:thanks|thank you|thx|ty|tysm|appreciate (?:it|you)|gracias)\b/.test(t)) {
       return out("thanks", [state.linkSent || state.quoted
-        ? "You're welcome! Whenever you're ready, the booking link above shows the open weekday times. Just message here if any questions come up."
+        ? (state.linkSent ? "You're welcome! Whenever you're ready, the booking link above shows the open weekday times. Just message here if any questions come up." : THANKS_NO_LINK)
         : "You're welcome! Whenever you're ready, tell me how many rooms and I'll get you a price."]);
     }
     // "perfect, booked it. thanks!" — they're done; never re-send the link
@@ -1113,7 +1121,7 @@ export function createConversation(init = {}) {
       return out("thanks", [state.linkSent ? "You're welcome — see you then! Once you pick your time on the booking calendar, you'll get a confirmation text." : "You're welcome — see you then!"]);
     }
     if (has(t, /\b(?:still available|still going on|still valid|still running|still good|is this (?:deal|offer|special|price)|this (?:deal|special|offer) still|(?:deal|special|offer|price) still (?:going|good|on|available|valid))\b/)) {
-      return out("price", [`Yes — the ${money(PRICES.standard)} special is still available! It covers ${COVER}, plus tax. ${hasScope() ? "Want the link to pick a weekday time?" : ASK_ROOMS}`]);
+      return out("price", [`Yes — the ${money(PRICES.standard)} special is still available! It covers ${COVER}, plus tax. ${hasScope() ? LINK_OFFER : ASK_ROOMS}`]);
     }
     // "ask Keith if he can do Saturday" / "can I talk to Keith about a weekend appointment": weekends are a firm no, never a handoff
     if (has(t, /\b(?:keith|someone|somebody|anyone|a person|a human|the owner|the boss|manager|him)\b/) && isWeekendJobAsk(t)
@@ -1783,7 +1791,7 @@ export function createConversation(init = {}) {
     }
     if (furnitureAsk && hasScope() && !scopeChanged && !asksIncluded) {
       state.quoted = true;
-      return out("price", linkOnce([...notes, "Carpet: " + quoteLine(scopeNow(), state.pets).replace(/^For /, "for ")]));
+      return out("price", offerLink([...notes, "Carpet: " + quoteLine(scopeNow(), state.pets).replace(/^For /, "for ")]));
     }
     const furnSaved = Object.keys(state.furn || {}).length ? furnitureLine({ items: state.furn, unpriced: null }) : "";
     if (hasScope() && state.quoted && !scopeChanged && /^(?:is (?:that|it|this)|that'?s|thats|is the (?:\$?\d+|price)) (?:each|per (?:room|area)|a room|for each)\b|\bor (?:the )?total\??$/.test(t)) {
@@ -1807,7 +1815,7 @@ export function createConversation(init = {}) {
     if (hasScope() && state.quoted && !scopeChanged && /^(?:is |so )?(?:that|thats|that's|this)(?: is)?(?: it| all| everything| the total| the full price| the whole thing| the final price| for everything| with everything| including everything| total)?(?: then)?\??$|^(?:is )?(?:that|thats|that's) (?:with|for|including) everything\b|^(?:and )?that'?s it\?|^(?:is )?that the (?:total|full price|whole price)\b/.test(t)) {
       const q = quote({ ...scopeNow(), pets: state.pets });
       const priceText = q.extras ? `${money(q.base)} + ${money(q.extras * PRICES.extra)}, plus tax,` : `${money(q.total)} plus tax`;
-      return out("price", [`Yes — ${priceText} covers everything you listed.${state.linkSent ? "" : " Want the link to pick a weekday time?"}`]);
+      return out("price", [`Yes — ${priceText} covers everything you listed.${state.linkSent ? "" : " " + LINK_OFFER}`]);
     }
     if (asksIncluded && !hasScope() && !/\d/.test(t) && /^(?:does|do|is|are|would|what about)\b/.test(t) && has(t, /\b(?:stairs?|staircases?|steps|hall ?ways?|halls?)\b/) && !has(t, /\b(?:extra|additional|second|another|more)\b/)) {
       return out("included", [has(t, /\bstair|\bsteps\b/) ? `Yes — one staircase is included in the ${money(PRICES.standard)} special, along with up to 5 rooms and two halls.` : `Yes — two hallways are included in the ${money(PRICES.standard)} special, along with up to 5 rooms and one staircase.`]);
@@ -1832,7 +1840,7 @@ export function createConversation(init = {}) {
       const qNotes = notes.filter((n) => n !== SPECIAL_REPLY
         && !(/^A standard area rug counts as one of the rooms in the package; each additional/.test(n))
         && !(lastIntentBefore === "apartment" && /^Yes, we clean apartments/.test(n)));
-      if (state.wholeHouse && qNotes.some((n) => /^No catch/.test(n))) return out("price", withLink(qNotes));
+      if (state.wholeHouse && qNotes.some((n) => /^No catch/.test(n))) return out("price", offerLink(qNotes));
       const whatNow = state.wholeHouse ? "the whole house" : describe(scopeNow());
       // the same price again: say so briefly, no link and no full re-description
       if (wasQuoted && prevQuoteKey && prevQuoteKey === quoteKey() && !scope.rangeHigh && !moving && !state.declined) {
@@ -1845,7 +1853,7 @@ export function createConversation(init = {}) {
       }
       const reminder = state.declined ? (state.declined === "base" ? "Just a reminder — we can't service on-base military housing, so this price is for an off-base home in our area." : "Just a reminder — we can't service downtown high-rise apartments, so this price is for a house, townhome or low-rise apartment in our area.") : "";
       state.declined = null;
-      if (qNotes.some((n) => /^Only if there are pet accidents/.test(n))) return out("price", withLink([...(reminder ? [reminder] : []), ...qNotes]));
+      if (qNotes.some((n) => /^Only if there are pet accidents/.test(n))) return out("price", offerLink([...(reminder ? [reminder] : []), ...qNotes]));
       const lines = [...qNotes, qNotes.length >= 2 ? ql.replace(/ If you have pet accidents or odor, the pet-treatment version is [^.]*\.| Pet treatment is available if you need it\./, "") : ql];
       if (scope.rangeHigh && scope.rangeHigh > state.rooms) {
         const hi = quote({ ...scopeNow(), rooms: scope.rangeHigh, pets: state.pets === true });
@@ -1853,7 +1861,7 @@ export function createConversation(init = {}) {
       }
       if (moving) lines.unshift(moveIn ? "Great timing — cleaning before you move in is the easiest way to do it." : "Perfect for a move-out — we'll have it fresh for the walkthrough.");
       if (reminder) lines.unshift(reminder);
-      return out("price", withLink(lines));
+      return out("price", offerLink(lines));
     }
     if (pets === false && mentionsPets(t) && !notes.length && !hasScope()) return out("pet", [`Got it — no pet treatment needed, so the regular price applies. ${ASK_ROOMS}`]);
     if ((pets === true || (mentionsPets(t) && pets !== false)) && !notes.length && !hasScope()) {
@@ -1889,7 +1897,7 @@ export function createConversation(init = {}) {
     /* --- small talk --- */
     // a nudge mid-chat ("hello??", "anyone there"): I'm here, plus where we left off — never the rooms question again
     if (state.turns > 1 && (/^(?:h(?:ello|i|ey)+o*\s*)?\?+$/.test(t) || /^(?:h(?:ello|i|ey)+o*)\s*\?+$/.test(t) || /\b(?:any ?one|any ?body|some ?one|you|u) (?:there|here|around|home)\b|\bstill there\b|\bhel+o+\?{2,}/.test(t)) && t.split(" ").length <= 6) {
-      return out("nudge", [`Yes, I'm here — sorry for the wait! ${hasScope() && state.quoted ? `Your quote is ${fmtJob()} for ${jobName()}. ${state.linkSent ? "The booking link above has the open weekday times." : "Want the link to pick a weekday time?"}` : "What can I help with — a price, booking, or a question?"}`]);
+      return out("nudge", [`Yes, I'm here — sorry for the wait! ${hasScope() && state.quoted ? `Your quote is ${fmtJob()} for ${jobName()}. ${state.linkSent ? "The booking link above has the open weekday times." : LINK_OFFER}` : "What can I help with — a price, booking, or a question?"}`]);
     }
     if (/^(?:ok|okay|k|cool|got it|sounds good|great|perfect|alright|awesome)\b/.test(t)) {
       return out("thanks", [state.inArea === false && !state.quoted ? "No problem! If you're ever within about 15 miles of downtown Wichita, we'd be glad to help." : state.quoted && !state.linkSent ? "Want the link to pick a time?" : "Sounds good! Let me know if you have any other questions."]);
@@ -1898,7 +1906,7 @@ export function createConversation(init = {}) {
       if (hasScope() && state.quoted) return out("greeting", [state.linkSent ? "Hi! I'm here — any questions about your quote, or ready to pick a time on the booking link above?" : "Hi! I'm here — want the link to pick a weekday time, or do you have a question?"]);
       if (state.greeted) return out("greeting", ["What can I help with — a price, booking, or a question?"]);
       state.greeted = true;
-      return out("greeting", ["Hi! What would you like cleaned?"]);
+      return out("greeting", ["Hi there, thanks for reaching out! What would you like cleaned?"]);
     }
 
     /* --- anything else: a helpful default, never a dead end --- */
@@ -2942,8 +2950,9 @@ export function createConversation(init = {}) {
     // link: a new or changed price sends it; an unchanged one doesn't
     let linkMode = null;
     if (!blocked && !quietClose && !emergency && !ctx.outOfArea) {
-      if (carpetChanged || floorPriced) linkMode = "send";
-      else if (uphPriced && hasScope()) linkMode = "once";
+      // a new price no longer pushes the link (owner, Oct 6): we offer it and send it when they say yes.
+      // A customer who can't use the link still gets passed to Keith.
+      if ((carpetChanged || floorPriced) && state.manualBooking && !site) linkMode = "send";
       if (topics.has("next_available") || topics.has("slot_times")) linkMode = "send";
       // a weekend question always gets the weekday booking link (owner rule)
       else if (topics.has("weekend_info") && !linkMode) linkMode = "once";
@@ -2951,6 +2960,7 @@ export function createConversation(init = {}) {
       if (plan) linkMode = plan.link ? (plan.once && !linkMode ? "once" : "send") : linkMode;
       if (rugLine === WOOL_REMINDER && !hasScope() && !floorPriced) linkMode = null;
     }
+    const offerNow = !linkMode && !state.linkSent && !blocked && !quietClose && !emergency && !ctx.outOfArea && (carpetChanged || floorPriced || (uphPriced && hasScope()));
 
     // after the answers: closings, yes/no, things we can't answer
     const pre = [
@@ -2976,11 +2986,11 @@ export function createConversation(init = {}) {
       // a past customer saying the carpets look great gets thanked, not a sales prompt
       else if (praise) post.push({ text: "Thank you so much — that's great to hear! We really appreciate you choosing us.", prio: 3 });
       else if (/\bbook\w*\b|\bschedule\b/.test(t) && !state.linkSent) extraLink = "You're welcome! Here's the booking link whenever you're ready:";
-      else post.push({ text: state.linkSent || state.quoted ? "You're welcome! Whenever you're ready, the booking link above shows the open weekday times. Just message here if any questions come up." : D_THANKS_NEW, prio: 3 });
+      else post.push({ text: state.linkSent ? "You're welcome! Whenever you're ready, the booking link above shows the open weekday times. Just message here if any questions come up." : state.quoted ? THANKS_NO_LINK : D_THANKS_NEW, prio: 3 });
     } else if (!hasContent && !linkMode && (closing === "ok" || d.answer_yes_no)) {
       const yes = closing === "ok" || d.answer_yes_no === "yes";
       if (yes && hasScope() && state.quoted && !ctx.outOfArea) {
-        if (!state.linkSent) { post.push({ text: "Great!", prio: 3 }); extraLink = BOOK_INTRO; }
+        if (!state.linkSent) extraLink = "Great! " + BOOK_INTRO;
         else if (closing === "ok") post.push({ text: "Sounds good! Whenever you're ready, tap the booking link above to pick a time.", prio: 3 });
         else extraLink = "Just tap the booking link — pick your time and you'll get a confirmation text right away:";
       } else if (d.answer_yes_no === "yes" && !hasScope() && !ctx.outOfArea) post.push({ text: `Happy to help! ${ASK_ROOMS}`, prio: 3 });
@@ -3039,8 +3049,9 @@ export function createConversation(init = {}) {
         const carpetAsk = uphLine && !floorLine && !/\bcarpets?\b|\brooms?\b/.test(t) && !topics.has("combo_same_visit");
         const ask = carpetAsk ? "Want carpets done the same visit? " + ASK_ROOMS : ASK_ROOMS;
         if (!(askedBefore && uphLine) && !(carpetAsk && saidHas("ask:carpet"))) { post.push({ text: ask, prio: 0, joinPrev: true }); if (carpetAsk) markSaid("ask:carpet"); }
-      } else if (state.quoted && !state.linkSent && !linkMode) post.push({ text: "Want the link to pick a weekday time?", prio: 0, joinPrev: true });
+      } else if (state.quoted && !state.linkSent && !linkMode) post.push({ text: LINK_OFFER, prio: 0, joinPrev: true });
     }
+    if (offerNow && !asked && !all().some((x) => /\?$/.test(x.text) || x.text === LINK_OFFER)) post.push({ text: LINK_OFFER, prio: 0, joinPrev: true });
 
     // never send a paragraph this conversation already sent (a short line covers a repeat ask)
     const seen = (x) => saidHas("#" + dHash(x));
