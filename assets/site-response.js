@@ -66,6 +66,9 @@ export const INTERPRET_URL = 'https://wichita-messenger-bot-deploy.vercel.app/ap
 export const POLISH_URL = 'https://wichita-messenger-bot-deploy.vercel.app/api/polish';
 export const INTERPRET_TIMEOUT_MS = 8000;
 export const POLISH_TIMEOUT_MS = 7000;
+// Keith's open start times (from his calendar; times only). Optional like the AI steps.
+export const OPEN_TIMES_URL = 'https://wichita-messenger-bot-deploy.vercel.app/api/open-times';
+export const OPEN_TIMES_TIMEOUT_MS = 4000;
 // The endpoint refuses longer messages, so they are not sent at all.
 const MAX_MESSAGE = 1000;
 const RECENT_LINES = 6;
@@ -124,9 +127,18 @@ export async function polishBubbles(url, payload, fetcher = globalThis.fetch, ti
   return check.ok ? check.bubbles : null;
 }
 
+/** Resolves to the open-times object the brain accepts ({asOf, days: [...]}) or null. */
+export async function openTimes(url, fetcher = globalThis.fetch, timeoutMs = OPEN_TIMES_TIMEOUT_MS) {
+  const data = await postJson(url, {}, fetcher, timeoutMs);
+  const slots = data && data.slots;
+  if (!slots || typeof slots !== 'object' || Array.isArray(slots) || !Array.isArray(slots.days) || typeof slots.asOf !== 'string') return null;
+  return slots;
+}
+
 /** What to send /api/polish for a reply, or null when it should be shown as is (handoffs stay word for word, unless translated). */
 export function polishRequest(message, result, language = 'en', recent = []) {
-  if (!result || !Array.isArray(result.bubbles) || (result.handoff && language !== 'es')) return null;
+  // handoffs and replies with live open times stay word for word (unless translated)
+  if (!result || !Array.isArray(result.bubbles) || ((result.handoff || result.slots) && language !== 'es')) return null;
   const link = result.bubbles.includes(bookingUrl);
   const draft = result.bubbles.filter(text => text !== bookingUrl && !BOOK_INTRO.test(text));
   if (!draft.length) return null;
@@ -155,28 +167,29 @@ export function createWebsiteConversation() {
     note('bot', lastBot);
     return result;
   };
-  const shape = r => ({ bubbles: r.bubbles, phone: Boolean(r.phone), messenger: false, sendLink: r.bubbles.includes(bookingUrl), booking: r.bubbles.includes(bookingUrl) });
+  const shape = r => ({ bubbles: r.bubbles, phone: Boolean(r.phone), messenger: false, sendLink: r.bubbles.includes(bookingUrl), booking: r.bubbles.includes(bookingUrl), slots: Boolean(r.slots) });
   const snapshot = () => JSON.stringify(state);
   const restore = saved => { for (const key of Object.keys(state)) delete state[key]; Object.assign(state, JSON.parse(saved)); };
   // The visitor's words, or the AI's reading of them. A clear complaint, an existing appointment or a
   // request for a person in the visitor's own words always stands; the AI reading can never end the chat.
-  const reply = (text, directives) => {
-    if (!directives) return conversation.incoming({ text });
+  const reply = (text, directives, slots) => {
+    if (!directives) return conversation.incoming({ text, slots });
     const before = snapshot();
-    const raw = conversation.incoming({ text });
+    const raw = conversation.incoming({ text, slots });
     const rawIntent = String(state.lastIntent || '');
     if (rawIntent === 'stop' || (HANDOFF_INTENTS.has(rawIntent) && textHandoffStands(rawIntent, text))) return raw;
     const rawState = snapshot();
     restore(before);
     let viaAI = null;
-    try { viaAI = conversation.incoming({ text, directives }); } catch { viaAI = null; }
+    try { viaAI = conversation.incoming({ text, directives, slots }); } catch { viaAI = null; }
     if (viaAI && Array.isArray(viaAI.bubbles) && viaAI.bubbles.length && String(state.lastIntent || '') !== 'stop') return viaAI;
     restore(rawState);
     return raw;
   };
   return {
     start: () => remember(forWebsite(conversation.start())),
-    respond: (input, directives) => remember(forWebsite(shape(reply(input, directives))), input),
+    // slots (optional): Keith's open start times from /api/open-times
+    respond: (input, directives, slots) => remember(forWebsite(shape(reply(input, directives, slots))), input),
     // After the reply was reworded: remember what the visitor actually saw.
     shown: bubbles => {
       const line = bubbles.filter(text => text !== bookingUrl).join(' ');

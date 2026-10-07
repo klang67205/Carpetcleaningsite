@@ -17,6 +17,8 @@ let polishRequest;
 let withPolish;
 let interpretUrl = "";
 let polishUrl = "";
+let openTimesUrl = "";
+let openTimes;
 let messengerUrl = "https://m.me/wichitacarpetcleaningservices";
 let smsUrl = "sms:+13162328111";
 let assistantModulePromise;
@@ -50,6 +52,8 @@ function loadAssistant() {
       withPolish = websiteModule.withPolish;
       interpretUrl = websiteModule.INTERPRET_URL;
       polishUrl = websiteModule.POLISH_URL;
+      openTimesUrl = websiteModule.OPEN_TIMES_URL;
+      openTimes = websiteModule.openTimes;
       messengerUrl = websiteModule.messengerUrl;
       smsUrl = websiteModule.smsUrl;
     }).catch((error) => {
@@ -278,6 +282,13 @@ function initializePage() {
   };
   const understandingUrl = () => endpoint(concierge.dataset.interpretUrl, interpretUrl);
   const rewordUrl = () => endpoint(concierge.dataset.polishUrl, polishUrl);
+  const timesUrl = () => endpoint(concierge.dataset.openTimesUrl, openTimesUrl);
+  // Keith's open start times (or null: the assistant then points to the booking calendar as before).
+  const liveTimes = () => {
+    const url = timesUrl();
+    if (!url || typeof openTimes !== "function") return Promise.resolve(null);
+    return openTimes(url).catch(() => null);
+  };
   // Shows "•••" while an AI step runs.
   const whileTyping = async (work) => {
     const typing = document.createElement("p");
@@ -321,9 +332,9 @@ function initializePage() {
     if (apiHost) result = await requestReply(apiHost, sessionId, entry[1]);
     else {
       const recent = conversation.recent();
-      const read = await understand(entry[1]);
+      const [read, slots] = await Promise.all([understand(entry[1]), liveTimes()]);
       if (read) entry[3] = { d: read.directives };
-      result = conversation.respond(entry[1], read ? read.directives : undefined);
+      result = conversation.respond(entry[1], read ? read.directives : undefined, slots || undefined);
       result = await reword(entry[1], result, read ? read.language : "en", recent);
     }
     await play(replyEntries(result), entry);

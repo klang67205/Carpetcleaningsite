@@ -565,6 +565,7 @@ export function textHandoffStands(intent, text) {
 const PACKAGE_SUMMARY = `The ${money(PRICES.standard)} special covers ${COVER}, plus tax. With pet treatment it's ${money(PRICES.pet)}. Smaller jobs (up to 3 areas) are ${money(PRICES.minimum)}.`;
 const ASK_ROOMS = "How many rooms, hallways and stairs are we cleaning?";
 const THANKS_NO_LINK = "You're very welcome! Whenever you're ready, just say the word and I'll send the booking link. Feel free to message here with any questions.";
+const DAY_ASK = "Is there a day and time that works best for you? I can check what's open.";
 const LINK_OFFER = "Would you like me to send the booking link so you can pick a time that works for you?";
 const BOOK_INTRO = "Here are the open weekday times — pick one and you'll get a confirmation text right away:";
 const DAY = "(?:mon|monday|tue|tues|tuesday|wed|weds|wednesday|thu|thur|thurs|thursday|fri|friday)";
@@ -870,6 +871,159 @@ export function createConversation(init = {}) {
   // the clock can be pinned for tests (init.now); production always uses the real time
   const clockNow = () => (init.now != null ? new Date(init.now) : new Date());
   const reach = (messengerLine, siteLine) => (site ? siteLine : messengerLine);
+
+  /* ---------- live open times (from Keith's calendar, passed in per message as msg.slots) ---------- */
+  // slots = { asOf, earliest, days: [{ date, wd, day, label, bookable, times, raw }] } — times only, never job details.
+  let slotsNow = null;
+  const SLOT_MAX_AGE = 20 * 60000;
+  function validSlots(x) {
+    if (!x || typeof x !== "object" || !Array.isArray(x.days) || !x.days.length) return null;
+    const age = clockNow().getTime() - Date.parse(x.asOf);
+    if (!(age >= -5 * 60000 && age <= SLOT_MAX_AGE)) return null;
+    const ok = x.days.every((d) => d && /^\d{4}-\d\d-\d\d$/.test(d.date) && Array.isArray(d.raw) && d.raw.every((t) => /^\d\d:\d\d$/.test(t)) && typeof d.label === "string" && typeof d.day === "string");
+    return ok ? x : null;
+  }
+  const ampm = (hhmm) => { const [h, m] = hhmm.split(":").map(Number); return `${((h + 11) % 12) + 1}:${String(m).padStart(2, "0")} ${h < 12 ? "AM" : "PM"}`; };
+  const orList = (xs) => (xs.length <= 1 ? xs.join("") : xs.length === 2 ? `${xs[0]} or ${xs[1]}` : `${xs.slice(0, -1).join(", ")} or ${xs.at(-1)}`);
+  const SLOT_DAY = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
+  const SLOT_DAY_RE = /\b(sun|mon|tue|wed|thu|fri|sat)(?:days?|s|\.)?(?:day|nesday|sday|rsday|urday|ursday|esday)?\b/g;
+  const TIME_ASK_RE = /\bwhen\b|\bavailab\w*|\bopenings?\b|\bopen (?:times?|slots?|days?)\b|\bsoonest\b|\bearliest\b|\bnext (?:week|available|opening|open)\b|\bthis week\b|\btomorrow\b|\btoday\b|\btonight\b|\bsame[- ]day\b|\bwhat times?\b|\btime ?slots?\b|\bslots?\b|\bschedul\w*|\bbook\w*|\bcome (?:out|by|over)\b|\bfit (?:me|us) in\b|\b(?:sun|mon|tue|wed|thu|fri|sat)(?:day|nesday|sday|rsday|urday|ursday|esday)?s?\b|\bmorning\b|\bafternoon\b|\bweekday\b|\bany ?time\b|\bdates?\b|\b\d{1,2}\/\d{1,2}\b|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\.?\s+\d{1,2}\b|\b\d{1,2}(?:st|nd|rd|th)\b/;
+  function slotSentence(t) {
+    const S = slotsNow; if (!S) return null;
+    const todayP = clockNow();
+    const fmtD = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Chicago", year: "numeric", month: "2-digit", day: "2-digit" });
+    const isoAt = (n) => fmtD.format(new Date(todayP.getTime() + n * 86400000));
+    const today = isoAt(0), tomorrow = isoAt(1);
+    const part = /\bmornings?\b|\b(?:early|am)\b/.test(t) ? "am" : /\bafternoons?\b|\b(?:late|pm|after (?:work|lunch))\b/.test(t) ? "pm" : null;
+    const filt = (raw) => raw.filter((x) => (part === "am" ? x < "12:00" : part === "pm" ? x >= "12:00" : true));
+    const open = S.days.filter((d) => d.bookable && filt(d.raw).length);
+    const dayPhrase = (d, raw = filt(d.raw)) => `${d.label} at ${orList(raw.map(ampm))}`;
+    const soonest = (after = "") => {
+      const xs = open.filter((d) => d.date > after);
+      if (!xs.length) return null;
+      return filt(xs[0].raw).length >= 2 || !xs[1] ? dayPhrase(xs[0], filt(xs[0].raw).slice(0, 3)) : `${dayPhrase(xs[0])}, or ${dayPhrase(xs[1], filt(xs[1].raw).slice(0, 2))}`;
+    };
+    const partWord = part === "am" ? "morning" : part === "pm" ? "afternoon" : "";
+    // which days did they name?
+    const asked = [];
+    if (/\btomorrow\b/.test(t)) asked.push(tomorrow);
+    for (const m of t.matchAll(SLOT_DAY_RE)) {
+      const wd = SLOT_DAY[m[1]];
+      if (wd === undefined || wd === 0 || wd === 6) continue;
+      const nextWeek = new RegExp(`\\bnext\\s+${m[0]}`).test(t);
+      const first = S.days.find((d) => d.wd === wd && d.date > today);
+      const pick = first && nextWeek ? S.days.find((d) => d.wd === wd && d.date > first.date && d.date > isoAt(6 - new Date(todayP).getDay())) || first : first;
+      if (pick && !asked.includes(pick.date)) asked.push(pick.date);
+    }
+    // "the 15th", "Oct 15", "10/15"
+    const MON = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+    const dm = /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\.?\s+(\d{1,2})(?:st|nd|rd|th)?\b/.exec(t) || /\b(\d{1,2})\/(\d{1,2})\b/.exec(t) || /\bthe\s+(\d{1,2})(?:st|nd|rd|th)\b|\b(\d{1,2})(?:st|nd|rd|th)\b/.exec(t);
+    if (dm) {
+      let mo = null, day = null;
+      if (MON[dm[1]]) { mo = MON[dm[1]]; day = +dm[2]; } else if (dm[2] && /\//.test(dm[0])) { mo = +dm[1]; day = +dm[2]; } else day = +(dm[1] || dm[2]);
+      const hit = S.days.find((d) => +d.date.slice(8) === day && (mo == null || +d.date.slice(5, 7) === mo) && d.date >= today);
+      if (hit) { asked.length = 0; asked.push(hit.date); }
+    }
+    const lines = [];
+    for (const date of asked.slice(0, 2)) {
+      const d = S.days.find((x) => x.date === date);
+      if (!d) continue; // a weekend, or beyond the window: the brain's own answer covers it
+      const s = soonest(d.date);
+      if (!d.bookable) { const n = soonest(); lines.push(n ? `${d.day} is a little too soon to book online — the soonest ${partWord ? partWord + " " : ""}openings are ${n}.` : `${d.day} is a little too soon to book online.`); continue; }
+      const raw = filt(d.raw);
+      // "friday at 10:30" / "monday at 1": a specific start time
+      const tm = /\b(?:at|@|around|for)\s+(\d{1,2})(?::(\d\d))?\s*(a\.?m\.?|p\.?m\.?)?\b|\b(\d{1,2}):(\d\d)\s*(a\.?m\.?|p\.?m\.?)?\b|\b(\d{1,2})\s*(a\.?m\.?|p\.?m\.?)\b/.exec(t);
+      if (tm) {
+        let h = +(tm[1] || tm[4] || tm[7]); const mi = +(tm[2] || tm[5] || 0); const ap = (tm[3] || tm[6] || tm[8] || "").replace(/\./g, "");
+        if (ap === "pm" && h < 12) h += 12; else if (!ap && h >= 1 && h <= 5) h += 12;
+        const want = `${String(h).padStart(2, "0")}:${String(mi).padStart(2, "0")}`;
+        if (h >= 6 && h <= 18) {
+          if (d.raw.includes(want)) { lines.push(`${d.label} at ${ampm(want)} is open right now.`); continue; }
+          lines.push(d.raw.length ? `${d.label} at ${ampm(want)} isn't open, but ${orList(d.raw.map(ampm))} ${d.raw.length > 1 ? "are" : "is"}.` : `${d.label} is booked up — the next open times are ${soonest(d.date) || "on the calendar"}.`);
+          continue;
+        }
+      }
+      if (raw.length) lines.push(`${d.label} shows ${orList(raw.map(ampm))} open right now.`);
+      else if (part && d.raw.length) lines.push(`${d.label} doesn't have a ${partWord} opening, but ${orList(d.raw.map(ampm))} ${d.raw.length > 1 ? "are" : "is"} open.`);
+      else lines.push(s ? `${d.label} is booked up — the next open ${partWord ? partWord + " " : ""}times are ${s}.` : `${d.label} is booked up.`);
+    }
+    if (lines.length) return lines.join(" ");
+    if (/\bnext week\b|\bthis week\b/.test(t)) {
+      const wkStart = new RegExp("\\bnext week\\b").test(t) ? isoAt(7 - new Date(todayP).getDay()) : today;
+      const wkEnd = new RegExp("\\bnext week\\b").test(t) ? isoAt(13 - new Date(todayP).getDay()) : isoAt(6 - new Date(todayP).getDay());
+      const xs = open.filter((d) => d.date >= wkStart && d.date <= wkEnd);
+      if (xs.length) return `${new RegExp("\\bnext week\\b").test(t) ? "Next week" : "This week"}, the open ${partWord ? partWord + " " : ""}times are ${xs.slice(0, 2).map((d) => dayPhrase(d)).join("; ")}${xs.length > 2 ? "; and more later in the week" : ""}.`;
+      const n = soonest(wkEnd);
+      return n ? `${new RegExp("\\bnext week\\b").test(t) ? "Next week" : "This week"} is booked up — the soonest open time after that is ${n}.` : null;
+    }
+    const n = soonest();
+    return n ? `The soonest open ${partWord ? partWord + " " : ""}times are ${n}.` : null;
+  }
+  // a reply about booking or times gets the real open times in place of the generic "the calendar shows what's open"
+  const GENERIC_TIMES = /(?:^|(?<=[.!?]\s))[^.!?]*(?:start times are usually|usual start times are|earliest usual start time|is one of our usual weekday start times|open times are on the live calendar|openings are on the live calendar)[^.!?]*[.!?:]\s*/gi;
+  // a time or day in the customer's words ("monday", "tomorrow", "mornings", "10:30", "the 15th", "anytime")
+  const SPECIFIC_RE = /\b(?:mon|tue|wed|thu|fri|sat|sun)(?:day|nesday|sday|rsday|urday|ursday|esday)?s?\b|\btomorrow\b|\btoday\b|\b(?:this|next) week\b|\bmornings?\b|\bafternoons?\b|\b\d{1,2}(?::\d\d)?\s*(?:am|pm|a\.m\.|p\.m\.)\b|\b\d{1,2}:\d\d\b|\bat \d{1,2}\b|\b\d{1,2}\/\d{1,2}\b|\b\d{1,2}(?:st|nd|rd|th)\b|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\.?\s+\d{1,2}\b/;
+  const SOONEST_RE = /\b(?:soonest|earliest|asap|as soon as|next (?:available|opening|open)|any ?(?:time|day|thing)|whenever|whatever(?:'s| is)? (?:open|soonest|first|available)|no preference|doesn'?t matter|don'?t care|flexible|first available|when(?:ever)? (?:is|are) (?:your )?(?:next|soonest|first)|when can you|when are you)\b/;
+  function applySlots(r, text, linkBefore = state.linkSent) {
+    if (!slotsNow || !r || !Array.isArray(r.bubbles) || !r.bubbles.length || r.phone) return r;
+    const t = norm(text);
+    // with live times, the gentle link offer becomes "what day works best? I can check"
+    const offerI = r.bubbles.findIndex((b) => b.includes(LINK_OFFER));
+    if (offerI >= 0 && !SPECIFIC_RE.test(t) && !SOONEST_RE.test(t)) {
+      const bubbles = [...r.bubbles];
+      bubbles[offerI] = bubbles[offerI].replace(LINK_OFFER, DAY_ASK);
+      state.lastReply = bubbles.filter((b) => b !== bookingUrl).join(" | ").slice(0, 400);
+      return { ...r, bubbles };
+    }
+    // "how do I book?" / "yes, let's book": ask what day suits them before listing times (unless they asked for the link itself)
+    if (r.bubbles.includes(bookingUrl) && !linkBefore && !SPECIFIC_RE.test(t) && !SOONEST_RE.test(t) && !/\blink\b|\bcalendar\b|\bsend it\b/.test(t) && !r.bubbles.some((b) => b.includes(WEEKEND_LINE) || b.includes(WEEKEND_AGAIN) || /same-day/.test(b))) {
+      const i = r.bubbles.indexOf(bookingUrl);
+      const lead = i > 0 ? r.bubbles[i - 1] : "";
+      const keep = lead.replace(GENERIC_TIMES, "").replace(/(?:^|\s)(?:The live calendar shows[^.!?:]*|Here are the open weekday times[^:]*|Just tap the booking link[^:]*|You can see the open times[^:]*|Or you can pick a time right now|grab one and[^:]*|The booking calendar shows[^.!?:]*)[.:]\s*$/i, "").replace(/\s*How many rooms, hallways and stairs are we cleaning\?/, "").trim();
+      const bubbles = [...r.bubbles.slice(0, Math.max(0, i - 1)), `${keep ? keep.replace(/[.!]?$/, "!") + " " : "Happy to get you on the schedule! "}${DAY_ASK}`, ...r.bubbles.slice(i + 1)].map((b) => b.replace(/^Great!! /, "Great! "));
+      state.lastReply = bubbles.join(" | ").slice(0, 400);
+      state.linkSent = linkBefore;
+      return { ...r, bubbles, dayAsk: true };
+    }
+    if (!TIME_ASK_RE.test(t) && !(r.bubbles.includes(bookingUrl) && /^(?:yes|yeah|yep|sure|ok|okay|please|yes please|sounds good|send it|go ahead)\b/.test(t))) return r;
+    const hasLink = r.bubbles.includes(bookingUrl);
+    const pointsAbove = r.bubbles.some((b) => /booking link above|booking calendar right now/.test(b));
+    const weekendNo = r.bubbles.some((b) => b.includes(WEEKEND_LINE) || b.includes(WEEKEND_AGAIN));
+    const offerAt = r.bubbles.findIndex((b) => b.includes(LINK_OFFER));
+    const namedDay = /\b(?:mon|tue|wed|thu|fri)\w*\b|\btomorrow\b|\bnext week\b|\bthis week\b/.test(t);
+    if (!hasLink && !pointsAbove && !weekendNo && !(offerAt >= 0 && namedDay)) return r;
+    if (!hasLink && !pointsAbove && !weekendNo) {
+      const s0 = slotSentence(t); if (!s0) return r;
+      const bubbles = [...r.bubbles];
+      bubbles[offerAt] = bubbles[offerAt].replace(LINK_OFFER, `${s0} Want me to send the link so you can grab ${/ is open right now\.$|shows \d{1,2}:\d\d [AP]M open right now\.$/.test(s0) ? "it" : "one"}?`);
+      state.lastReply = bubbles.join(" | ").slice(0, 400);
+      return { ...r, bubbles, slots: true };
+    }
+    let s = slotSentence(t.replace(/\b(?:sat|sun)\w*\b|\bweekends?\b/g, " "));
+    if (!s) return r;
+    if (weekendNo) s = s.replace(/^The soonest open /, "The soonest weekday open ");
+    let bubbles = r.bubbles.map((b) => b.replace(/, but we often have weekday openings soon — the booking calendar shows the next open times\./, "."));
+    if (weekendNo && !hasLink && !pointsAbove) {
+      bubbles.push(`${s} ${state.linkSent ? "The booking link above has them." : "Want me to send the link so you can grab one?"}`);
+      state.lastReply = bubbles.join(" | ").slice(0, 400);
+      return { ...r, bubbles, slots: true };
+    }
+    if (hasLink) {
+      const i = bubbles.indexOf(bookingUrl);
+      const lead = i > 0 ? bubbles[i - 1] : "";
+      const keep = lead.replace(GENERIC_TIMES, "").replace(/(?:^|\s)(?:The live calendar shows[^.!?:]*|Here are the open weekday times[^:]*|Just tap the booking link[^:]*|You can see the open times[^:]*|grab one and[^:]*|The booking calendar shows[^.!?:]*)[.:]\s*$/i, "").trim();
+      const newLead = `${keep && !/:$/.test(keep) ? keep + " " : ""}${s} You can grab ${/ is open right now\.$|shows \d{1,2}:\d\d [AP]M open right now\.$/.test(s) ? "it" : "one"} here, and you'll get a confirmation text right away:`.replace(/^Great!\s+/, "Great! ");
+      if (i > 0) bubbles[i - 1] = newLead; else bubbles.splice(i, 0, newLead);
+    } else {
+      const i = bubbles.findIndex((b) => /booking link above|booking calendar right now/.test(b));
+      bubbles.splice(i, 0, s);
+    }
+    bubbles = bubbles.map((b) => (b === bookingUrl ? b : b.replace(GENERIC_TIMES, "").trim())).filter(Boolean);
+    // a lone "Great!" / "Thanks for reaching out!" joins the bubble after it
+    for (let i = bubbles.length - 2; i >= 0; i--) if (/^(?:Great!|Thanks for reaching out!|Sounds good!)$/.test(bubbles[i]) && bubbles[i + 1] !== bookingUrl) bubbles.splice(i, 2, `${bubbles[i]} ${bubbles[i + 1]}`);
+    state.lastReply = bubbles.filter((b) => b !== bookingUrl).join(" | ").slice(0, 400);
+    return { ...r, bubbles, slots: true };
+  }
   /** Update the job from what the customer just said. Returns true when the job changed. */
   let restated = [];
   function applyScope(scope, t, { adding = false, inclusionQ = false } = {}) {
@@ -3129,6 +3283,31 @@ export function createConversation(init = {}) {
      * Valid directives that produce a reply win; anything else answers msg.text exactly as before.
      */
     incoming(msg) {
+      slotsNow = validSlots(msg && msg.slots);
+      try {
+        const tn = norm(msg && msg.text);
+        // "yes" to "Want me to send the link so you can grab one?" (offered with the open times) sends it
+        if (!state.linkSent && /Want me to send the link so you can grab (?:one|it)\?$/.test(state.lastReply || "") && /^(?:yes|yeah|yep|yes please|sure|ok|okay|please|send it|go ahead|sounds good)\b[\s!.]*(?:please|thanks|thank you)?[\s!.]*$/.test(tn)) {
+          // keep the day (and time) the offer was about: "Monday, Oct 12 shows …" → "monday"
+          const m = /(Monday|Tuesday|Wednesday|Thursday|Friday), \w+ \d+(?: at (\d{1,2}:\d\d [AP]M) is open| shows)/.exec(state.lastReply || "");
+          state.turns += 1;
+          return applySlots(out("booking", ["Great! " + BOOK_INTRO, bookingUrl]), m ? `yes ${m[1]}${m[2] ? " at " + m[2] : ""}` : msg.text);
+        }
+        // the answer to "Is there a day and time that works best?": the closest real openings, and the link
+        if (slotsNow && (state.lastReply || "").includes(DAY_ASK) && (SPECIFIC_RE.test(tn) || SOONEST_RE.test(tn) || /^(?:yes|yeah|yep|sure|ok|okay|please)\b[\s!.]*$/.test(tn)) && !/\b(?:how much|price|cost|rooms?|halls?|stairs?|pets?|dogs?|cats?|sat\w*|sun\w*|weekends?)\b/.test(tn)) {
+          const s = slotSentence(SOONEST_RE.test(tn) || !SPECIFIC_RE.test(tn) ? "soonest" : tn);
+          if (s) {
+            state.turns += 1;
+            const nudge = !SPECIFIC_RE.test(tn) && !SOONEST_RE.test(tn) ? " Or tell me a day that suits you better." : "";
+            const r = out("booking", [`${/ is open right now\.$/.test(s) ? "Good news — " : /^(?:yes|yeah|yep|sure|ok|okay|please)\b/.test(tn) ? "Great! " : ""}${s}${nudge} You can grab ${/ is open right now\.$|shows \d{1,2}:\d\d [AP]M open right now\.$/.test(s) ? "it" : "one"} here, and you'll get a confirmation text right away:`.replace(/^Good news — (\w)/, (m, c) => `Good news — ${c}`), bookingUrl]);
+            return { ...r, slots: true };
+          }
+        }
+        const linkBefore = state.linkSent;
+        return applySlots(this.incoming0(msg), msg && msg.text, linkBefore);
+      } finally { slotsNow = null; }
+    },
+    incoming0(msg) {
       const d = msg && msg.directives != null ? validateDirectives(msg.directives) : null;
       if (d) {
         const saved = JSON.stringify(state);
