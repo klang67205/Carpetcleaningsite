@@ -9,16 +9,16 @@ const C = [
  ["interested", ["Interested"], {has:["How many rooms"], not:["Keith"]}],
  ["learn more (old ad button)", ["I'd like to learn more"], {has:["How many rooms"], not:["passing"]}],
  ["yes alone", ["Yes"], {has:["How many rooms"]}],
- ["3br+hall = $99", ["How much would it be for three bedrooms and a hallway"], {has:["$99"], not:["$75 plus"], link:true}],
- ["add front room", ["How much would it be for three bedrooms and a hallway","And front room"], {has:["4 rooms","$99"], not:["$114"], link:true}],
- ["Tonya flow pet", ["How much would it be for three bedrooms and a hallway","And front room","Pet"], {has:["$149"], link:true}],
+ ["3br+hall = $99", ["How much would it be for three bedrooms and a hallway"], {has:["send the booking link","$99"], not:["$75 plus"], link:false}],
+ ["add front room", ["How much would it be for three bedrooms and a hallway","And front room"], {has:["send the booking link","4 rooms","$99"], not:["$114"], link:false}],
+ ["Tonya flow pet", ["How much would it be for three bedrooms and a hallway","And front room","Pet"], {has:["send the booking link","$149"], link:false}],
  ["when can you clean", ["when can you clean"], {link:true, not:["Commercial"]}],
  ["QR how much", ["How much for mine?"], {has:["$99","How many rooms"]}],
- ["QR how much then 4+hall", ["How much for mine?","4 rooms and a hallway"], {has:["$99"], link:true}],
+ ["QR how much then 4+hall", ["How much for mine?","4 rooms and a hallway"], {has:["send the booking link","$99"], link:false}],
  ["QR included", ["What's included?"], {has:["5 rooms","$149","$15"]}],
  ["QR how do I book", ["How do I book?"], {link:true}],
  ["I have pets", ["I have pets"], {has:["$149","$85"], not:["Keith"]}],
- ["pets then rooms", ["I have pets","3 bedrooms and living room, dog pee spots"], {has:["$149"], link:true}],
+ ["pets then rooms", ["I have pets","3 bedrooms and living room, dog pee spots"], {has:["send the booking link","$149"], link:false}],
  ["see open times", ["See open times"], {link:true}],
  ["dog 3br saturday", ["hi i have 3 bedrooms and a dog, can you come saturday and whats the price"], {has:["$75","weekdays only (Monday–Friday) — we're closed Saturday and Sunday"], not:["Keith"], link:true}],
  ["speak to someone", ["I'm ready I would just like to speak to someone"], {}],
@@ -26,12 +26,12 @@ const C = [
  ["steam", ["Do you steam clean"], {has:["low-moisture","BrushPro"]}],
  ["wellington", ["Do you come to Wellington?"], {has:["outside"]}],
  ["goddard", ["Do you service Goddard?"], {has:["Yes","Goddard"]}],
- ["6br 2h stairs", ["I have 6 bedrooms, 2 hallways and stairs, how much"], {has:["$99 + $15, plus tax"], link:true}],
- ["2 bedrooms", ["Just need 2 bedrooms done. price?"], {has:["$75"], link:true}],
+ ["6br 2h stairs", ["I have 6 bedrooms, 2 hallways and stairs, how much"], {has:["send the booking link","$99 + $15, plus tax"], link:false}],
+ ["2 bedrooms", ["Just need 2 bedrooms done. price?"], {has:["send the booking link","$75"], link:false}],
  ["weekends?", ["Do you do weekends"], {has:["weekdays only (Monday–Friday) — we're closed Saturday and Sunday"], not:["Keith","232-8111"]}],
  ["repeat customer", ["Hi! Just checking if you have availability to clean my carpets again","You have cleaned my house before and it was $170"], {not:["prep","vacuum"]}],
  ["couch", ["How much to clean a couch too?"], {has:["sofa is $89"]}],
- ["move out 3br", ["Moving out next week need carpets done for deposit, 3 bedrooms"], {has:["move-out","$75"], link:true}],
+ ["move out 3br", ["Moving out next week need carpets done for deposit, 3 bedrooms"], {has:["send the booking link","move-out","$75"], link:false}],
  ["dry", ["how long until dry"], {has:["1.5"]}],
  ["base", ["I live on McConnell base housing"], {has:["on-base"]}],
  ["4 rooms then book", ["4 rooms","ok sounds good how do I book"], {link:true}],
@@ -39,9 +39,9 @@ const C = [
  ["what does 99 include", ["what does the 99 include"], {has:["5 rooms","two halls"]}],
  ["urine guarantee", ["will it get the cat urine smell out for sure?"], {has:["enzyme"]}],
  ["thanks after quote", ["4 rooms no pets","thanks!"], {has:["welcome"]}],
- ["no pets quote", ["5 rooms 2 halls no pets"], {has:["$99"], not:["pet-treatment version"], link:true}],
+ ["no pets quote", ["5 rooms 2 halls no pets"], {has:["send the booking link","$99"], not:["pet-treatment version"], link:false}],
  ["whole house", ["how much for my whole house"], {has:["$99"]}],
- ["8 rooms", ["8 rooms"], {has:["$99 + $45, plus tax"], link:true}],
+ ["8 rooms", ["8 rooms"], {has:["send the booking link","$99 + $45, plus tax"], link:false}],
  ["1 room", ["just one room"], {has:["$75"]}],
  ["1 room pet", ["one bedroom the cat peed"], {has:["$85"]}],
  ["3 rooms + stairs pets", ["3 bedrooms and stairs, we have dogs"], {has:["$149"]}],
@@ -56,7 +56,7 @@ const C = [
  ["military", ["any military discount?"], {has:["15%"]}],
  ["move furniture", ["do you move furniture?"], {has:["couches"]}],
  ["hello", ["Hello"], {has:["What would you like cleaned"]}],
- ["park city price", ["I'm in Park City, how much for 4 rooms and a hall"], {has:["$99"], link:true}],
+ ["park city price", ["I'm in Park City, how much for 4 rooms and a hall"], {has:["send the booking link","$99"], link:false}],
  ["kids pets safe", ["is it safe for my kids and pets"], {has:["product","dry"], not:["safe for"]}],
  ["today", ["can you come today?"], {has:["same-day"]}],
  ["call me", ["can you call me 316-555-1212"], {call:true}],
@@ -106,10 +106,13 @@ test('Website prices match the owner price list', () => {
   assert.match(say('How much for an accent chair?'), /\$39/);
 });
 
-test('Website chat offers booking once the customer has a price', () => {
-  const result = createWebsiteConversation().respond('4 bedrooms and a hallway, how much?');
+test('Website chat offers booking once the customer has a price, and sends it when they say yes', () => {
+  const chat = createWebsiteConversation();
+  const result = chat.respond('4 bedrooms and a hallway, how much?');
   assert.equal(result.handoff, false);
-  assert.ok(result.bubbles.includes(bookingUrl));
+  assert.ok(!result.bubbles.includes(bookingUrl), 'the price alone does not push the link');
+  assert.match(result.bubbles.join(' '), /send the booking link/);
+  assert.ok(chat.respond('yes please').bubbles.includes(bookingUrl));
 });
 
 test('Network request has a timeout and validated response', async () => {
@@ -172,7 +175,7 @@ test('Each chat button sits next to the text it belongs to', () => {
   const layout = replyEntries({ bubbles: ['You can text us anytime at ' + contact + '.', 'For 3 rooms it is $75 plus tax.', 'Here are the open times:', bookingUrl], contact: true });
   assert.deepEqual(layout.map(entry => entry[0]), ['g', 'a', 'g', 'g', 'b'], 'Text/Messenger right after the texting bubble, booking where its link was');
   assert.deepEqual(layout[1][1].map(link => link[0]), ['Text the company', 'Open Messenger']);
-  const live = replyEntries(createWebsiteConversation().respond('3 rooms, can I text you'));
+  const live = replyEntries(createWebsiteConversation().respond('3 rooms, can I text you? when are you available'));
   const kinds = live.map(entry => entry[0]);
   assert.equal(kinds.at(-1), 'b', 'Booking button stays at the end, where the link was');
   assert.match(live[kinds.indexOf('a') - 1][1], /232-8111|Messenger/i, 'Contact buttons follow the bubble that mentions texting');
