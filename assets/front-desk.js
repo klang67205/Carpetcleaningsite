@@ -485,6 +485,7 @@ const PAYMENT_REPLY = "We can take cash at the job, or we send a payment link ri
 // owner (Oct 6): no Venmo — card or cash
 const PAYMENT_APPS_REPLY = "No Venmo or other payment apps — we take card or cash. We send a payment link after the job is complete (card or Apple Pay), or you can pay cash at the time of service.";
 const INSURED_REPLY = "Yes — we're insured.";
+const COI_REPLY = `Yes — we're insured. For a certificate of insurance, text Keith at ${TEXT_LINE}.`;
 // business.ts typicalAppointmentDuration
 const JOB_LENGTH_REPLY = "A typical job takes about 1.5 to 2 hours. That can flex a little with the size of the home.";
 const VACUUM_REPLY = "You do not need to do special vacuuming — just pick up large debris. We typically vacuum beforehand unless there is major cat litter or construction debris.";
@@ -567,6 +568,15 @@ const ASK_ROOMS = "How many rooms, hallways and stairs are we cleaning?";
 const THANKS_NO_LINK = "You're very welcome! Whenever you're ready, just say the word and I'll send the booking link. Feel free to message here with any questions.";
 const DAY_ASK = "Is there a day and time that works best for you? I can check what's open.";
 const LINK_OFFER = "Would you like me to send the booking link so you can pick a time that works for you?";
+const PM_PAGE = "https://wichitacarpetcleaningservices.com/property-managers/";
+const PM_PRICES = "$75 plus tax for up to 3 rooms, or $99 plus tax for up to 5 rooms, 2 halls and 1 staircase. Pet treatment is $85 or $149.";
+const pmLines = (t) => [
+  /\b(?:volume|bulk|discount\w*|deals?|special rates?|commercial rates?|better rates?|rates? for)\b/.test(t) ? "We don't have separate volume rates, but rental units book online like any appointment, at the same published prices: " + PM_PRICES : "Yes! Rental units book online like any appointment, at the same published prices: " + PM_PRICES,
+  "Each unit is its own booking and time slot, openings start two days out, and the invoice comes after each visit. Details for property managers: " + PM_PAGE,
+];
+const PM_RE = /\b(?:property manag\w*|unit turns?|vacant (?:units?|apartments?)|(?:i'?m|we'?re|i am|we are) (?:a |the )?landlords?|manage (?:an? |the |our )?(?:apartment|complex|building|propert\w*)|\d+ (?:rental )?units|(?:[2-9]|\d{2,3})[ -]?(?:rental |apartment |condo )?units?|(?:[2-9]|\d{2,3}) (?:rental (?:houses|homes|properties|units)|rentals|apartments|condos|townhomes)|apartment complex(?:es)?|(?:own|manage|run) (?:an? |the |our |my )?apartment (?:complex|building)s?|\d ?-?plex(?:es)?|(?:tri|quad|four|five|six)[ -]?plex(?:es)?|duplex(?:es)?|multiple (?:units|rentals)|several (?:units|rentals)|rental (?:units?|propert\w*|homes?))\b/;
+const PM_STRONG_RE = /\b(?:property manag\w*|unit turns?|vacant (?:units?|apartments?)|(?:i'?m|we'?re|i am|we are) (?:a |the )?landlords?)\b/;
+const PM_COMMERCIAL_RE = /\b(?:office|offices|church|restaurant|warehouse|hotel|daycare|storefront|retail|business(?:es)?)\b/;
 const BOOK_INTRO = "Here are the open weekday times — pick one and you'll get a confirmation text right away:";
 const DAY = "(?:mon|monday|tue|tues|tuesday|wed|weds|wednesday|thu|thur|thurs|thursday|fri|friday)";
 /* ---------- weekends: a firm no (owner policy). Never offered to Keith, never handed to Keith. ---------- */
@@ -1546,9 +1556,10 @@ export function createConversation(init = {}) {
       if (!site) state.offeredKeith = true;
       topic("about", reach("We're owner-operated — Keith runs the business and does the cleaning himself, and we have over 385 satisfied customers. I don't have the exact years here — want me to ask Keith?", `We're owner-operated — Keith runs the business and does the cleaning himself, and we have over 385 satisfied customers. For the exact years, text Keith at ${TEXT_LINE}.`));
     }
+    if (PM_STRONG_RE.test(t) && !PM_COMMERCIAL_RE.test(t)) return out("property_manager", offerLink(pmLines(t)));
     if (has(t, /\b(?:commercial|office building|offices|office (?:space|suite)|small office|(?<!(?:after|before|from|at|to) )church|restaurant|warehouse|property manag\w*|manage (?:an? |the |our )?(?:apartment|complex|building|propert\w*)|\d+ (?:rental )?units|(?:[2-9]|\d{2,3})[ -]?(?:rental |apartment |condo )?units?|(?:[2-9]|\d{2,3}) (?:rental (?:houses|homes|properties|units)|rentals|apartments|condos|townhomes|houses|homes|properties)|apartment complex(?:es)?|(?:own|manage|run) (?:an? |the |our |my )?apartment (?:complex|building)s?|\d ?-?plex(?:es)?|(?:tri|quad|four|five|six)[ -]?plex(?:es)?|volume (?:pricing|discount|rate)|multiple (?:units|properties|rentals|houses)|several (?:units|properties|rentals)|bulk (?:pricing|rate|discount)|hotel|daycare|storefront)\b|\b(?:do|can) you (?:do|clean) (?:an? |my |our )?office\b/) || (has(t, /\boffice\b/) && has(t.replace(/(\d),(?=\d{3}\b)/g, "$1"), /\b\d{3,6}\s*(?:square (?:feet|foot)|sq\.?\s*f(?:ee)?t\.?|sqft|sf)\b/)) || (has(t, /\bbusiness(?:es)?\b/) && !has(t, /\b(?:in business|been in|your business|the business|my (?:home|house)|business days?|business hours)\b/))) {
       if (has(t, /\b(?:\d+ (?:rental )?units|(?:[2-9]|\d{2,3})[ -]?(?:rental |apartment |condo )?units?|(?:[2-9]|\d{2,3}) (?:rental (?:houses|homes|properties|units)|rentals|apartments|condos|townhomes|houses|homes|properties)|apartment complex(?:es)?|(?:own|manage|run) (?:an? |the |our |my )?apartment (?:complex|building)s?|\d ?-?plex(?:es)?|(?:tri|quad|four|five|six)[ -]?plex(?:es)?|volume|multiple (?:units|properties|rentals|houses)|several (?:units|properties|rentals)|bulk)\b/)) {
-        return out("commercial", [reach("Multiple units get a personal quote from Keith. Send the number of units and rough room counts here, and he'll get back to you.", `Multiple units get a personal quote from Keith — text the number of units and rough room counts to ${TEXT_LINE} and he'll get back to you.`)], { phone: true });
+        return out("property_manager", offerLink(pmLines(t)));
       }
       if (lastIntentBefore === "commercial") return out("commercial", [reach("Thanks — I've added that for Keith, and he'll get back to you with a quote.", `Thanks — please text that to Keith at ${TEXT_LINE} along with a couple of photos, and he'll get back to you with a quote.`)], { phone: true });
       return out("commercial", [reach("Commercial jobs get a personal quote. Send a quick description (rough size and type of space) and a couple of photos here, and Keith will get back to you.", `Commercial jobs get a personal quote. Text a quick description and a couple of photos to ${TEXT_LINE} and Keith will get back to you.`)], { phone: true });
@@ -1846,7 +1857,7 @@ export function createConversation(init = {}) {
     if (has(t, /\$\s?\d+ (?:each|per room|a room)\b/)) topic("included", "No — that's the total price for the job, not per room.");
     if (travelQ) topic("fees", "No travel fee — it's the same package price anywhere in our service area, plus tax.");
     else if (has(t, /\b(?:hidden fees?|extra fees?|any fees|travel fee|trip charge)\b/)) topic("fees", "Your price is the package price you're quoted, plus tax — Housecall Pro shows your exact total before you confirm.");
-    if (has(t, /\b(?:insured|insurance|licensed|license|bonded)\b/)) topic("insured", has(t, /\b(?:insured|insurance)\b/) ? INSURED_REPLY : "We're insured.");
+    if (has(t, /\b(?:insured|insurance|licensed|license|bonded)\b/)) topic("insured", has(t, /\bcertificate\b|\bcoi\b|\bproof of insurance\b/) ? COI_REPLY : has(t, /\b(?:insured|insurance)\b/) ? INSURED_REPLY : "We're insured.");
     if (has(t, /\b(?:certified|certification|iicrc|cri)\b/)) topic("certified", CERT_REPLY);
     if (has(t, /\b(?:hiring|job openings?|employment)\b|\b(?:can i|could i|want to|looking to|apply to|like to) work for you\b/)) topic("hiring", reach("Thanks for asking! That's a question for Keith — he'll see it here.", `Thanks for asking! That's a question for Keith — you can text him at ${TEXT_LINE}.`));
     if (has(t, /\b(?:leave (?:a |you a )?review|write (?:a )?review|amazing job|great job|did a great)\b/)) return out("thanks", [has(t, /\b(?:leave (?:a |you a )?review|write (?:a )?review)\b/) ? reach("Thank you so much — that means a lot to Keith! We don't use Google reviews right now, so your message here is the best way to share it — he'll see it.", "Thank you so much — that means a lot to Keith! We don't use Google reviews right now, but we really appreciate you saying so.") : "Thank you so much — that means a lot to Keith!"]);
@@ -1902,8 +1913,8 @@ export function createConversation(init = {}) {
       return out("price", [`Each room over five is ${money(PRICES.extra)} plus tax — the same for each hall over two or staircase over one.${hasScope() ? "" : " " + ASK_ROOMS}`]);
     }
     const oneDuplex = has(t, /\b(?:i|we) (?:live|stay|rent|reside) in (?:a|an|my|our|the|one)\b[^.?!]{0,30}\bduplex\b|\bmy (?:half of (?:the|a|my) |side of (?:the|a|my) )?duplex\b/) && !has(t, /\bboth (?:sides|units|halves)\b|\beach (?:side|unit)\b|\bduplexes\b|\b(?:rent|lease) (?:it|them|out)\b/);
-    if (!oneDuplex && (has(t, /\b(?:duplex(?:es)?|triplex(?:es)?|fourplex(?:es)?|four-?plex)\b/) || has(t, /\bboth (?:sides|units|halves)\b|\beach (?:side|unit)\b/))) {
-      return out("commercial", [reach("Multiple units get a personal quote from Keith. Send the number of units and rough room counts here, and he'll get back to you.", `Multiple units get a personal quote from Keith — text the number of units and rough room counts to ${TEXT_LINE} and he'll get back to you.`)], { phone: true });
+    if (!oneDuplex && (has(t, /\b(?:duplex(?:es)?|triplex(?:es)?|fourplex(?:es)?|four-?plex)\b/) || has(t, /\bboth (?:units|halves)\b|\beach unit\b/) || (has(t, /\bboth sides\b|\beach side\b/) && !has(t, /\b(?:stairs?|staircases?|steps|hall ?ways?|halls?|rooms?|carpet(?:ed)?)\b/)))) {
+      return out("property_manager", offerLink(pmLines(t)));
     }
     // "does that include the stairs / the hallway?" after a quote
     const incItem = hasScope() && state.quoted && !scopeChanged && has(t, /\b(?:include|includes|included|cover|covers|count)\b|\bwhat about\b/) && (t.match(/\b(stairs?|staircases?|steps|hall ?ways?|halls?)\b/) || [])[1];
@@ -2201,6 +2212,7 @@ export function createConversation(init = {}) {
         return weekendBooking(weekendRef(t, wkChanged));
       }
       case "commercial":
+        if (PM_RE.test(t) && !PM_COMMERCIAL_RE.test(t) && lastIntentBefore !== "commercial") return out("property_manager", offerLink(pmLines(t)));
         if (lastIntentBefore === "commercial" && /\b(?:weekends?|saturdays?|sundays?)\b/.test(t)) return out("commercial", [`${WEEKEND_LINE} ` + reach("Keith will work out a weekday time with you along with the quote.", `Text Keith at ${TEXT_LINE} and he'll work out a weekday time with you along with the quote.`)], PHONE);
         if (lastIntentBefore === "commercial") {
           if (/@|\bemail/.test(t)) return out("commercial", [reach("Keith will send the quote himself — I've added your note, and he'll reply here.", `This chat can't send email quotes — text the details and a couple of photos to Keith at ${TEXT_LINE}, and he'll get you a quote.`)], PHONE);
@@ -2212,7 +2224,7 @@ export function createConversation(init = {}) {
         // "my house and my mom's house" are two homes, not "units"
         if (!/\b(?:units?|apartments?|complex(?:es)?|buildings?|propert(?:y|ies)|rentals?|plex(?:es)?|duplex(?:es)?|triplex(?:es)?|condos|townhomes|doors)\b/.test(t))
           return out("commercial", [reach("More than one home in a visit gets a personal quote from Keith. Send the room counts for each home here, and he'll get back to you.", `More than one home in a visit gets a personal quote from Keith — text the room counts for each home to ${TEXT_LINE} and he'll get back to you.`)], PHONE);
-        return out("commercial", [reach("Multiple units get a personal quote from Keith. Send the number of units and rough room counts here, and he'll get back to you.", `Multiple units get a personal quote from Keith — text the number of units and rough room counts to ${TEXT_LINE} and he'll get back to you.`)], PHONE);
+        return out("property_manager", offerLink(pmLines(t)));
       case "oversized_rug":
         if (!site) { const again = lastIntentBefore === "keith_review" && state.reviewKind === "rug"; state.reviewKind = "rug"; return out("keith_review", [again ? "Keith has the rug details — he'll reach out here." : "That rug needs a quick look before we can price it — I've let Keith know, and he'll reach out here. Meanwhile, I'm happy to help with anything else."], again ? {} : { notify: "review" }); }
         if (lastIntentBefore === "rug_price") {
@@ -2335,7 +2347,7 @@ export function createConversation(init = {}) {
         // "steam or that dry stuff?" / "how is it different from steam?" aren't yes/no questions
         return !ynQ(t) || /\bdiffer\w*|\bvs\.?\b|\bversus\b|\bcompare\w*\b/.test(t) ? STEAM_DIFF_REPLY : NO_STEAM_REPLY;
       case "certification": return topics.has("method") || topics.has("steam") ? (/\b(?:licens\w*|insur\w*)\b/.test(t) ? LICENSE_LINE : null) : CERT_REPLY + (/\b(?:licens\w*|registered|insur\w*)\b/.test(t) ? " " + LICENSE_LINE : "");
-      case "insured": return INSURED_REPLY;
+      case "insured": return /\bcertificate\b|\bcoi\b|\bproof of insurance\b/i.test(currentText) ? COI_REPLY : INSURED_REPLY;
       case "reviews":
         if (topics.has("scam")) return null;
         if (ctx.praise || /\b(?:leave|write|post) (?:a |you a )?review\b|\bwhere (?:can|do) i review\b/.test(t)) {
