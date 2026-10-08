@@ -571,8 +571,8 @@ const LINK_OFFER = "Would you like me to send the booking link so you can pick a
 const PM_PAGE = "https://wichitacarpetcleaningservices.com/property-managers/";
 const PM_PRICES = "$75 plus tax for up to 3 rooms, or $99 plus tax for up to 5 rooms, 2 halls and 1 staircase. Pet treatment is $85 or $149.";
 const pmLines = (t) => [
-  /\b(?:volume|bulk|discount\w*|deals?|special rates?|commercial rates?|better rates?|rates? for)\b/.test(t) ? "We don't have separate volume rates, but rental units book online like any appointment, at the same published prices: " + PM_PRICES : "Yes! Rental units book online like any appointment, at the same published prices: " + PM_PRICES,
-  "Each unit is its own booking and time slot, openings start two days out, and the invoice comes after each visit. Details for property managers: " + PM_PAGE,
+  (/\b(?:volume|bulk|discount\w*|deals?|special rates?|commercial rates?|better rates?|rates? for)\b/.test(t) ? "We don't have separate volume rates, but rental units book online like any appointment, at the same published prices: " : "Happy to help! Rental units book online like any appointment, at the same published prices: ") + PM_PRICES,
+  "Each unit is its own booking and time slot (about 2 hours), openings start two days out, and payment is due when the invoice arrives. Details for property managers: " + PM_PAGE,
 ];
 const PM_RE = /\b(?:property manag\w*|unit turns?|vacant (?:units?|apartments?)|(?:i'?m|we'?re|i am|we are) (?:a |the )?landlords?|manage (?:an? |the |our )?(?:apartment|complex|building|propert\w*)|\d+ (?:rental )?units|(?:[2-9]|\d{2,3})[ -]?(?:rental |apartment |condo )?units?|(?:[2-9]|\d{2,3}) (?:rental (?:houses|homes|properties|units)|rentals|apartments|condos|townhomes)|apartment complex(?:es)?|(?:own|manage|run) (?:an? |the |our |my )?apartment (?:complex|building)s?|\d ?-?plex(?:es)?|(?:tri|quad|four|five|six)[ -]?plex(?:es)?|duplex(?:es)?|multiple (?:units|rentals)|several (?:units|rentals)|rental (?:units?|propert\w*|homes?))\b/;
 const PM_STRONG_RE = /\b(?:property manag\w*|unit turns?|vacant (?:units?|apartments?)|(?:i'?m|we'?re|i am|we are) (?:a |the )?landlords?)\b/;
@@ -2024,7 +2024,7 @@ export function createConversation(init = {}) {
         const hi = quote({ ...scopeNow(), rooms: scope.rangeHigh, pets: state.pets === true });
         lines.push(`If it's ${scope.rangeHigh} rooms, it's ${hi.extras ? `${money(hi.base)} + ${money(hi.extras * PRICES.extra)}, plus tax` : `${money(hi.total)} plus tax`}.`);
       }
-      if (moving) lines.unshift(moveIn ? "Great timing — cleaning before you move in is the easiest way to do it." : "Perfect for a move-out — we'll have it fresh for the walkthrough.");
+      if (moving) lines.unshift(moveIn ? "Great timing — cleaning before you move in is the easiest way to do it." : "Happy to help with your move-out cleaning.");
       if (reminder) lines.unshift(reminder);
       return out("price", offerLink(lines));
     }
@@ -2032,7 +2032,7 @@ export function createConversation(init = {}) {
     if ((pets === true || (mentionsPets(t) && pets !== false)) && !notes.length && !hasScope()) {
       return out("pet", [`Pet treatment adds an enzyme that breaks down urine and odor: ${money(PRICES.petMinimum)} for up to 3 areas, or ${money(PRICES.pet)} for ${COVER}, plus tax. How many rooms are we cleaning?`]);
     }
-    if (moving && (!notes.length || asksPrice)) return out("price", [...notes, (moveIn ? "Great timing — cleaning before you move in is the easiest way to do it. " : "Perfect for a move-out — we'll have it fresh for the walkthrough. ") + PACKAGE_SUMMARY + " " + ASK_ROOMS]);
+    if (moving && (!notes.length || asksPrice)) return out("price", [...notes, (moveIn ? "Great timing — cleaning before you move in is the easiest way to do it. " : "Happy to help with your move-out cleaning. ") + PACKAGE_SUMMARY + " " + ASK_ROOMS]);
     if (asksPrice && !hasScope() && !notes.length && has(t, /\b(?:floors?|carpets?|carpeting)\b/) && !has(t, /\b(?:tile|grout|hard ?wood|laminate|vinyl)\b/)) return out("price", [`Happy to price it! ${ASK_ROOMS} For reference, the ${money(PRICES.standard)} special covers ${COVER}, plus tax.`]);
     if (asksPrice && !hasScope() && !notes.length) return out("price", [PACKAGE_SUMMARY + " " + ASK_ROOMS]);
     if (wantsBook && (!weekend || new RegExp(`\\b(?:${DAY}|next week|this week|weekday)\\b`).test(t))) {
