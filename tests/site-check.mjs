@@ -47,7 +47,7 @@ const servicePages = [
   'services/tile-grout-cleaning/index.html',
   'services/hard-floor-cleaning/index.html',
 ];
-const guidePages = ['low-moisture-carpet-cleaning/index.html', 'service-area/index.html', 'appointment-preparation/index.html'];
+const guidePages = ['low-moisture-carpet-cleaning/index.html', 'service-area/index.html', 'appointment-preparation/index.html', 'property-managers/index.html'];
 const pages = ['index.html', '404.html', 'booking-confirmed/index.html', 'privacy-policy/index.html', 'terms-of-service/index.html', 'data-deletion/index.html', 'accessibility/index.html', ...servicePages, ...guidePages];
 for (const page of pages) {
   const content = readFileSync(resolve(root, page), 'utf8');
@@ -105,7 +105,7 @@ const areaGuide = readFileSync(resolve(root, 'service-area/index.html'), 'utf8')
 for (const value of ['Wichita', 'Derby', 'Andover', 'Goddard', 'Maize', 'Newton is outside', 'On-base military housing is not serviced']) assert.ok(areaGuide.includes(value), `Missing service-area detail: ${value}`);
 assert.match(html, /<h1>Wichita-area carpet cleaning\./, 'Homepage must describe the broader Wichita-area coverage accurately');
 const sitemap = readFileSync(resolve(root, 'sitemap.xml'), 'utf8');
-for (const path of ['/low-moisture-carpet-cleaning/', '/service-area/', '/appointment-preparation/']) assert.ok(sitemap.includes(`https://wichitacarpetcleaningservices.com${path}`), `Missing sitemap entry: ${path}`);
+for (const path of ['/low-moisture-carpet-cleaning/', '/service-area/', '/appointment-preparation/', '/property-managers/']) assert.ok(sitemap.includes(`https://wichitacarpetcleaningservices.com${path}`), `Missing sitemap entry: ${path}`);
 const preparationGuide = readFileSync(resolve(root, 'appointment-preparation/index.html'), 'utf8');
 for (const value of ['Clear loose items', 'Protect breakables', 'Plan furniture', 'Keep pets comfortable', 'There is no cancellation fee']) assert.ok(preparationGuide.includes(value), `Missing preparation guidance: ${value}`);
 assert.doesNotMatch(preparationGuide, /must (?:crate|remove)|pets? away|required to vacuum/i, 'Preparation guide must remain helpful rather than bossy');
@@ -175,3 +175,7 @@ for (const value of ['--radius: 8px', 'body * { letter-spacing: 0 !important; }'
 assert.match(css, /\.button\s*\{\s*color:\s*var\(--ink\)/);
 assert.match(css, /\.concierge-panel\[hidden\]/);
 console.log('Public-page, approved pricing, catalog scope, structured-data, local-link and module checks passed.');
+
+const managerGuide = readFileSync(resolve(root, 'property-managers/index.html'), 'utf8');
+for (const value of ['$75', '$85', '$99', '$149', '$15', 'Openings start two days out', 'One unit per booking', 'Payment is due on receipt', 'certificate of insurance', 'Permanent stain or odor removal cannot be promised', 'plus applicable tax']) assert.ok(managerGuide.includes(value), `Missing property-manager detail: ${value}`);
+for (const value of ['same day', 'same-day', 'volume', 'discount', 'free unit', 'net 30', 'monthly invoic', 'photos of every']) assert.doesNotMatch(managerGuide, new RegExp(value, 'i'), `Property-manager page must not promise: ${value}`);
