@@ -1385,3 +1385,15 @@ body {
   .service-area::after { bottom: -22px; font-size: 6rem; }
   .final-cta { min-height: 560px; }
 }
+
+/* CRO pass (Oct 9): text option beside booking, quick links under the hero buttons */
+.hero-link {
+  margin: 16px 0 0;
+  font-size: .92rem;
+  color: #c6d2cc;
+}
+.hero-link a { color: #fff; text-underline-offset: 3px; }
+.hero-link span { margin: 0 8px; color: var(--accent); }
+@media (max-width: 850px) {
+  .mobile-bar.mobile-bar-3 { grid-template-columns: 1fr 1fr 1.6fr; gap: 6px; }
+}
