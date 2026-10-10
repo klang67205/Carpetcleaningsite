@@ -1465,3 +1465,11 @@ footer { grid-template-columns: 2fr 1fr 1fr 1fr; }
 .hero-tagline { margin: 22px 0 0; font-size: clamp(1.15rem, 2.2vw, 1.5rem); font-weight: 850; letter-spacing: -.02em; color: var(--accent); }
 .hero-tagline + .hero-copy { margin-top: 10px; }
 .value-grid a { color: var(--green); font-weight: 750; }
+
+/* cro-6: service-area strip */
+.area-strip { display: flex; align-items: center; justify-content: space-between; gap: 28px; padding: 60px max(24px, calc((100vw - 1180px) / 2)); background: #fff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.area-strip h2 { font-size: clamp(1.7rem, 3.2vw, 2.6rem); letter-spacing: -.05em; line-height: 1.05; margin: 10px 0 12px; max-width: 760px; }
+.area-strip p { color: var(--muted); max-width: 720px; margin: 0; }
+.area-strip a:not(.button) { color: var(--green); font-weight: 750; }
+.area-strip .button { flex: none; }
+@media (max-width: 850px) { .area-strip { flex-direction: column; align-items: stretch; } .area-strip .button { width: 100%; } }
