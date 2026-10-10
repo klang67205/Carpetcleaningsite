@@ -515,8 +515,11 @@ const fmtQ = (q) => (q.extras ? `${money(q.base)} + ${money(q.extras * PRICES.ex
 const CHICAGO_DAY = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
 const weekdayChicago = (d) => { try { return CHICAGO_DAY[new Intl.DateTimeFormat("en-US", { timeZone: "America/Chicago", weekday: "short" }).format(d)]; } catch { return d.getUTCDay(); } };
 const MILITARY_REPLY = "Yes — we offer 15% off for military, first responders, and teachers. Please put that in the notes when you book so we can apply it.";
-const IDENTITY_REPLY = "I'm the automated assistant for Wichita Carpet Cleaning Services — I can give you a price and get you booked, or get the owner (the owner) if you need him.";
-const IDENTITY_REPLY_SITE = "I'm the automated assistant for Wichita Carpet Cleaning Services — I can give you a price and help you book. For anything else, you can text us (the owner) at (316) 232-8111.";
+const IDENTITY_REPLY = "I'm the automated assistant for Wichita Carpet Cleaning Services — I can give you a price and get you booked, or get the owner if you need him.";
+// value story: independent, no franchise fees or call center, so the savings go into the price
+const VALUE_RE = /\bfranchis\w*\b|\blocal(?:ly)?[- ]owned\b|\bindependent(?:ly owned)?\b|\b(?:a|big|national) chain\b|\bwhy (?:is (?:it|this|that|your price|the price) |are (?:you|your prices|the prices) )?(?:so )?(?:cheap|inexpensive|affordable|low)\b|\bhow (?:are|can) you (?:be )?(?:so )?(?:cheap|affordable|inexpensive)\b|\bwhy (?:are )?you(?:r prices)? (?:so )?(?:much )?(?:cheaper|lower)\b/;
+const VALUE_LINE = "We're independent and locally owned — no franchise fees, no call center and no big ad budget to cover, so the savings go into your price. The owner does the cleaning himself with professional low-moisture equipment.";
+const IDENTITY_REPLY_SITE = "I'm the automated assistant for Wichita Carpet Cleaning Services — I can give you a price and help you book. For anything else, you can text us at (316) 232-8111.";
 const PET_DIFF_REPLY = "Same coverage — up to 5 rooms, two halls and one staircase. The $149 version adds an enzyme treatment that breaks down pet urine and odor, plus extra time for pet hair. No accidents or odor? The $99 is the one.";
 // someone selling marketing/leads/web services to the business, not a customer
 const VENDOR_PITCH = /\b(?:i|we) (?:help|work with|partner with) (?:\w+ ){0,3}(?:businesses|companies|cleaners|owners)\b|\bwho (?:handles|does|runs) your (?:marketing|ads|advertising|seo|website)\b|\b(?:facebook|google|meta) ads\b[^.?!]*\b(?:businesses|leads|booked jobs|clients)\b|\b(?:more|\d+\+?) (?:leads|booked jobs|appointments) (?:a|per) (?:month|week)\b|\b(?:seo|lead gen\w*|marketing agency|web design) (?:services|agency|for your)\b/;
@@ -1894,6 +1897,7 @@ export function createConversation(init = {}) {
     if (has(t, /\b(?:scotch ?gu?ard|protectant|protector|stain guard|stain protection)\b/)) topic("protector", `Carpet protector isn't on our standard menu. If you'd like to ask the owner about it for your job, text ${TEXT_LINE}.`);
     if (has(t, /\bbasements?\b/) && has(t, /\b(?:do you|can you|clean|count|include)\b/) && !scope.found) topic("included", "Yes — a carpeted basement counts like any other room.");
     if (has(t, /\b(?:website|web ?site|web ?page|url|online)\b/) && has(t, /\b(?:what(?:'s| is)?|your|do you have|got a|link|address)\b/) && !has(t, /\bbook\w*\b/)) topic("website", "Our website is wichitacarpetcleaningservices.com.");
+    if (has(t, VALUE_RE) && !pastJob) topic("about", VALUE_LINE);
     if (has(t, /\bscam\b|\blegit(?:imate)?\b|\bis (?:this|it|that) (?:for )?real\b|\bare you (?:guys )?real\b|\bfor real\?/) && !pastJob && !has(t, /\byou (?:guys )?are (?:a )?scam/)) topic("about", `${has(t, /\bscam\b/) ? "Not at all" : "Yes"} — we're a real local business in Wichita, owner-operated, with over 385 satisfied customers. You pay after the job is done.`);
     if ((has(t, /\b(?:difference|different|vs\.?|versus|compare)\b/) && has(t, /\b99\b/) && has(t, /\b149\b/)) || (has(t, /\b149\b|\bpet (?:package|special|version|price)\b/) && has(t, /\b(?:include|includes|included|cover|covers|get|what'?s in|for pets)\b/) && !scope.found)) topic("pet", PET_DIFF_REPLY);
     if (has(t, /\b(?:do|does|can) (?:you|y'?all|u)(?: guys)? (?:have|offer|do|provide)\b[^.?!]{0,12}\bpet (?:treatment|cleaning|odor|stain|urine)\b|\bwhat (?:is|'s) (?:the |your )?pet treatment\b/) && !has(t, /\b149\b/)) {
@@ -2358,15 +2362,16 @@ export function createConversation(init = {}) {
         // owner: no Google reviews as a service right now
         if (/\b(?:google|yelp|facebook|bbb|angi|thumbtack|nextdoor)\b|\bwhere (?:can|do|could) i (?:see|read|find|check|look)\b|\b(?:link|website) (?:to|for|with) (?:your |the )?reviews\b/.test(t)) return "We don't use Google reviews right now — " + "We have over 385 satisfied customers and a 4.9 out of 5 rating from 229 customer reviews.".replace(/^We/, "but we");
         return "We have over 385 satisfied customers and a 4.9 out of 5 rating from 229 customer reviews.";
-      case "crew": return /\bcrew\b|\bteam\b|\bemployees\b|\bhelpers\b|\bsubcontract/.test(t) ? "No crew — we're owner-operated, and the owner does the cleaning himself." : "We're owner-operated — the owner does the cleaning himself.";
+      case "crew": if (VALUE_RE.test(t)) return VALUE_LINE; return /\bcrew\b|\bteam\b|\bemployees\b|\bhelpers\b|\bsubcontract/.test(t) ? "No crew — we're owner-operated, and the owner does the cleaning himself." : "We're owner-operated — the owner does the cleaning himself.";
       case "identity": case "is_keith":
         if (id === "is_keith" && topics.has("identity")) return null;
         // "is this a real company?" is the legit question, not "are you a bot?"
         if (/\b(?:real|legit\w*|actual) (?:company|business)\b|\bis (?:this|it) (?:a )?(?:real|legit)\b/.test(t) && !/\b(?:bot|ai|robot|person|human|automated)\b/.test(t)) return "Yes — we're a real local business in Wichita, owner-operated, with over 385 satisfied customers. You pay after the job is done.";
         // "is the man who comes the owner?" is about who cleans, not who's typing
-        if (/\b(?:who comes|man who|guy who|person who|lady who|who (?:will )?(?:come|clean|do)|technician|tech who|who does the (?:work|cleaning))\b/.test(t)) return "We're owner-operated — the owner, the owner, does the cleaning himself.";
+        if (/\b(?:who comes|man who|guy who|person who|lady who|who (?:will )?(?:come|clean|do)|technician|tech who|who does the (?:work|cleaning))\b/.test(t)) return "We're owner-operated — the owner does the cleaning himself.";
         return site ? IDENTITY_REPLY_SITE : IDENTITY_REPLY;
       case "scam": {
+        if (VALUE_RE.test(t)) return VALUE_LINE;
         const body = "we're a real local business in Wichita, owner-operated, with over 385 satisfied customers. You pay after the job is done.";
         // "is this a scam?" → "Not at all"; "are you legit / real?" → "Yes"; anything else → just the facts
         // "Not at all" only answers "is this a scam?"; "Yes" only answers "are you legit/real?"
@@ -2377,6 +2382,7 @@ export function createConversation(init = {}) {
         return body[0].toUpperCase() + body.slice(1);
       }
       case "competitor":
+        if (VALUE_RE.test(t)) return VALUE_LINE;
         if (topics.has("pet_treatment_info") || topics.has("odor")) return null;
         return /\b(?:water|moisture|wet|soak\w*|dry)\b/.test(t) ? "We use low-moisture encapsulation — very little water, so carpets usually dry in about 1.5 to 2 hours." : topics.has("prices_set") || (scoped && state.quoted) ? "We're owner-operated — the owner does the cleaning himself." : `We're owner-operated — the owner does the cleaning himself. The ${money(PRICES.standard)} special covers ${COVER}, plus tax, and carpets dry in about 1.5 to 2 hours.`;
       case "utilities":
@@ -2458,7 +2464,7 @@ export function createConversation(init = {}) {
       case "special_info":
         if (/\b(?:coupon|promo|code|voucher)\b/.test(t)) return `No code needed — those are our regular prices: ${money(PRICES.minimum)} plus tax covers up to 3 rooms, and the ${money(PRICES.standard)} special covers ${COVER}, plus tax.`;
         return SPECIAL_REPLY;
-      case "catch": return `No catch — ${money(PRICES.minimum)} plus tax covers up to 3 areas, and ${money(PRICES.standard)} plus tax covers ${COVER}. Bigger homes add ${money(PRICES.extra)} plus tax for each area beyond the ${money(PRICES.standard)} package. Pet treatment (${money(PRICES.petMinimum)} or ${money(PRICES.pet)}) is only if you need it.`;
+      case "catch": if (VALUE_RE.test(t)) return VALUE_LINE; return `No catch — ${money(PRICES.minimum)} plus tax covers up to 3 areas, and ${money(PRICES.standard)} plus tax covers ${COVER}. Bigger homes add ${money(PRICES.extra)} plus tax for each area beyond the ${money(PRICES.standard)} package. Pet treatment (${money(PRICES.petMinimum)} or ${money(PRICES.pet)}) is only if you need it.`;
       case "still_available":
         // "does it expire?" / "how long does the deal last?" isn't a yes question
         if (/\b(?:expire\w*|end\w*|last\w*|how long|until when|deadline|limited)\b/.test(t)) return `The ${money(PRICES.standard)} special is available right now — it covers ${COVER}, plus tax.`;
