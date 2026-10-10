@@ -47,7 +47,7 @@ const servicePages = [
   'services/tile-grout-cleaning/index.html',
   'services/hard-floor-cleaning/index.html',
 ];
-const guidePages = ['low-moisture-carpet-cleaning/index.html', 'service-area/index.html', 'appointment-preparation/index.html', 'property-managers/index.html', 'derby-carpet-cleaning/index.html', 'how-long-does-carpet-take-to-dry/index.html'];
+const guidePages = ['low-moisture-carpet-cleaning/index.html', 'service-area/index.html', 'appointment-preparation/index.html', 'property-managers/index.html', 'derby-carpet-cleaning/index.html', 'how-long-does-carpet-take-to-dry/index.html', 'pet-urine-carpet-cleaning/index.html', 'how-often-to-clean-carpet/index.html', 'move-out-carpet-cleaning/index.html'];
 const pages = ['index.html', '404.html', 'booking-confirmed/index.html', 'privacy-policy/index.html', 'terms-of-service/index.html', 'data-deletion/index.html', 'accessibility/index.html', ...servicePages, ...guidePages];
 for (const page of pages) {
   const content = readFileSync(resolve(root, page), 'utf8');
@@ -105,7 +105,7 @@ const areaGuide = readFileSync(resolve(root, 'service-area/index.html'), 'utf8')
 for (const value of ['Wichita', 'Derby', 'Andover', 'Goddard', 'Maize', 'Newton is outside', 'On-base military housing is not serviced']) assert.ok(areaGuide.includes(value), `Missing service-area detail: ${value}`);
 assert.match(html, /<h1>Wichita-area carpet cleaning\./, 'Homepage must describe the broader Wichita-area coverage accurately');
 const sitemap = readFileSync(resolve(root, 'sitemap.xml'), 'utf8');
-for (const path of ['/low-moisture-carpet-cleaning/', '/service-area/', '/appointment-preparation/', '/property-managers/', '/derby-carpet-cleaning/', '/how-long-does-carpet-take-to-dry/']) assert.ok(sitemap.includes(`https://wichitacarpetcleaningservices.com${path}`), `Missing sitemap entry: ${path}`);
+for (const path of ['/low-moisture-carpet-cleaning/', '/service-area/', '/appointment-preparation/', '/property-managers/', '/derby-carpet-cleaning/', '/how-long-does-carpet-take-to-dry/', '/pet-urine-carpet-cleaning/', '/how-often-to-clean-carpet/', '/move-out-carpet-cleaning/']) assert.ok(sitemap.includes(`https://wichitacarpetcleaningservices.com${path}`), `Missing sitemap entry: ${path}`);
 const preparationGuide = readFileSync(resolve(root, 'appointment-preparation/index.html'), 'utf8');
 for (const value of ['Clear loose items', 'Protect breakables', 'Plan furniture', 'Keep pets comfortable', 'There is no cancellation fee']) assert.ok(preparationGuide.includes(value), `Missing preparation guidance: ${value}`);
 assert.doesNotMatch(preparationGuide, /must (?:crate|remove)|pets? away|required to vacuum/i, 'Preparation guide must remain helpful rather than bossy');
@@ -187,3 +187,8 @@ assert.ok(areaGuide.includes('href="../derby-carpet-cleaning/"'), 'Service area 
 const dryGuide = readFileSync(resolve(root, 'how-long-does-carpet-take-to-dry/index.html'), 'utf8');
 for (const value of ['1.5 to 2 hours', 'not guaranteed', '$99', '$149', 'plus applicable tax'.replace('plus', 'Plus')]) assert.ok(dryGuide.includes(value), `Missing dry-time guide detail: ${value}`);
 for (const value of ['one-hour dry', 'safe for kids', 'safe for pets', 'no mold']) assert.doesNotMatch(dryGuide, new RegExp(value, 'i'), `Unsupported dry-time claim: ${value}`);
+for (const slug of ['pet-urine-carpet-cleaning', 'how-often-to-clean-carpet', 'move-out-carpet-cleaning']) {
+  const guide = readFileSync(resolve(root, `${slug}/index.html`), 'utf8');
+  for (const value of ['$99', '$149', 'Plus applicable tax', 'Monday through Friday', 'FAQPage']) assert.ok(guide.includes(value), `Missing ${slug} detail: ${value}`);
+  for (const value of ['guarantee', 'safe for kids', 'safe for pets', 'no mold', 'allerg', 'discount', '% off']) assert.doesNotMatch(guide, new RegExp(value, 'i'), `Unsupported claim in ${slug}: ${value}`);
+}
