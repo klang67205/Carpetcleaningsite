@@ -1143,9 +1143,9 @@ export function createConversation(init = {}) {
   // Messenger callback/text request: never promise a text or call without a number to use
   const callbackLine = (t, wantsText) => {
     const num = /\(?\b\d{3}\)?[-. ]?\d{3}[-. ]?\d{4}\b/.test(t);
-    if (num) return wantsText ? "Absolutely — I've passed your request to Keith, and he'll text you as soon as he can. He's usually on a job, but he'll reach out shortly." : "Absolutely — I've passed your callback request to Keith. He's usually on a job, but he'll call as soon as he can.";
+    if (num) return wantsText ? "Absolutely — I've passed your request to Keith, and he'll text you as soon as he can. He's usually on a job, but he'll reach out shortly." : "Got it — I've passed that to Keith. He works by text rather than phone calls, so he'll text you at that number as soon as he can.";
     return wantsText ? `Absolutely — I've passed your request to Keith. He's usually on a job; he'll reply right here, or send your number if you'd rather he text you. You can also reach him at ${TEXT_LINE}.`
-      : `Absolutely — I've passed your callback request to Keith. He's usually on a job; send your number here if you'd like him to call, or he'll reply right here. You can also reach him at ${TEXT_LINE}.`;
+      : `Happy to get Keith on this. He works by text rather than phone calls, so he'll reply right here as soon as he can, or you can text him at ${TEXT_LINE}.`;
   };
   // "I want a real person": Keith takes the thread; an impatient ask gets the text line, not a booking link
   const humanHandoff = (rawText) => {
@@ -2203,7 +2203,7 @@ export function createConversation(init = {}) {
           return out("keith_booking", ["No problem at all — Keith can set it up with you personally, and I've let him know. To help him, tell me how many rooms, hallways and stairs, and which weekday works best for you."], { notify: "booking" });
         }
         if (/\b(?:can'?t|cannot|hard to|trouble|difficult\w*) (?:type|typing|text|texting|see|read)\b|\bmy (?:hands|eyes|vision)\b|\bby phone\b|\b(?:talk|speak) to (?:someone|somebody|a person)\b/.test(t))
-          return out("human", [`Sorry about the trouble! Text Keith at ${TEXT_LINE} with just your number and "please call," and he'll call you to set it up. Messaging us on Facebook works too.`], PHONE);
+          return out("human", [`Sorry about the trouble! Text Keith at ${TEXT_LINE} and he'll set it up with you personally by text. Messaging us on Facebook works too.`], PHONE);
         return out("human", [reach("No problem at all — I've asked Keith to set it up with you personally. He'll reply here as soon as he can.", `No problem at all — text Keith at ${TEXT_LINE} and he'll set it up with you personally.`)], PHONE);
       case "weekend_booking": {
         // nothing in the words says a weekend ("a swan sday works" is voice-to-text for Wednesday): don't refuse a weekday
