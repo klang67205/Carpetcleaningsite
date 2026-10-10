@@ -4,6 +4,7 @@
  * through the language model. Without that, this file uses the local book only.
  */
 import { applyBookingAttribution } from "./booking-attribution.js";
+import "./analytics.js";
 
 let activeBookingUrl = "";
 let bookingUrl = "";
