@@ -87,7 +87,7 @@ test('Polished bubbles are used only when they pass the writer checks here too',
   for (const bad of [
     ["That's $89 plus tax."],
     ["Saturday works! $99 plus tax for 4 rooms and a staircase."],
-    ["I've passed this to Keith and he'll reply here. $99 plus tax for 4 rooms and a staircase."],
+    ["I've passed this to the owner and he'll reply here. $99 plus tax for 4 rooms and a staircase."],
     ["Book at https://evil.example — $99 plus tax."],
     ['a', 'b', 'c', 'd'],
   ]) assert.equal(await polishBubbles(PURL, polishPayload, reply({ bubbles: bad })), null, bad.join(' '));
@@ -99,7 +99,7 @@ test('Only non-handoff replies are reworded (handoffs only to translate), and th
   const result = { bubbles: [...DRAFT, "Here are the open weekday times — pick one and you'll get a confirmation text right away:", bookingUrl], handoff: false };
   assert.deepEqual(polishRequest('how much', result, 'en', ['bot: Hi!']), { message: 'how much', draft: DRAFT, link: true, language: 'en', recent: ['bot: Hi!'] });
   assert.deepEqual(withPolish(result, ['Reworded.']).bubbles, ['Reworded.', bookingUrl]);
-  const handoff = { bubbles: ['Please text Keith at (316) 232-8111.'], handoff: true };
+  const handoff = { bubbles: ['Please text us at (316) 232-8111.'], handoff: true };
   assert.equal(polishRequest('you ruined my rug', handoff, 'en'), null);
   assert.equal(polishRequest('arruinaron mi alfombra', handoff, 'es').language, 'es');
   assert.equal(polishRequest('x', { bubbles: [bookingUrl] }, 'en'), null);

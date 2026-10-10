@@ -6,7 +6,7 @@ const text = result => result.bubbles.join(' ');
 
 // Owner scorecard (same cases the Messenger bot must pass). Messenger-only call requests are skipped here.
 const C = [
- ["interested", ["Interested"], {has:["How many rooms"], not:["Keith"]}],
+ ["interested", ["Interested"], {has:["How many rooms"], not:["The owner"]}],
  ["learn more (old ad button)", ["I'd like to learn more"], {has:["How many rooms"], not:["passing"]}],
  ["yes alone", ["Yes"], {has:["How many rooms"]}],
  ["3br+hall = $99", ["How much would it be for three bedrooms and a hallway"], {has:["send the booking link","$99"], not:["$75 plus"], link:false}],
@@ -17,10 +17,10 @@ const C = [
  ["QR how much then 4+hall", ["How much for mine?","4 rooms and a hallway"], {has:["send the booking link","$99"], link:false}],
  ["QR included", ["What's included?"], {has:["5 rooms","$149","$15"]}],
  ["QR how do I book", ["How do I book?"], {link:true}],
- ["I have pets", ["I have pets"], {has:["$149","$85"], not:["Keith"]}],
+ ["I have pets", ["I have pets"], {has:["$149","$85"], not:["The owner"]}],
  ["pets then rooms", ["I have pets","3 bedrooms and living room, dog pee spots"], {has:["send the booking link","$149"], link:false}],
  ["see open times", ["See open times"], {link:true}],
- ["dog 3br saturday", ["hi i have 3 bedrooms and a dog, can you come saturday and whats the price"], {has:["$75","weekdays only (Monday–Friday) — we're closed Saturday and Sunday"], not:["Keith"], link:true}],
+ ["dog 3br saturday", ["hi i have 3 bedrooms and a dog, can you come saturday and whats the price"], {has:["$75","weekdays only (Monday–Friday) — we're closed Saturday and Sunday"], not:["The owner"], link:true}],
  ["speak to someone", ["I'm ready I would just like to speak to someone"], {}],
  ["phone number", ["do u have a phone number"], {has:["232-8111"]}],
  ["steam", ["Do you steam clean"], {has:["low-moisture","BrushPro"]}],
@@ -28,7 +28,7 @@ const C = [
  ["goddard", ["Do you service Goddard?"], {has:["Yes","Goddard"]}],
  ["6br 2h stairs", ["I have 6 bedrooms, 2 hallways and stairs, how much"], {has:["send the booking link","$99 + $15, plus tax"], link:false}],
  ["2 bedrooms", ["Just need 2 bedrooms done. price?"], {has:["send the booking link","$75"], link:false}],
- ["weekends?", ["Do you do weekends"], {has:["weekdays only (Monday–Friday) — we're closed Saturday and Sunday"], not:["Keith","232-8111"]}],
+ ["weekends?", ["Do you do weekends"], {has:["weekdays only (Monday–Friday) — we're closed Saturday and Sunday"], not:["The owner","232-8111"]}],
  ["repeat customer", ["Hi! Just checking if you have availability to clean my carpets again","You have cleaned my house before and it was $170"], {not:["prep","vacuum"]}],
  ["couch", ["How much to clean a couch too?"], {has:["sofa is $89"]}],
  ["move out 3br", ["Moving out next week need carpets done for deposit, 3 bedrooms"], {has:["send the booking link","move-out","$75"], link:false}],
@@ -78,7 +78,7 @@ for (const [name, msgs, chk] of C) {
   });
 }
 
-test('Website chat never claims it notified Keith', () => {
+test('Website chat never claims it notified the owner', () => {
   for (const input of ['I need to talk to a real person', 'you guys came yesterday and it is still dirty, I want a refund', 'I need to reschedule my appointment', 'do you do commercial office building carpet', 'You cleaned my house last time and it was $170']) {
     const result = createWebsiteConversation().respond(input);
     assert.doesNotMatch(text(result), /I've sent|I’ve sent|passing (?:this|your|it)|flagged this/i, input);
@@ -86,12 +86,12 @@ test('Website chat never claims it notified Keith', () => {
   }
 });
 
-test('Weekend requests are a firm no: weekdays-only line and the weekday booking link, never Keith', () => {
+test('Weekend requests are a firm no: weekdays-only line and the weekday booking link, never the owner', () => {
   for (const input of ['Can I book Saturday?', 'Can you come this Saturday?', 'can you ask keith if he can do sunday?']) {
     const result = createWebsiteConversation().respond(input);
     assert.ok(text(result).includes("weekdays only (Monday–Friday) — we're closed Saturday and Sunday"), input);
     assert.ok(result.bubbles.includes(bookingUrl), `${input}: weekday booking link`);
-    assert.doesNotMatch(text(result), /Keith|232-8111|I've sent|I’ve sent|passing (?:this|your|it)/i, input);
+    assert.doesNotMatch(text(result), /the owner|232-8111|I've sent|I’ve sent|passing (?:this|your|it)/i, input);
     assert.equal(Boolean(result.phone), false, `${input}: not a handoff`);
   }
 });
