@@ -57,7 +57,7 @@ export function checkPolished(out, ctx) {
     return { ok: false, reason: `new claim ${re.source}` };
   }
   if (WEEKEND_YES.test(text) && !/closed|cerrad/i.test(text)) return { ok: false, reason: "weekend offer" };
-  // the bot is the automated assistant: it never speaks as Keith
+  // the bot is the automated assistant: it never speaks as the owner
   if (/\bi(?:'m| am) keith\b|\bi own\b|\bi do (?:the|all the|my own) cleaning\b|\bmyself\b|\bmy (?:business|company|equipment|machine)\b/i.test(text) && !/\bi(?:'m| am) keith\b|\bmyself\b/i.test(draft)) return { ok: false, reason: "keith voice" };
   // never imply a booking exists
   if (/\byou(?:'re| are) (?:all set|booked|confirmed|scheduled|on the (?:schedule|calendar))\b|\b(?:i|we)(?:'ve| have) (?:booked|scheduled|reserved) you\b|\bsee you (?:then|soon|on)\b/i.test(text) && !/\byou(?:'re| are) (?:all set|booked)\b/i.test(draft)) return { ok: false, reason: "booking claim" };
@@ -89,13 +89,13 @@ export function checkPolished(out, ctx) {
   if (/booking link above/i.test(draft) && !/\blink\b|\benlace\b/i.test(text)) return { ok: false, reason: "dropped link pointer" };
   // the assistant can't go check anything: no "let me check / I can see if"
   if (/\b(?:let me|i(?:'ll| will| can)|i'?m going to) (?:check|look into|find out|see if|look up|confirm)\b/i.test(text) && !/\b(?:check|look into|find out|see if|confirm)\b/i.test(draft)) return { ok: false, reason: "new claim check" };
-  // never claim Keith or the crew speaks Spanish; a Spanish reply must actually be in Spanish
+  // never claim the owner or the crew speaks Spanish; a Spanish reply must actually be in Spanish
   if (/\bhabl\w* (?:espa[ñn]ol|ingl[eé]s)\b|\bspeaks? spanish\b|\bse habla\b/i.test(text) && !/spanish|espa[ñn]ol/i.test(draft)) return { ok: false, reason: "new claim spanish" };
   if (ctx.language === "es" && ((" " + text.toLowerCase() + " ").match(/\s(?:el|la|los|las|es|para|con|por|que|y|de|su|sus|más|mas|una?|le|lo|se|cuartos?|alfombras?|impuestos)\s/g) || []).length < 3) return { ok: false, reason: "not spanish" };
   // pet treatment is only in a quote when the draft puts it there
   if (/\bwith (?:the )?pet treatment\b|\bcon (?:el )?tratamiento\b/i.test(text) && !/\bwith (?:the )?pet treatment\b|\bpet[- ]treatment (?:special|version|package)\b/i.test(draft)) return { ok: false, reason: "new claim pet treatment" };
-  // keep the line about Keith when the draft has one (an unanswered question, an offer to ask him)
-  if (/\bkeith\b/i.test(draft) && /keith can answer|want me to ask (?:him|keith)|(?:i've|i have) asked keith|(?:text|message) (?:keith|him)|let keith know|keith (?:will|'ll|can) /i.test(draft) && !/\bkeith\b/i.test(text)) return { ok: false, reason: "dropped keith line" };
+  // keep the line about the owner when the draft has one (an unanswered question, an offer to ask him)
+  if (/\bkeith\b/i.test(draft) && /(?:keith|the owner) can answer|want me to ask (?:him|(?:keith|the owner))|(?:i've|i have) asked (?:keith|the owner)|(?:text|message) (?:(?:keith|the owner)|him)|let (?:keith|the owner) know|(?:keith|the owner) (?:will|'ll|can) /i.test(draft) && !/\bkeith\b/i.test(text)) return { ok: false, reason: "dropped (?:keith|the owner) line" };
   // ask only the draft's questions: a question of the writer's own ("Which one fits your situation?") pushes the customer
   if ((text.match(/\?/g) || []).length > (draft.match(/\?/g) || []).length) return { ok: false, reason: "new question" };
   { const qs = (x) => x.split(/(?<=[.!?])\s+/).filter((y) => /\?$/.test(y.trim()));
@@ -124,7 +124,7 @@ export function explainGuard(reason = "") {
   if (/availability/.test(reason)) return "You implied a day or time is open. The bot can't see the calendar — only the booking link shows openings.";
   if (/weekend/.test(reason)) return "You implied a weekend is possible. We're closed Saturday and Sunday.";
   if (/length|count/.test(reason)) return "Too long: use 1 to 3 bubbles of at most 300 characters each.";
-  if (/site claim/.test(reason)) return "On the website chat, never say you passed anything to Keith.";
+  if (/site claim/.test(reason)) return "On the website chat, never say you passed anything to the owner.";
   if (/per-unit/.test(reason)) return "You stated a per-room/per-item price the draft doesn't state. Keep prices exactly as the draft words them.";
   if (/count changed/.test(reason)) return `You changed a count (${reason.replace("count changed ", "")}). Keep the counts exactly as in the draft.`;
   if (/^dropped time/.test(reason)) return `You left out the time ${reason.split(" ")[2]}. Keep every time from the draft.`;
@@ -134,10 +134,10 @@ export function explainGuard(reason = "") {
   if (reason === "new question") return "You asked a question the draft doesn't ask. Ask only the draft's question (if it has one) — don't add your own.";
   if (reason === "dropped link offer") return "You left out the offer to send the booking link. Keep it as a gentle question at the end.";
   if (/dropped link pointer/.test(reason)) return "You left out the pointer to the booking link above. Keep it — that's where the open times are.";
-  if (/dropped keith line/.test(reason)) return "You left out the sentence about Keith. Keep it.";
+  if (/dropped keith line/.test(reason)) return "You left out the sentence about the owner. Keep it.";
   if (/lead without link/.test(reason)) return "You ended with a \"pick a time here:\" lead-in, but no link follows this reply. Don't point to a link.";
   if (/booking claim/.test(reason)) return "You implied the customer is already booked. Only picking a time on the booking link books it.";
-  if (/keith voice/.test(reason)) return "Never speak as Keith. You are the automated assistant; refer to Keith in the third person.";
+  if (/keith voice/.test(reason)) return "Never speak as the owner. You are the automated assistant; refer to the owner in the third person.";
   return `Your reply was rejected (${reason}). Stay closer to the draft.`;
 }
 

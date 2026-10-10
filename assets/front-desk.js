@@ -5,10 +5,10 @@
  *  - Prices come only from the PRICES table below. Never guessed.
  *  - Answer what the customer asked (all of it), then give ONE next step.
  *  - Send the booking link when a customer has a price for their home or asks to book.
- *  - Hand off to Keith only for: complaints about our work, changes to an existing
+ *  - Hand off to the owner only for: complaints about our work, changes to an existing
  *    appointment, commercial jobs, explicit requests for a person, or a returning
  *    customer's past price. Never for "I don't understand" — that gets a helpful default.
- *  - Website chat never claims a message was sent to Keith (it can't send anything).
+ *  - Website chat never claims a message was sent to the owner (it can't send anything).
  * No dependencies; runs in Node (Messenger bot) and in the browser (website).
  */
 
@@ -52,7 +52,7 @@ function townsIn(t, list) {
   const words = t.split(/[^a-z]+/).filter((w) => w.length >= 6 && !NOT_TOWN_WORDS.has(w));
   return list.filter((c) => new RegExp(`\\b${c}\\b`).test(t) || (!c.includes(" ") && c.length >= 6 && words.some((w) => lev(w, c) <= (c.length >= 9 ? 2 : 1))));
 }
-const PLACE_STOP = new Set(["the", "a", "an", "my", "our", "your", "need", "love", "town", "kansas", "ks", "wichita", "messenger", "facebook", "keith", "here", "there", "it", "this", "that", "home", "house", "apartment", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "the area", "area", "city", "county", "sedgwick county", "need of", "a hurry", "rush"]);
+const PLACE_STOP = new Set(["the", "a", "an", "my", "our", "your", "need", "love", "town", "kansas", "ks", "wichita", "messenger", "facebook", "(?:keith|the owner|owner)", "here", "there", "it", "this", "that", "home", "house", "apartment", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "the area", "area", "city", "county", "sedgwick county", "need of", "a hurry", "rush"]);
 
 const NUM = { dozen: 12, "a dozen": 12, a: 1, an: 1, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20, hundred: 100, "a hundred": 100, couple: 2, few: 3, uno: 1, dos: 2, tres: 3, cuatro: 4, cinco: 5, seis: 6 };
 const W = "a dozen|dozen|a hundred|hundred|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|a|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|couple|few|uno|dos|tres|cuatro|cinco|seis";
@@ -411,11 +411,11 @@ function furnitureLine(f, site = false) {
     const known = Object.keys(it).map((k) => FURN.find((x) => x.key === k)).filter((x) => x && x.price);
     const piece = f.unpriced === "benches" ? "bench" : /^(?:cushions? only|chaise)$/.test(f.unpriced) ? f.unpriced : f.unpriced.replace(/s$/, "");
     return `${known.length ? "Upholstery, plus tax: " + known.map((x) => `${x.label} ${money(x.price)}`).join(", ") + ". " : ""}The ${piece} isn't on our standard menu, so it needs a quick review before we can price it — ` +
-      (site ? `text a photo to Keith at ${TEXT_LINE} and he'll price it.` : "I've passed it to Keith and he'll get back to you here with a price.");
+      (site ? `text a photo to the owner at ${TEXT_LINE} and he'll price it.` : "I've passed it to the owner and he'll get back to you here with a price.");
   }
   const LABEL = { sofa: "sofa", loveseat: "loveseat", chair: "recliner or accent chair" };
   const extrasAfterSet = (used) => Object.entries(used).filter(([, n]) => n > 0).map(([k, n]) => `${n > 1 ? `${n} more ${LABEL[k]}s` : `another ${LABEL[k]}`} at ${money(FURN.find((x) => x.key === k).price)}${n > 1 ? " each" : ""}`);
-  const special = f.special ? " Specialty fabrics like leather or velvet, heavy staining, or oversized pieces may need Keith to review them before the price is final." : "";
+  const special = f.special ? " Specialty fabrics like leather or velvet, heavy staining, or oversized pieces may need the owner to review them before the price is final." : "";
   if (it.sofa && it.loveseat && it.chair) {
     const more = extrasAfterSet({ sofa: it.sofa - 1, loveseat: it.loveseat - 1, chair: it.chair - 1 });
     return `A sofa, loveseat and chair or recliner is our complete seating package — ${money(179)} plus tax.` + (more.length ? ` Plus ${more.join(" and ")}, plus tax. Each piece is priced separately.` : "") + special;
@@ -485,7 +485,7 @@ const PAYMENT_REPLY = "We can take cash at the job, or we send a payment link ri
 // owner (Oct 6): no Venmo — card or cash
 const PAYMENT_APPS_REPLY = "No Venmo or other payment apps — we take card or cash. We send a payment link after the job is complete (card or Apple Pay), or you can pay cash at the time of service.";
 const INSURED_REPLY = "Yes — we're insured.";
-const COI_REPLY = `Yes — we're insured. For a certificate of insurance, text Keith at ${TEXT_LINE}.`;
+const COI_REPLY = `Yes — we're insured. For a certificate of insurance, text us at ${TEXT_LINE}.`;
 // business.ts typicalAppointmentDuration
 const JOB_LENGTH_REPLY = "A typical job takes about 1.5 to 2 hours. That can flex a little with the size of the home.";
 const VACUUM_REPLY = "You do not need to do special vacuuming — just pick up large debris. We typically vacuum beforehand unless there is major cat litter or construction debris.";
@@ -515,13 +515,13 @@ const fmtQ = (q) => (q.extras ? `${money(q.base)} + ${money(q.extras * PRICES.ex
 const CHICAGO_DAY = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
 const weekdayChicago = (d) => { try { return CHICAGO_DAY[new Intl.DateTimeFormat("en-US", { timeZone: "America/Chicago", weekday: "short" }).format(d)]; } catch { return d.getUTCDay(); } };
 const MILITARY_REPLY = "Yes — we offer 15% off for military, first responders, and teachers. Please put that in the notes when you book so we can apply it.";
-const IDENTITY_REPLY = "I'm the automated assistant for Wichita Carpet Cleaning Services — I can give you a price and get you booked, or get Keith (the owner) if you need him.";
-const IDENTITY_REPLY_SITE = "I'm the automated assistant for Wichita Carpet Cleaning Services — I can give you a price and help you book. For anything else, you can text Keith (the owner) at (316) 232-8111.";
+const IDENTITY_REPLY = "I'm the automated assistant for Wichita Carpet Cleaning Services — I can give you a price and get you booked, or get the owner (the owner) if you need him.";
+const IDENTITY_REPLY_SITE = "I'm the automated assistant for Wichita Carpet Cleaning Services — I can give you a price and help you book. For anything else, you can text us (the owner) at (316) 232-8111.";
 const PET_DIFF_REPLY = "Same coverage — up to 5 rooms, two halls and one staircase. The $149 version adds an enzyme treatment that breaks down pet urine and odor, plus extra time for pet hair. No accidents or odor? The $99 is the one.";
 // someone selling marketing/leads/web services to the business, not a customer
 const VENDOR_PITCH = /\b(?:i|we) (?:help|work with|partner with) (?:\w+ ){0,3}(?:businesses|companies|cleaners|owners)\b|\bwho (?:handles|does|runs) your (?:marketing|ads|advertising|seo|website)\b|\b(?:facebook|google|meta) ads\b[^.?!]*\b(?:businesses|leads|booked jobs|clients)\b|\b(?:more|\d+\+?) (?:leads|booked jobs|appointments) (?:a|per) (?:month|week)\b|\b(?:seo|lead gen\w*|marketing agency|web design) (?:services|agency|for your)\b/;
-const VENDOR_REPLY = "Thanks for reaching out — I've passed this along to Keith, and he'll reply if he's interested.";
-const VENDOR_REPLY_SITE = `Thanks for reaching out — if you'd like Keith to see this, text him at ${TEXT_LINE}.`;
+const VENDOR_REPLY = "Thanks for reaching out — I've passed this along to the owner, and he'll reply if he's interested.";
+const VENDOR_REPLY_SITE = `Thanks for reaching out — if you'd like the owner to see this, text us at ${TEXT_LINE}.`;
 const SPECIAL_REPLY ="Our specials: $75 plus tax covers up to 3 rooms, and the $99 special covers up to 5 rooms, two halls, and one staircase, plus tax.";
 const MONTHS = { jan: 0, january: 0, feb: 1, february: 1, mar: 2, march: 2, apr: 3, april: 3, may: 4, jun: 5, june: 5, jul: 6, july: 6, aug: 7, august: 7, sep: 8, sept: 8, september: 8, oct: 9, october: 9, nov: 10, november: 10, dec: 11, december: 11 };
 /** True when the message names a calendar date (e.g. "October 3") that falls on a Saturday or Sunday. */
@@ -557,9 +557,9 @@ export function textHandoffStands(intent, text) {
   if (intent === "stop") return true;
   // a worry about the result ("scared they'll say it's still dirty") is a prospect's question, not a complaint about our work
   if (intent === "complaint" && /\b(?:scared|worried|afraid|nervous|concerned|hope|hoping)\b|\b(?:will|would|might|gonna|'ll|could) (?:it |they |that |he )?(?:say|be|look|still)\b/.test(t) && !/\blast time\b|\byou (?:guys )?(?:came|cleaned|did|were here|left)\b|\byour (?:guy|tech|cleaning|cleaner|work)\b|\bafter (?:you|the cleaning|your)\b|\brefund\b|\bmoney back\b/.test(t)) return false;
-  if (intent === "complaint") return /\b(?:you|your (?:guy|tech|cleaner|company|team)|he|keith|the tech)\b[^.?!]{0,40}\b(?:ruin\w*|damag\w*|broke|broken|scratch\w*|stain\w*|bleach\w*|tore|ripped|missed|lost|left|never (?:showed|came)|no[- ]show\w*|late|rude)\b|\b(?:refund|money back|still dirty|not happy with|unhappy with|disappointed|terrible job|bad job|worst|nobody (?:called|showed)|no one (?:called|showed))\b/.test(t);
+  if (intent === "complaint") return /\b(?:you|your (?:guy|tech|cleaner|company|team)|he|(?:keith|the owner|owner)|the tech)\b[^.?!]{0,40}\b(?:ruin\w*|damag\w*|broke|broken|scratch\w*|stain\w*|bleach\w*|tore|ripped|missed|lost|left|never (?:showed|came)|no[- ]show\w*|late|rude)\b|\b(?:refund|money back|still dirty|not happy with|unhappy with|disappointed|terrible job|bad job|worst|nobody (?:called|showed)|no one (?:called|showed))\b/.test(t);
   if (intent === "change_existing" || intent === "confirm_existing") return /\b(?:my|our|the) (?:appointment|appt|booking|reservation|scheduled cleaning)\b|\balready (?:booked|scheduled|have an appointment)\b|\bi (?:booked|scheduled)\b|\bwe (?:booked|scheduled)\b/.test(t);
-  if (intent === "human") return /\b(?:talk|speak|chat) (?:to|with) (?:a |an |the |someone|somebody|keith|owner|manager|person|human|real)|\b(?:real|actual|live) (?:person|human)\b|\bhave (?:keith|someone|him) (?:call|text|contact|reach)\b|\bcall me\b|\b(?:useless|not helping|frustrat\w*)\b/.test(t);
+  if (intent === "human") return /\b(?:talk|speak|chat) (?:to|with) (?:a |an |the |someone|somebody|(?:keith|the owner|owner)|owner|manager|person|human|real)|\b(?:real|actual|live) (?:person|human)\b|\bhave (?:(?:keith|the owner|owner)|someone|him) (?:call|text|contact|reach)\b|\bcall me\b|\b(?:useless|not helping|frustrat\w*)\b/.test(t);
   return false;
 }
 
@@ -579,13 +579,13 @@ const PM_STRONG_RE = /\b(?:property manag\w*|unit turns?|vacant (?:units?|apartm
 const PM_COMMERCIAL_RE = /\b(?:office|offices|church|restaurant|warehouse|hotel|daycare|storefront|retail|business(?:es)?)\b/;
 const BOOK_INTRO = "Here are the open weekday times — pick one and you'll get a confirmation text right away:";
 const DAY = "(?:mon|monday|tue|tues|tuesday|wed|weds|wednesday|thu|thur|thurs|thursday|fri|friday)";
-/* ---------- weekends: a firm no (owner policy). Never offered to Keith, never handed to Keith. ---------- */
+/* ---------- weekends: a firm no (owner policy). Never offered to the owner, never handed to the owner. ---------- */
 const WEEKEND_LINE = "Sorry, we're weekdays only (Monday–Friday) — we're closed Saturday and Sunday.";
 // the same answer when the customer pushes right after hearing it (never the identical sentence twice in a row)
 const WEEKEND_AGAIN = "Sorry — weekends aren't an option. We work Monday through Friday only, and we're closed Saturday and Sunday.";
-// a weekend named as the day for the job ("ask Keith if he can do Saturday", "talk to Keith about a weekend appointment")
-// "yes please ask Keith" / "can Keith make an exception?" right after the weekdays-only answer
-const WEEKEND_KEITH_FOLLOW_RE = /^(?:(?:yes|yeah|yep|sure|ok|okay|please|can you|could you|would you|will you|just|then|so|but)\b[\s,!.]*)*(?:ask|check with|talk to|speak (?:to|with)|message|tell|get) (?:him|keith)(?: (?:please|then|anyway|for me|about (?:it|that|this)|if he (?:can|could|would|will)(?: make an exception| do it| do one| do (?:a |one )?weekend)?))*[\s?!.]*$|\b(?:make|do|any|an) (?:an |one )?exceptions?\b/;
+// a weekend named as the day for the job ("ask the owner if he can do Saturday", "talk to the owner about a weekend appointment")
+// "yes please ask the owner" / "can the owner make an exception?" right after the weekdays-only answer
+const WEEKEND_KEITH_FOLLOW_RE = /^(?:(?:yes|yeah|yep|sure|ok|okay|please|can you|could you|would you|will you|just|then|so|but)\b[\s,!.]*)*(?:ask|check with|talk to|speak (?:to|with)|message|tell|get) (?:him|(?:keith|the owner|owner))(?: (?:please|then|anyway|for me|about (?:it|that|this)|if he (?:can|could|would|will)(?: make an exception| do it| do one| do (?:a |one )?weekend)?))*[\s?!.]*$|\b(?:make|do|any|an) (?:an |one )?exceptions?\b/;
 const isWeekendJobAsk = (t) => /\b(?:saturdays?|sundays?|weekends?)\b(?! ?(?:room|porch|down))/.test(t)
   && /\b(?:come|coming|do|doing|work|make|book|booking|schedule|appointment|appt|clean|cleaning|exception|slot|fit (?:me|us|it) in|squeeze|available|availability|possible|open)\b/.test(t)
   && !/\b(?:last|ago|cleaned|came|was|were|did)\b/.test(t);
@@ -681,7 +681,7 @@ const D_USUAL_SLOTS = ["8:00 AM", "10:30 AM", "1:00 PM", "3:30 PM"];
 const D_LATE = "We don't start that late — our usual weekday start times are 8:00 AM, 10:30 AM, 1:00 PM and 3:30 PM (3:30 is the latest). You don't need to be home, though — a garage code, lockbox or unlocked door works.";
 const D_EARLY = "We don't start that early — our earliest usual start time is 8:00 AM on weekdays. You don't need to be home, though — a garage code, lockbox or unlocked door works.";
 const D_DAYNAME = { monday: "Monday", tuesday: "Tuesday", wednesday: "Wednesday", thursday: "Thursday", friday: "Friday" };
-const D_ETA_RE = /\bwhat time (?:are|is|will) (?:you|he|keith|the tech|your guy)\b|\bon (?:the|your|his) way\b|\bstill coming\b|\bcoming today\b|\beta\b|\bwhere(?:'s| is) (?:the tech|keith|my tech|your guy)\b|\brunning late\b|\bsupposed to (?:be here|come|show)\b|\b(?:an|a half|\d+) hours? (?:ago|late)\b|\bstill (?:not here|waiting)\b|\bnever showed\b|\bno ?show\b|\bwhere (?:is|are) (?:he|you|y'?all|the (?:tech|guy|cleaner))\b|\bis (?:he|someone|anyone) (?:still )?coming\b/;
+const D_ETA_RE = /\bwhat time (?:are|is|will) (?:you|he|(?:keith|the owner|owner)|the tech|your guy)\b|\bon (?:the|your|his) way\b|\bstill coming\b|\bcoming today\b|\beta\b|\bwhere(?:'s| is) (?:the tech|(?:keith|the owner|owner)|my tech|your guy)\b|\brunning late\b|\bsupposed to (?:be here|come|show)\b|\b(?:an|a half|\d+) hours? (?:ago|late)\b|\bstill (?:not here|waiting)\b|\bnever showed\b|\bno ?show\b|\bwhere (?:is|are) (?:he|you|y'?all|the (?:tech|guy|cleaner))\b|\bis (?:he|someone|anyone) (?:still )?coming\b/;
 // topics that make "how many rooms?" a natural next question (sales questions, not policy/logistics)
 const D_SALES_TOPICS = new Set(["service_area", "apartments", "special_info", "still_available", "prices_set", "discount_other", "military_discount", "catch",
   "rug_info", "whole_house_info", "what_counts_room", "included", "minimum", "extra_staircase", "extra_hall", "extra_room", "why_75_for_one", "travel_fee",
@@ -717,7 +717,7 @@ const TRAFFIC_REPLY = "Traffic areas get cleaned along with the rest of the carp
 const SUMMARY_SHORT = "$99 plus tax covers up to 5 rooms, two halls and one staircase ($149 with pet treatment); up to 3 areas is $75.";
 const PET_DIFF_85 = "$85 is pet treatment for up to 3 rooms, and $149 is pet treatment for up to 5 rooms, two halls and one staircase, plus tax. Without pet treatment those are $75 and $99 — pet treatment is only needed for pet accidents or odor.";
 /**
- * Keith's approved facts, by id. The AI understanding step may answer a specific question in its own
+ * the owner's approved facts, by id. The AI understanding step may answer a specific question in its own
  * words (directive "answer") only by citing these: every number, price, time and sensitive word in its
  * answer must appear in the facts it cites (see checkFactAnswer). Wording mirrors business.ts.
  */
@@ -734,8 +734,8 @@ export const FACTS = {
   closet: CLOSET_REPLY,
   rug_pricing: `A standard area rug counts as one of the rooms in the package. One standard area rug by itself is ${money(PRICES.minimum)} plus tax (the same as one room); once the five package rooms are used, each extra standard rug is ${money(PRICES.extra)} plus tax.`,
   rug_onsite: "We clean qualifying area rugs right at your home.",
-  rug_limits: "We clean most synthetic area rugs. We can't clean wool or other natural-fiber rugs (jute, sisal, silk), or very small mats like bath mats or door mats. Rugs bigger than about 8x10, or antique/oriental/handmade rugs, need Keith to look first.",
-  upholstery_prices: `Upholstery, plus tax: ${PRICES.furniture.map(([n, p]) => `${n} ${money(p)}`).join("; ")}. Specialty fabrics (like leather), heavy staining, or oversized pieces need Keith to review first.`,
+  rug_limits: "We clean most synthetic area rugs. We can't clean wool or other natural-fiber rugs (jute, sisal, silk), or very small mats like bath mats or door mats. Rugs bigger than about 8x10, or antique/oriental/handmade rugs, need the owner to look first.",
+  upholstery_prices: `Upholstery, plus tax: ${PRICES.furniture.map(([n, p]) => `${n} ${money(p)}`).join("; ")}. Specialty fabrics (like leather), heavy staining, or oversized pieces need the owner to review first.`,
   tile_prices: `Tile & grout, plus tax: ${PRICES.tile.map(([n, p]) => `${n} ${money(p)}`).join("; ")}. The whole-floor option includes a standard grout sealant. Larger areas need a quick review first.`,
   hard_floor_prices: `Hard floors (hardwood, laminate, vinyl/LVP), plus tax: ${PRICES.hardFloor.map(([n, p]) => `${n} ${money(p)}`).join("; ")}. Hard floors and tile are priced separately from the carpet. Over 600 sq ft needs a review first.`,
   same_visit: "We can do carpet, rugs, upholstery, tile and hard floors in the same visit.",
@@ -769,13 +769,13 @@ export const FACTS = {
   parking: PARKING_REPLY,
   on_the_way: ON_THE_WAY_REPLY,
   running_late: RUNNING_LATE_REPLY,
-  satisfaction: SATISFACTION_REPLY + " Keith arranges any return visit personally.",
+  satisfaction: SATISFACTION_REPLY + " the owner arranges any return visit personally.",
   insured: INSURED_REPLY + " Carpet cleaning doesn't require licensing or registration in Kansas. We don't claim Carpet and Rug Institute (CRI) certification.",
   reviews: "We have over 385 satisfied customers and a 4.9 out of 5 rating from 229 customer reviews. We don't use Google reviews right now.",
-  owner: "We're a real local business in Wichita, owner-operated by Keith, who does the cleaning himself. No crew.",
+  owner: "We're a real local business in Wichita, owner-operated — the owner does the cleaning himself. No crew.",
   bot: IDENTITY_REPLY,
   not_offered: "We don't do carpet repair, stretching or installation, mattress or car cleaning, or other trades — only carpet, rug, upholstery, tile and hard-floor cleaning.",
-  commercial: "Commercial spaces and multiple units get a personal quote from Keith.",
+  commercial: "Commercial spaces and multiple units get a personal quote from the owner.",
   contact: `For an existing appointment, reply to your Housecall Pro text or text ${TEXT_LINE}. New work is booked online.`,
   website: "Our website is wichitacarpetcleaningservices.com.",
   spanish: "This chat can answer in Spanish.",
@@ -794,7 +794,7 @@ const faNums = (s, words = true) => { const low = String(s).toLowerCase().replac
 /**
  * Check the AI's own-words answer against the facts it cites. Returns the cleaned text, or null.
  * Every price, percent, time, phone, number, weekday and sensitive word must come from those facts
- * (bare numbers may also echo the customer's message), and it may never promise anything for Keith.
+ * (bare numbers may also echo the customer's message), and it may never promise anything for the owner.
  */
 // topic ids the AI sometimes cites in place of the fact that holds the same wording
 const FACT_ALIAS = { walk_in_closet: "closet", checks: "payment", cash: "payment", cards: "payment", deposit: "payment", kids_pets_walk: "dry_time", extra_staircase: "price_packages", extra_hall: "price_packages",
@@ -882,7 +882,7 @@ export function createConversation(init = {}) {
   const clockNow = () => (init.now != null ? new Date(init.now) : new Date());
   const reach = (messengerLine, siteLine) => (site ? siteLine : messengerLine);
 
-  /* ---------- live open times (from Keith's calendar, passed in per message as msg.slots) ---------- */
+  /* ---------- live open times (from the owner's calendar, passed in per message as msg.slots) ---------- */
   // slots = { asOf, earliest, days: [{ date, wd, day, label, bookable, times, raw }] } — times only, never job details.
   let slotsNow = null;
   const SLOT_MAX_AGE = 20 * 60000;
@@ -1085,7 +1085,7 @@ export function createConversation(init = {}) {
     state.lastIntent = intent;
     if (intent !== "unknown") { state.unknownCount = 0; state.unknownQ = 0; }
     if (bubbles.some((b) => /same-day service/.test(String(b || "")))) markSaid("sameday");
-    if (bubbles.some((b) => /^Water damage is something Keith would want to look at personally/.test(String(b || "")))) { state.openIssue = "water"; state.openIssueTurn = state.turns; }
+    if (bubbles.some((b) => /^Water damage is something the owner would want to look at personally/.test(String(b || "")))) { state.openIssue = "water"; state.openIssueTurn = state.turns; }
     let list = bubbles.filter(Boolean).map((b) => b.replace(/\s+/g, " ").trim()).filter(Boolean);
     var sad = list.length && intent !== "stop" && SAD_RE.test(currentText);
     if (sad) list = list.map((b) => b.replace(/ If you have pet accidents or odor, the pet-treatment version is [^.]*\.| Pet treatment is available if you need it\./g, ""));
@@ -1124,7 +1124,7 @@ export function createConversation(init = {}) {
     state.lastReply = list.filter((b) => b !== bookingUrl).join(" | ").slice(0, 400);
     if (site && extra.phone && ["human", "complaint", "change_existing", "confirm_existing", "commercial"].includes(intent)) state.siteHandoff = intent;
     if (list.includes(bookingUrl)) state.linkSent = true;
-    // the reply just gave the weekdays-only answer: "please ask Keith" next is about the weekend, and still a no
+    // the reply just gave the weekdays-only answer: "please ask the owner" next is about the weekend, and still a no
     state.weekendLast = list.some((b) => b.includes(WEEKEND_LINE) || b.includes(WEEKEND_AGAIN));
     state.askedRooms = list.some((b) => /how many rooms|number of rooms|room count/i.test(b));
     state.askStreak = state.askedRooms ? (state.askStreak || 0) + 1 : 0;
@@ -1137,19 +1137,19 @@ export function createConversation(init = {}) {
     return { bubbles: list, intent, ...extra };
   }
   const complaintReply = (comeBack) => out("complaint", [reach(
-    comeBack ? "I'm sorry about that. We're always happy to come back out and fix the issue — I've sent this to Keith and he'll reach out to arrange it as soon as he can."
-      : "I'm sorry about that. I've sent this to Keith so he can make it right — he'll reach out to you personally as soon as he can.",
-    comeBack ? `I'm sorry about that. We're always happy to come back out and fix the issue — please text Keith at ${TEXT_LINE} so he can set it up.` : `I'm sorry about that. Please text Keith at ${TEXT_LINE} or message us on Facebook so he can make it right personally.`)], { phone: true });
+    comeBack ? "I'm sorry about that. We're always happy to come back out and fix the issue — I've sent this to the owner and he'll reach out to arrange it as soon as he can."
+      : "I'm sorry about that. I've sent this to the owner so he can make it right — he'll reach out to you personally as soon as he can.",
+    comeBack ? `I'm sorry about that. We're always happy to come back out and fix the issue — please text us at ${TEXT_LINE} so we can set it up.` : `I'm sorry about that. Please text us at ${TEXT_LINE} or message us on Facebook so we can make it right personally.`)], { phone: true });
   // Messenger callback/text request: never promise a text or call without a number to use
   const callbackLine = (t, wantsText) => {
     const num = /\(?\b\d{3}\)?[-. ]?\d{3}[-. ]?\d{4}\b/.test(t);
-    if (num) return wantsText ? "Absolutely — I've passed your request to Keith, and he'll text you as soon as he can. He's usually on a job, but he'll reach out shortly." : "Got it — I've passed that to Keith. He works by text rather than phone calls, so he'll text you at that number as soon as he can.";
-    return wantsText ? `Absolutely — I've passed your request to Keith. He's usually on a job; he'll reply right here, or send your number if you'd rather he text you. You can also reach him at ${TEXT_LINE}.`
-      : `Happy to get Keith on this. He works by text rather than phone calls, so he'll reply right here as soon as he can, or you can text him at ${TEXT_LINE}.`;
+    if (num) return wantsText ? "Absolutely — I've passed your request to the owner, and he'll text you as soon as he can. He's usually on a job, but he'll reach out shortly." : "Got it — I've passed that to the owner. He works by text rather than phone calls, so he'll text you at that number as soon as he can.";
+    return wantsText ? `Absolutely — I've passed your request to the owner. He's usually on a job; he'll reply right here, or send your number if you'd rather he text you. You can also reach him at ${TEXT_LINE}.`
+      : `Happy to get the owner on this. He works by text rather than phone calls, so he'll reply right here as soon as he can, or you can text us at ${TEXT_LINE}.`;
   };
-  // "I want a real person": Keith takes the thread; an impatient ask gets the text line, not a booking link
+  // "I want a real person": the owner takes the thread; an impatient ask gets the text line, not a booking link
   const humanHandoff = (rawText) => {
-    const base = `Absolutely — I'm handing this to a person. Keith will reply here as soon as he can, and your messages are saved so you won't need to repeat anything. You can also text him at ${TEXT_LINE}.`;
+    const base = `Absolutely — I'm handing this to a person. The owner will reply here as soon as he can, and your messages are saved so you won't need to repeat anything. You can also text us at ${TEXT_LINE}.`;
     const urgent = /\b(?:now|asap|right away|immediately|robot|bot|ai)\b|!{2,}/i.test(String(rawText || "")) || (String(rawText || "").replace(/[^A-Za-z]/g, "").length >= 6 && String(rawText || "").replace(/[^A-Z]/g, "").length / String(rawText || "").replace(/[^A-Za-z]/g, "").length > 0.6) || /\bNOW\b/.test(String(rawText || ""));
     return urgent ? [base] : [base, "If you'd like to grab a time in the meantime, here are the open weekday times:", bookingUrl];
   };
@@ -1189,7 +1189,7 @@ export function createConversation(init = {}) {
       : `Happy to price it — how many rooms are we cleaning along with the ${what.replace(/^an? /, "")}?`;
   };
   const waterOpen = () => state.openIssue === "water" && state.turns - (state.openIssueTurn || 0) <= 4;
-  const WATER_FOLLOW = () => reach("Thanks — that's helpful. Keith has the water-damage details and will reach out here.", `Thanks — include that when you text Keith at ${TEXT_LINE} with a photo, so he has everything.`);
+  const WATER_FOLLOW = () => reach("Thanks — that's helpful. The owner has the water-damage details and will reach out here.", `Thanks — include that when you text us at ${TEXT_LINE} with a photo, so he has everything.`);
   const hasScope = () => state.wholeHouse || state.rooms + state.rugs + state.halls + state.stairs > 0;
   const scopeNow = () => ({ rooms: state.rooms, rugs: state.rugs, halls: state.halls, stairs: state.stairs, wholeHouse: state.wholeHouse });
   const quoteKey = () => { const q = quote({ ...scopeNow(), pets: state.pets === true }); return `${state.wholeHouse ? "whole" : describe(scopeNow())}|${q.total}|${q.extras}|${state.pets === true}`; };
@@ -1218,13 +1218,13 @@ export function createConversation(init = {}) {
       return out("greeting", ["Hi there, thanks for reaching out! What would you like cleaned?"]);
     }
     if (isStopMessage(t)) return out("stop", []);
-    // water damage is with Keith: more details about it go to him, not into a room count or our dry time
+    // water damage is with the owner: more details about it go to him, not into a room count or our dry time
     if (waterOpen() && !readScope(t).found && !/\b(?:thanks|thank you|thx|ty|bye|book|schedule|how much|price|cost|quote|call|text me|weekend|saturday|sunday|also|another|couch|sofa|rug|tile)\b/.test(t)) return out("info", [WATER_FOLLOW()]);
-    // we offered to get Keith for a question we couldn't answer; "yes" takes us up on it
+    // we offered to get the owner for a question we couldn't answer; "yes" takes us up on it
     if (state.offeredKeith) {
       state.offeredKeith = false;
       if (/^(?:yes|yeah|yep|yup|sure|ok|okay|please|yes please|go ahead|that would be (?:great|good|nice)|that'?d be great|please do|sounds good|y)\b[\s!.]*(?:please|thanks|thank you)?[\s!.]*$/.test(t)) {
-        return out("human", [reach("Done — I've asked Keith to answer, and he'll reply here as soon as he can.", `Please text Keith at ${TEXT_LINE} and he'll answer that for you.`)], { phone: true });
+        return out("human", [reach("Done — I've asked the owner to answer, and he'll reply here as soon as he can.", `Please text us at ${TEXT_LINE} and we'll answer that for you.`)], { phone: true });
       }
     }
     // weekends mentioned for another reason ("my grandkids visit on weekends") aren't a weekend request
@@ -1255,9 +1255,9 @@ export function createConversation(init = {}) {
     const rawText = String(raw ?? "");
     const shouting = rawText.replace(/[^A-Za-z]/g, "").length >= 12 && rawText === rawText.toUpperCase();
     if (profane || (shouting && has(t, /\b(?:answer|anyone|respond|reply|nobody|no one|hello)\b/)) || has(t, /\b(?:you )?(?:didn'?t|did not|don'?t|never) (?:answer|understand|get) (?:my|the|what i)\b|\bnot what i (?:asked|meant|said)\b|\byou'?re not (?:helping|understanding|listening)\b|\bthat (?:doesn'?t|does not|didn'?t) (?:help|answer|make sense)\b|\bthis isn'?t helping\b|\bgoing in circles\b|\byou already (?:said|asked) that\b|\bnot helpful\b|\bthis is useless\b/) || has(t, /\bwhy (?:isn'?t|is no ?one|won'?t you|aren'?t you|doesn'?t anyone) (?:anyone )?(?:answer|respond|repl|get back)|\b(?:no ?one|nobody) (?:is )?(?:answering|responding|getting back)/)) {
-      return out("human", [reach("I'm sorry for the frustration. I've let Keith know, and he'll reply here as soon as he can.", `I'm sorry for the frustration. Please text Keith at ${TEXT_LINE} and he'll get right back to you.`)], { phone: true });
+      return out("human", [reach("I'm sorry for the frustration. I've let the owner know, and he'll reply here as soon as he can.", `I'm sorry for the frustration. Please text us at ${TEXT_LINE} and we'll get right back to you.`)], { phone: true });
     }
-    if ((has(t, /\b(?:are you|is this|am i (?:talking|chatting|speaking|texting) (?:to|with)|r u|are u)\s+(?:a |an |just a |the )?(?:bot|robot|ai|a\.i\.?|automated|machine|chat ?gpt|real person|real|human|person|computer|live person)\b/) || /^(?:hi |hey |hello )?(?:is (?:this|that|it) keith|are you keith|am i (?:talking|chatting|speaking|texting) (?:to|with) keith|is keith (?:there|here|reading this))\b/.test(t)) && !has(t, /\b(?:speak|talk|chat) (?:to|with) (?:a |an )?(?:real |live )?(?:person|human|someone|keith|owner)\b/)) {
+    if ((has(t, /\b(?:are you|is this|am i (?:talking|chatting|speaking|texting) (?:to|with)|r u|are u)\s+(?:a |an |just a |the )?(?:bot|robot|ai|a\.i\.?|automated|machine|chat ?gpt|real person|real|human|person|computer|live person)\b/) || /^(?:hi |hey |hello )?(?:is (?:this|that|it) (?:keith|the owner|owner)|are you (?:keith|the owner|owner)|am i (?:talking|chatting|speaking|texting) (?:to|with) (?:keith|the owner|owner)|is (?:keith|the owner|owner) (?:there|here|reading this))\b/.test(t)) && !has(t, /\b(?:speak|talk|chat) (?:to|with) (?:a |an )?(?:real |live )?(?:person|human|someone|(?:keith|the owner|owner)|owner)\b/)) {
       return out("identity", [IDENTITY_REPLY]);
     }
 
@@ -1287,29 +1287,29 @@ export function createConversation(init = {}) {
     if (has(t, /\b(?:still available|still going on|still valid|still running|still good|is this (?:deal|offer|special|price)|this (?:deal|special|offer) still|(?:deal|special|offer|price) still (?:going|good|on|available|valid))\b/)) {
       return out("price", [`Yes — the ${money(PRICES.standard)} special is still available! It covers ${COVER}, plus tax. ${hasScope() ? LINK_OFFER : ASK_ROOMS}`]);
     }
-    // "ask Keith if he can do Saturday" / "can I talk to Keith about a weekend appointment": weekends are a firm no, never a handoff
-    if (has(t, /\b(?:keith|someone|somebody|anyone|a person|a human|the owner|the boss|manager|him)\b/) && isWeekendJobAsk(t)
+    // "ask the owner if he can do Saturday" / "can I talk to the owner about a weekend appointment": weekends are a firm no, never a handoff
+    if (has(t, /\b(?:(?:keith|the owner|owner)|someone|somebody|anyone|a person|a human|the owner|the boss|manager|him)\b/) && isWeekendJobAsk(t)
       && !(has(t, /\bcall\b|\btext me\b/) && !has(t, /\b(?:come|appointment|appt|clean|cleaning|book|schedule|exception)\b/))) return weekendFromText(t);
     if (state.weekendLast && WEEKEND_KEITH_FOLLOW_RE.test(t) && t.split(" ").length <= 12 && !has(t, /\bcall\b|\btext me\b|\$/)) return weekendFromText(t);
     const phoneInMsg = /\b\(?\d{3}\)?[ .-]?\d{3}[ .-]?\d{4}\b/.test(t);
-    if ((/\bcall me\b|\bgive me a call\b|\bcall\b(?=[^.?!]{0,6}\(?\d{3}\)?[ .-]?\d{3}[ .-]?\d{4})|\bcan (?:you|someone|somebody|keith) (?:please )?call\b|\bplease call\b|\bcall me back\b|\bcan i (?:just )?(?:call|talk to|speak (?:to|with)) (?:someone|somebody|keith|a person|the owner)\b|\bis there (?:a number|someone) i can call\b/.test(t) || (/\btext me\b(?! (?:the|a|that) link)/.test(t) && (phoneInMsg || /\b(?:text me (?:back|instead)|can (?:you|someone|keith) text me)\b/.test(t)))) && !/\b(?:don'?t|do not|dont) call\b/.test(t)) {
+    if ((/\bcall me\b|\bgive me a call\b|\bcall\b(?=[^.?!]{0,6}\(?\d{3}\)?[ .-]?\d{3}[ .-]?\d{4})|\bcan (?:you|someone|somebody|(?:keith|the owner|owner)) (?:please )?call\b|\bplease call\b|\bcall me back\b|\bcan i (?:just )?(?:call|talk to|speak (?:to|with)) (?:someone|somebody|(?:keith|the owner|owner)|a person|the owner)\b|\bis there (?:a number|someone) i can call\b/.test(t) || (/\btext me\b(?! (?:the|a|that) link)/.test(t) && (phoneInMsg || /\b(?:text me (?:back|instead)|can (?:you|someone|(?:keith|the owner|owner)) text me)\b/.test(t)))) && !/\b(?:don'?t|do not|dont) call\b/.test(t)) {
       const wantsText = /\btext me\b/.test(t) && !/\bcall\b/.test(t);
-      return out("human", [reach(callbackLine(t, wantsText), phoneInMsg ? `This website chat can't pass your number along, so Keith won't see it here — please text him at ${TEXT_LINE} and he'll get back to you.` : `Text Keith at ${TEXT_LINE} and he'll get back to you as soon as he can.`)], { phone: true });
+      return out("human", [reach(callbackLine(t, wantsText), phoneInMsg ? `This website chat can't pass your number along, so the owner won't see it here — please text us at ${TEXT_LINE} and we'll get back to you.` : `Text us at ${TEXT_LINE} and we'll get back to you as soon as we can.`)], { phone: true });
     }
 
-    // "yes please ask him" / "can you ask Keith?" -> get Keith (site: point them to his text line)
-    if ((has(t, /\b(?:ask|check with|tell|message|have|get) keith\b/) && !has(t, /\b(?:i'?ll|i will|let me|i need to|i have to|i gotta|i'?m going to)\b/)) || /^(?:yes|yeah|yep|sure|ok|okay|please)\b[ ,!.]*(?:please )?(?:ask|check with) (?:him|keith)\b/.test(t)) {
-      return out("human", [reach("Sure — I've asked Keith, and he'll reply here as soon as he can.", `This chat can't message Keith directly — please text him at ${TEXT_LINE} and he'll get right back to you.`)], { phone: true });
+    // "yes please ask him" / "can you ask the owner?" -> get the owner (site: point them to his text line)
+    if ((has(t, /\b(?:ask|check with|tell|message|have|get) (?:keith|the owner|owner)\b/) && !has(t, /\b(?:i'?ll|i will|let me|i need to|i have to|i gotta|i'?m going to)\b/)) || /^(?:yes|yeah|yep|sure|ok|okay|please)\b[ ,!.]*(?:please )?(?:ask|check with) (?:him|(?:keith|the owner|owner))\b/.test(t)) {
+      return out("human", [reach("Sure — I've asked the owner, and he'll reply here as soon as he can.", `This chat can't message the owner directly — please text us at ${TEXT_LINE} and we'll get right back to you.`)], { phone: true });
     }
 
-    // someone who can't (or won't) use the booking link gets Keith to set it up personally
-    if (has(t, /\b(?:don'?t|dont|do not|can'?t|cant|not good with|bad with|no good with|never learned) (?:do |use |work |understand |know how to use )?(?:computers?|the internet|internet|online stuff|online|websites?|links?|apps?|technology|smart ?phones?|the booking(?: things?| link| page)?)\b|\b(?:don'?t|dont|do not) know how to (?:use|book|do|work) (?:the |that |this |a )?(?:booking|link|website|online|computer|internet|app)\b|\bcan (?:you|someone|keith) (?:just )?(?:book|schedule|put) (?:me|us|it) (?:in|down|on)\b|\b(?:just )?put (?:me|us) down for\b|\bbook (?:it|me|us) for me\b/)) {
-      return out("human", [reach("No problem at all — I've asked Keith to set it up with you personally. He'll reply here as soon as he can.", `No problem at all — text Keith at ${TEXT_LINE} and he'll set it up with you personally.`)], { phone: true });
+    // someone who can't (or won't) use the booking link gets the owner to set it up personally
+    if (has(t, /\b(?:don'?t|dont|do not|can'?t|cant|not good with|bad with|no good with|never learned) (?:do |use |work |understand |know how to use )?(?:computers?|the internet|internet|online stuff|online|websites?|links?|apps?|technology|smart ?phones?|the booking(?: things?| link| page)?)\b|\b(?:don'?t|dont|do not) know how to (?:use|book|do|work) (?:the |that |this |a )?(?:booking|link|website|online|computer|internet|app)\b|\bcan (?:you|someone|(?:keith|the owner|owner)) (?:just )?(?:book|schedule|put) (?:me|us|it) (?:in|down|on)\b|\b(?:just )?put (?:me|us) down for\b|\bbook (?:it|me|us) for me\b/)) {
+      return out("human", [reach("No problem at all — I've asked the owner to set it up with you personally. He'll reply here as soon as he can.", `No problem at all — text us at ${TEXT_LINE} and we'll set it up with you personally.`)], { phone: true });
     }
-    // facts we don't have: offer Keith rather than guess
+    // facts we don't have: offer the owner rather than guess
     if (has(t, /\bnew customers? only\b|\bonly (?:for )?new customers?\b|\bfirst[- ]time customers?\b|\b(?:returning|existing|repeat|past|old) customers?\b|\bfor everyone\b/) && has(t, /\b(?:special|deal|price|offer|\$?99|discount|promo)\b/)) {
       if (!site) state.offeredKeith = true;
-      return out("unknown", [reach("Good question — Keith can answer that one. Want me to ask him?", `Good question — Keith can answer that one if you text ${TEXT_LINE}.`)]);
+      return out("unknown", [reach("Good question — the owner can answer that one. Want me to ask him?", `Good question — the owner can answer that one if you text ${TEXT_LINE}.`)]);
     }
 
     /* --- hard routing that must win before time, price and booking logic --- */
@@ -1317,41 +1317,41 @@ export function createConversation(init = {}) {
       return out("media", ["Sorry — I can't play voice messages here. Could you type it out? I'll answer right away."]);
     }
     if (has(t, /\b(?:water damage|flood\w*|restoration|sewage)\b/)) {
-      { return out("other-services", [reach("Water damage is something Keith would want to look at personally — I've let him know, and he'll reach out here.", `Water damage is something Keith would want to look at personally — text a photo and a description to ${TEXT_LINE}.`)], site ? {} : { notify: "review" }); }
+      { return out("other-services", [reach("Water damage is something the owner would want to look at personally — I've let him know, and he'll reach out here.", `Water damage is something the owner would want to look at personally — text a photo and a description to ${TEXT_LINE}.`)], site ? {} : { notify: "review" }); }
     }
     // damage or loss blamed on us: "you ruined my carpet", "the tech scratched my floor", "something is missing"
     const damageClaim = has(t, /\b(?:you|y'?all|you guys|your (?:tech|technician|guy|crew|worker|cleaner|machine|equipment|team)|the (?:tech|technician|guy|cleaner|crew|worker|cleaning guy|carpet guy))\s+(?:(?:have|has|had|just|totally|completely)\s+)*(?:ruined|damaged|broke|scratched|scuffed|stained|tore|ripped|dented|bleached|chipped|cracked|burned|burnt|melted|discolou?red|destroyed|shrunk|knocked over)\b(?<!\b(?:lost|stole|took))|\b(?:you|y'?all|you guys|the (?:tech|technician|guy|cleaner|crew|worker))\s+(?:lost|stole|took) (?:my|our|the)\b|\bsomething (?:is|was|'s|went|has gone) missing\b|\b(?:is|are|went|was|were) missing (?:since|after) (?:you|the (?:tech|cleaning|visit))\b/)
       && !has(t, /\b(?:will|would|could|can|might|does|do) (?:it|you|that|this|the \w+) (?:damage|ruin|scratch|stain|break)\b|\bwhat if\b|\bis it true\b|\b(?:someone|somebody|anyone|people)(?:'s)?\b|\bheard\b/);
     if (damageClaim) return complaintReply(false);
     if (has(t, /\b(?:question|questions|problem|issue|confused|wrong|mistake|dispute|help)\b[^.?!]{0,25}\b(?:my|the|our|this) (?:bill|invoice|charge|statement)\b|\b(?:charged|billed) (?:me |us )?(?:twice|wrong|too much|double|incorrectly)\b|\bovercharg\w*|\bdouble[- ]charg\w*/)) {
-      return out("human", [reach("Thanks — I've passed your billing question to Keith, and he'll reply here as soon as he can.", `For billing questions, please text Keith at ${TEXT_LINE} and he'll sort it out.`)], { phone: true });
+      return out("human", [reach("Thanks — I've passed your billing question to the owner, and he'll reply here as soon as he can.", `For billing questions, please text us at ${TEXT_LINE} and we'll sort it out.`)], { phone: true });
     }
     // an appointment that already exists: confirmations and changes go to a person (never the booking link)
     const bookedRef = has(t, /\b(?:i|we) (?:already |just )?(?:booked|scheduled|made (?:an|the) appointment)\b|^(?:just |already )booked\b/);
     const forgotAdd = has(t, /\bforgot (?:to )?(?:add|include|mention|put|book)\b/) && (bookedRef || has(t, /\b(?:booking|appointment|appt)\b/));
-    const CHANGE_LINE = reach(`We'll be happy to get that arranged. A team member will reach out to handle the change, since I can't update a booked appointment from Messenger. You can also reply to your Housecall Pro text or text ${TEXT_LINE}.`, `For an existing appointment, please reply to your Housecall Pro text or text ${TEXT_LINE} — Keith handles changes personally.`);
+    const CHANGE_LINE = reach(`We'll be happy to get that arranged. A team member will reach out to handle the change, since I can't update a booked appointment from Messenger. You can also reply to your Housecall Pro text or text ${TEXT_LINE}.`, `For an existing appointment, please reply to your Housecall Pro text or text ${TEXT_LINE} — the owner handles changes personally.`);
     if (forgotAdd || (bookedRef && has(t, /\b(?:change (?:it|that|the|my|to)|need to change|cancel|reschedul\w*|switch (?:it|the|my|to)|push (?:it|back)|bump|move (?:it|my (?:appointment|appt|booking|time|date|cleaning)|the (?:appointment|date|time|day)|to (?:a |another |next |mon|tue|wed|thu|fri))|wrong (?:day|date|time|address)|add (?:a |the |another |one more )?(?:room|bed ?room|hall|stair|rug))\b/))) {
       return out("change_existing", [CHANGE_LINE], { phone: true });
     }
     if (bookedRef && has(t, /\bconfirm\w*\b|\bdid you (?:get|receive|see)\b|\b(?:you )?got it\b|\b(?:go|went|come|came) through\b/)) {
-      return out("confirm_existing", [reach("I can't see or confirm an existing appointment from Messenger. I've flagged this conversation for a person to check the booking and follow up with you. I haven't confirmed or changed your appointment.", `I can't see bookings from this website chat — please reply to your Housecall Pro text or text ${TEXT_LINE}, and Keith will check it for you.`)], { phone: true });
+      return out("confirm_existing", [reach("I can't see or confirm an existing appointment from Messenger. I've flagged this conversation for a person to check the booking and follow up with you. I haven't confirmed or changed your appointment.", `I can't see bookings from this website chat — please reply to your Housecall Pro text or text ${TEXT_LINE}, and the owner will check it for you.`)], { phone: true });
     }
     if (has(t, /\b(?:i|we) (?:need|have|want|got|would like|'d like) to (?:cancel|reschedule|move|change)\b|\b(?:cancel|reschedule|move|change) (?:my|our) (?:appointment|appt|booking|cleaning|visit)\b/) && has(t, /\b(?:my|our) (?:appointment|appt|booking|cleaning|visit)\b|\b(?:cancel|reschedule) (?:it|that)\b/) && !has(t, /\bwhat if\b|\bif (?:i|we) (?:need|have|want)\b|\bin case\b/)) {
       const fee = has(t, /\b(?:fee|fees|charge|penalty|cost)\b/) ? "There's no cancellation fee. " : "";
       return out("change_existing", [fee + CHANGE_LINE], { phone: true });
     }
     const existingAppt = has(t, /\b(?:existing|booked|scheduled|upcoming|current) (?:appointment|appt|booking|cleaning|visit)\b|\balready (?:have|got|booked|scheduled|made)\b[^.?!]{0,30}\b(?:appointment|appt|booking|cleaning|visit|it)\b|\b(?:the|my) old (?:one|appointment|booking)\b|\bbook a new (?:one|appointment)\b[^.?!]*\bcancel\b|\bcancel (?:the|my) (?:old|other|first) (?:one|appointment|booking)\b/);
-    const changeAsk = has(t, /\b(?:move|change|reschedule|cancel|push|bump|switch|contact|reach (?:you|someone|keith)|what number|which number|text (?:who|you|someone)|question about|add (?:a |another |one more )?(?:room|hall|staircase|rug)|contact you about|update)\b/);
+    const changeAsk = has(t, /\b(?:move|change|reschedule|cancel|push|bump|switch|contact|reach (?:you|someone|(?:keith|the owner|owner))|what number|which number|text (?:who|you|someone)|question about|add (?:a |another |one more )?(?:room|hall|staircase|rug)|contact you about|update)\b/);
     // checking on a booking that already exists (or a confirmation that never came) goes to a person
     const confirmAsk = has(t, /\b(?:i|we) (?:already )?booked(?: (?:it|already|online))?\b[^.?!]{0,10}[.,!?]?\s*(?:did|do|can) you (?:get|got|receive|see)\b|\bdid (?:my|our|the) (?:booking|appointment|appt|reservation|request) (?:go through|work|come through)\b|\bdid you (?:get|receive|see) my (?:booking|appointment|appt|request|reservation)\b|\bam i (?:booked|confirmed|scheduled|on the (?:schedule|calendar))\b|\bis (?:my|our) (?:appointment|appt|booking|cleaning) (?:confirmed|still on|set|booked|scheduled)\b|\bdo (?:i|we) (?:have|still have) an? (?:appointment|appt|booking)\b|\bwhat time is (?:my|our) (?:appointment|appt|cleaning)\b|\bwhen is (?:my|our) (?:appointment|appt|cleaning)\b|\bcheck (?:on )?(?:my|our) (?:appointment|appt|booking)\b|\bconfirm(?:ing)? (?:my|our|the) (?:appointment|appt|booking|time|visit|cleaning)\b|\b(?:did not|didn'?t|have not|haven'?t|never|didnt|havent) (?:get|got|receive|received|see|seen)\b[^.?!]{0,35}\bconfirmation\b|\b(?:missing|no) confirmation(?: email| text| message)?\b|\bconfirmation (?:email|text|message)\b[^.?!]{0,25}\b(?:missing|never (?:came|arrived)|hasn'?t (?:come|arrived)|did not arrive|didn'?t (?:come|arrive))\b/);
-    if (has(t, /\bwhat time (?:are|is|will) (?:you|he|keith|the tech|your guy) (?:coming|getting here|be here|arriving)\b|\b(?:is|are) (?:the tech|he|keith|you|your guy) (?:on (?:the|your|his) way|still coming|coming today|running late|close)\b|\bwhere(?:'s| is) (?:the tech|keith|my tech|your guy)\b|\beta\b/)) {
-      return out("confirm_existing", [reach("I can't see the live schedule from here — I've let Keith know you're checking, and he'll reply as soon as he can. You'll also get a text when he's about 10 to 15 minutes away.", `This website chat can't see the schedule — please reply to your Housecall Pro text or text Keith at ${TEXT_LINE}. You'll also get a text when he's about 10 to 15 minutes away.`)], { phone: true });
+    if (has(t, /\bwhat time (?:are|is|will) (?:you|he|(?:keith|the owner|owner)|the tech|your guy) (?:coming|getting here|be here|arriving)\b|\b(?:is|are) (?:the tech|he|(?:keith|the owner|owner)|you|your guy) (?:on (?:the|your|his) way|still coming|coming today|running late|close)\b|\bwhere(?:'s| is) (?:the tech|(?:keith|the owner|owner)|my tech|your guy)\b|\beta\b/)) {
+      return out("confirm_existing", [reach("I can't see the live schedule from here — I've let the owner know you're checking, and he'll reply as soon as he can. You'll also get a text when he's about 10 to 15 minutes away.", `This website chat can't see the schedule — please reply to your Housecall Pro text or text us at ${TEXT_LINE}. You'll also get a text when he's about 10 to 15 minutes away.`)], { phone: true });
     }
     if (confirmAsk && !changeAsk) {
-      return out("confirm_existing", [reach("I can't see or confirm an existing appointment from Messenger. I've flagged this conversation for a person to check the booking and follow up with you. I haven't confirmed or changed your appointment.", `I can't see bookings from this website chat — please reply to your Housecall Pro text or text ${TEXT_LINE}, and Keith will check it for you.`)], { phone: true });
+      return out("confirm_existing", [reach("I can't see or confirm an existing appointment from Messenger. I've flagged this conversation for a person to check the booking and follow up with you. I haven't confirmed or changed your appointment.", `I can't see bookings from this website chat — please reply to your Housecall Pro text or text ${TEXT_LINE}, and the owner will check it for you.`)], { phone: true });
     }
     if (existingAppt && changeAsk) {
-      return out("change_existing", [reach(`We'll be happy to get that arranged. A team member will reach out to handle the change, since I can't update a booked appointment from Messenger. You can also reply to your Housecall Pro text or text ${TEXT_LINE}.`, `For an existing appointment, please reply to your Housecall Pro text or text ${TEXT_LINE} — Keith handles changes personally.`)], { phone: true });
+      return out("change_existing", [reach(`We'll be happy to get that arranged. A team member will reach out to handle the change, since I can't update a booked appointment from Messenger. You can also reply to your Housecall Pro text or text ${TEXT_LINE}.`, `For an existing appointment, please reply to your Housecall Pro text or text ${TEXT_LINE} — the owner handles changes personally.`)], { phone: true });
     }
     // a map pin doesn't tell us the town
     if (lastIntentBefore === "location" && !townsIn(t, SERVED).length && !townsIn(t, NOT_SERVED).length && !/\b\d{5}\b/.test(t) && has(t, /\b(?:in your (?:service )?area|your area|service area|do you (?:come|service|serve|cover|go)|can you come|is (?:this|that|it|here) (?:ok|okay|close enough|covered|in range|too far)|in range|that far|cover (?:this|that|it|here))\b/)) {
@@ -1411,7 +1411,7 @@ export function createConversation(init = {}) {
     }
     const bareSlot = !tm && t.match(/^(?:ok |okay |yes |yeah )?(?:the )?(8|10|1|3)(?::30)?\b/);
     let timeOfDayLine = null;
-    if ((!roomWords || has(t, /\bstart times?\b/)) && !has(t, /\b(?:good|this) (?:morning|afternoon)\b/) && (has(t, /\bwhat time (?:would|will|do|does|can|could) (?:you|u|he|keith|the tech)\b(?! (?:close|open))|\bwhat (?:start )?times? (?:do you have|are (?:open|available)|you got|do you offer|can you (?:come|do)|you have|works?)\b|\bstart times?\b|^(?:ok |so |and )?(?:what|which) times?\??$/) || (has(t, /\b(?:mornings?|afternoons?)\b/) && has(t, /\b(?:if possible|prefer|preferably|works? (?:best|better)|better|available|do you have|can you|could you|any|only|\?)\b/)))) {
+    if ((!roomWords || has(t, /\bstart times?\b/)) && !has(t, /\b(?:good|this) (?:morning|afternoon)\b/) && (has(t, /\bwhat time (?:would|will|do|does|can|could) (?:you|u|he|(?:keith|the owner|owner)|the tech)\b(?! (?:close|open))|\bwhat (?:start )?times? (?:do you have|are (?:open|available)|you got|do you offer|can you (?:come|do)|you have|works?)\b|\bstart times?\b|^(?:ok |so |and )?(?:what|which) times?\??$/) || (has(t, /\b(?:mornings?|afternoons?)\b/) && has(t, /\b(?:if possible|prefer|preferably|works? (?:best|better)|better|available|do you have|can you|could you|any|only|\?)\b/)))) {
       const morning = has(t, /\bmornings?\b/), afternoon = has(t, /\bafternoons?\b/);
       timeOfDayLine = morning && !afternoon ? "Our morning start times are usually 8:00 and 10:30 AM on weekdays." : afternoon && !morning ? "Our afternoon start times are usually 1:00 and 3:30 PM on weekdays." : "Our weekday start times are usually 8:00 AM, 10:30 AM, 1:00 PM and 3:30 PM (we're closed Saturday and Sunday).";
     }
@@ -1435,9 +1435,9 @@ export function createConversation(init = {}) {
       return out("booking", ["Thanks! The booking calendar collects your address and phone number and sends your confirmation text — pick your time here:", bookingUrl]);
     }
     if (/^(?:i )?(?:need|want) (?:some )?help(?: please| pls| plz)?[.!?]*$|^(?:please |pls )?help(?: me)?(?: please| pls| plz)?[.!?]*$/.test(t)) {
-      if (state.helpAsked) return out("human", [reach(`Keith has your message and will reply here as soon as he can. If it's urgent, you can also text ${TEXT_LINE}.`, `Please text Keith at ${TEXT_LINE} — he'll get right back to you.`)], { phone: true });
+      if (state.helpAsked) return out("human", [reach(`The owner has your message and will reply here as soon as he can. If it's urgent, you can also text ${TEXT_LINE}.`, `Please text us at ${TEXT_LINE} — we'll get right back to you.`)], { phone: true });
       state.helpAsked = true;
-      return out("human", [reach("I'll get Keith for you — he'll reply here as soon as he can.", `Text Keith at ${TEXT_LINE} or message us on Facebook and he'll get right back to you.`)], { phone: true });
+      return out("human", [reach("I'll get the owner for you — he'll reply here as soon as he can.", `Text us at ${TEXT_LINE} or message us on Facebook and we'll get right back to you.`)], { phone: true });
     }
     if (has(t, /\b(?:get back to you|back to you|be measuring|do some measuring|measure (?:it|first|and)|think about it|talk to my (?:husband|wife|spouse|partner)|check with my|check my (?:schedule|calendar|time off)|let you know|get back with you)\b/)) {
       return out("thanks", ["No rush at all — just message here whenever you're ready."]);
@@ -1453,7 +1453,7 @@ export function createConversation(init = {}) {
       return out("tax", [hasScope() ? `${lead ? lead + " " : ""}${quoteLine(scopeNow(), state.pets)} Housecall Pro shows your exact total before you confirm.` : `${lead || "Our prices are plus tax."} Housecall Pro shows your exact total before you confirm. ${ASK_ROOMS}`]);
     }
     if (has(t, /\b(?:new|updated|different|changed) (?:phone|cell|number)\b|\bmy (?:phone|number) (?:changed|is wrong)\b|\b(?:don'?t|do not) have my (?:new )?(?:phone|number)\b/)) {
-      return out("human", [reach("Thanks for letting us know — I've kept that for a person to update.", `Please text your new number to ${TEXT_LINE} and Keith will update it.`)], { phone: true });
+      return out("human", [reach("Thanks for letting us know — I've kept that for a person to update.", `Please text your new number to ${TEXT_LINE} and the owner will update it.`)], { phone: true });
     }
     if (has(t, /\b(?:i'?ll take|i will take|we'?ll take|we will take|i want|sign me up for|let'?s do|go with) (?:the )?\$?(?:99|149|75|85)\b/)) {
       const n = (t.match(/\$?(99|149|75|85)\b/) || [])[1];
@@ -1483,17 +1483,17 @@ export function createConversation(init = {}) {
     const safetyQ = productQ || (has(t, /\b(?:safe|toxic|non toxic|harmful|harsh|chemicals?|poison\w*|hurt)\b/) && has(t, /\b(?:grand ?(?:kids|children)|kids?|children|child|bab(?:y|ies)|pets?|dogs?|cats?|family|allerg\w*|toddlers?|pregnant|infants?|asthma)\b/))
       || (has(t, /\b(?:pets?|dogs?|cats?|kids?|children)\b/) && has(t, /\b(?:be (?:home|there|around|inside)|are home|stay (?:home|inside)|around while)\b/) && has(t, /\?|\b(?:ok|okay|fine|alright)\b/))
       || (has(t, /\b(?:asthma\w*|allerg\w*|sensitivit\w*|sensitive|copd|breathing (?:issues?|problems?)|crawl\w*)\b/) && has(t, /\b(?:bother|affect|safe|ok|okay|problem|react|trigger|cleaner|chemicals?|products?|solution|smell|sick|hurt|fine|issue)\b/));
-    if (has(t, /\b(?:speak|talk|chat) (?:to|with) (?:someone|somebody|a person|a human|a real person|a live person|keith|the owner|a manager|an? (?:actual|real) (?:person|human))\b|\breal person\b|\bhuman\b|\blive (?:person|agent)\b/)) {
+    if (has(t, /\b(?:speak|talk|chat) (?:to|with) (?:someone|somebody|a person|a human|a real person|a live person|(?:keith|the owner|owner)|the owner|a manager|an? (?:actual|real) (?:person|human))\b|\breal person\b|\bhuman\b|\blive (?:person|agent)\b/)) {
       return out("human", site
-        ? [`Absolutely — text Keith at ${TEXT_LINE} or message us on Facebook and he'll get right back to you.`]
+        ? [`Absolutely — text us at ${TEXT_LINE} or message us on Facebook and we'll get right back to you.`]
         : humanHandoff(raw), { phone: true });
     }
     if (has(t, /\b(?:last time|last year|you (?:guys )?(?:cleaned|came|did)|(?:i|we) (?:previously )?paid (?:you|y'?all)|previous (?:visit|cleaning|job)|cleaned (?:my|our) (?:house|home|carpets?) before|came out before)\b/) && has(t, /\$\s?\d+/) && !has(t, /\b(?:stanley|steemer|chemdry|zerorez|oxi ?fresh|other compan\w*|another compan\w*|someone else|other guy|ignore|instructions)\b/)) {
       return out("human", site
-        ? [`Welcome back, and thanks for choosing us again! Text Keith at ${TEXT_LINE} and he'll match your last visit.`]
-        : ["Welcome back, and thanks for choosing us again! I don't have your past invoice here, so I've flagged this for Keith to match your last visit — he'll text you shortly. You can also grab a time now:", bookingUrl], { phone: true });
+        ? [`Welcome back, and thanks for choosing us again! Text us at ${TEXT_LINE} and we'll match your last visit.`]
+        : ["Welcome back, and thanks for choosing us again! I don't have your past invoice here, so I've flagged this for the owner to match your last visit — he'll text you shortly. You can also grab a time now:", bookingUrl], { phone: true });
     }
-    // a standard rug is up to 8x10; anything bigger needs Keith's review
+    // a standard rug is up to 8x10; anything bigger needs the owner's review
     const rugDims = t.match(/\b(\d{1,2}(?:\.\d)?)\s*(?:'|ft|feet|foot)?\s*(?:x|by|×)\s*(\d{1,2}(?:\.\d)?)\s*(?:'|ft|feet|foot)?(?=\s|$|[,.!?])/);
     const rugTooBig = Boolean(rugDims) && (Math.min(+rugDims[1], +rugDims[2]) > 8 || Math.max(+rugDims[1], +rugDims[2]) > 10);
     if ((rugDims || has(t, /\b(?:wool|silk|persian|oriental|jute|sisal|synthetic|polyester|nylon|olefin)\b/)) && !has(t, /\b(?:area )?rugs?\b/) && (/^rug/.test(state.lastIntent) || state.rugs) && !has(t, /\b(?:tile|grout|kitchen|bath|floors?|rooms?|sofa|couch|chair|sectional|loveseat)\b/)) t += " rug";
@@ -1526,20 +1526,20 @@ export function createConversation(init = {}) {
       || /^(?:i'?m |we'?re |i am |very |really |so |pretty |extremely )*(?:disappointed|unhappy|not happy|upset|dissatisfied)[.!]*$/.test(t);
     const otherCompany = has(t, /\b(?:last|other|previous|another|old) (?:company|cleaner|carpet cleaner|guy)\b|\btenants?\b|\bprevious owners?\b|\b(?:my|a) (?:friend|neighbou?r|coworker|co worker|sister|brother|mom|dad|cousin) (?:said|told|says|mentioned)\b|\b(?:someone|people) (?:said|told me|say)\b|\breviews? (?:said|say)\b/);
     if (has(t, /\b(?:water damage|flood\w*|restoration|sewage)\b/)) {
-      { return out("other-services", [reach("Water damage is something Keith would want to look at personally — I've let him know, and he'll reach out here.", `Water damage is something Keith would want to look at personally — text a photo and a description to ${TEXT_LINE}.`)], site ? {} : { notify: "review" }); }
+      { return out("other-services", [reach("Water damage is something the owner would want to look at personally — I've let him know, and he'll reach out here.", `Water damage is something the owner would want to look at personally — text a photo and a description to ${TEXT_LINE}.`)], site ? {} : { notify: "review" }); }
     }
     if (has(t, /\b(?:repair|stretch\w*|re-?stretch|install\w*|patch(?:ing)?|replace (?:the )?carpet)\b/) && has(t, /\bcarpet|rug\b/)) {
       return out("other-services", ["We don't do carpet repair, stretching or installation — just cleaning. A carpet installer can help with that, and we'd be glad to clean it afterward."]);
     }
     // a technician who showed up late is a complaint, not a change to a booking
-    const lateArrival = has(t, /\b(?:arrived|showed up|show(?:ed)? up|came|got here|was|were|ran)\s+(?:\w+\s+){0,3}late\b|\b\d+ (?:min(?:ute)?s?|hours?) late\b/) && has(t, /\b(?:tech\w*|your guy|he|keith|you guys|you|cleaner)\b/)
-      && !has(t, /\b(?:what (?:happens )?if|what if|if (?:you|he|keith|the tech)|do you ever|in case|are you|is he)\b/);
+    const lateArrival = has(t, /\b(?:arrived|showed up|show(?:ed)? up|came|got here|was|were|ran)\s+(?:\w+\s+){0,3}late\b|\b\d+ (?:min(?:ute)?s?|hours?) late\b/) && has(t, /\b(?:tech\w*|your guy|he|(?:keith|the owner|owner)|you guys|you|cleaner)\b/)
+      && !has(t, /\b(?:what (?:happens )?if|what if|if (?:you|he|(?:keith|the owner|owner)|the tech)|do you ever|in case|are you|is he)\b/);
     if (lateArrival) return complaintReply(false);
     if ((strongComplaint || weakComplaint) && !salesy && !otherCompany) return complaintReply(has(t, /\bcome back\b|\b(?:came|coming) back\b/));
     // policy questions asked ahead of time (not about a booked visit)
-    const hypo = has(t, /\b(?:what (?:happens )?if|what if|if (?:you|i|we|he|keith)|do you (?:ever|usually|guys|send|text|call|let)|does (?:the tech|he) (?:send|text|call)|will (?:you|i|he|keith)|would you|does (?:he|keith)|is there (?:a|any)|do i get|how will i know|let me know|in case)\b/);
+    const hypo = has(t, /\b(?:what (?:happens )?if|what if|if (?:you|i|we|he|(?:keith|the owner|owner))|do you (?:ever|usually|guys|send|text|call|let)|does (?:the tech|he) (?:send|text|call)|will (?:you|i|he|(?:keith|the owner|owner))|would you|does (?:he|(?:keith|the owner|owner))|is there (?:a|any)|do i get|how will i know|let me know|in case)\b/);
     if (has(t, /\b(?:on time|punctual|show up late|usually late)\b/) && !has(t, /\b(?:are you|is he) (?:still )?(?:on time|coming)\b(?! usually)/)) topic("policy", RUNNING_LATE_REPLY);
-    if (has(t, /\b(?:running (?:late|behind)|late|behind schedule)\b/) && hypo && (has(t, /\b(?:what (?:happens )?if|what if|if (?:you|he|keith|the tech)|do you ever|in case)\b/) || !has(t, /\b(?:are you|you'?re|is he|he'?s) (?:running )?(?:late|behind)\b/))) topic("policy", RUNNING_LATE_REPLY);
+    if (has(t, /\b(?:running (?:late|behind)|late|behind schedule)\b/) && hypo && (has(t, /\b(?:what (?:happens )?if|what if|if (?:you|he|(?:keith|the owner|owner)|the tech)|do you ever|in case)\b/) || !has(t, /\b(?:are you|you'?re|is he|he'?s) (?:running )?(?:late|behind)\b/))) topic("policy", RUNNING_LATE_REPLY);
     if (has(t, /\bon (?:your|the|his) way\b|\b(?:let (?:me|us) know|notify (?:me|us)|warn (?:me|us)|tell (?:me|us)|message (?:me|us)|text (?:me|us)) before (?:you|he|they|the tech|someone) (?:show up|come|arrive|get here|head (?:over|out)|leave)\b|\bheads[- ]up\b|\btext (?:me )?(?:before|when)\b|\b(?:send|get) a text before\b/) && (hypo || has(t, /\btext (?:me )?(?:before|when)\b|\bheads[- ]up\b|\bcall (?:me )?(?:before|first)\b/))) topic("policy", ON_THE_WAY_REPLY);
     const cancelHypo = has(t, /\b(?:fee|fees|charge|charged|penalty|policy|cost me|what if|what happens if|if (?:something|anything|i|we)|in case|will i|would i|can i)\b/);
     if (has(t, /\b(?:cancel\w*|reschedul\w*)\b/) && !has(t, /\b(?:cancel|reschedule|move) (?:it|that|this|mine|ours)\b|\brebook\b/) && (hypo || cancelHypo) && (cancelHypo || !has(t, /\bmy (?:appointment|appt|booking)\b|\bneed to (?:cancel|reschedule)\b(?! later)|\bi (?:want|have) to (?:cancel|reschedule)\b/))) {
@@ -1549,27 +1549,27 @@ export function createConversation(init = {}) {
     if (!prepQ && !notes.length && has(t, /\b(?:reschedul\w*|cancel\w*|(?:move|push|bump|switch) (?:my|our) (?:appointment|appt|booking|cleaning|visit)|change (?:my|our|an|the) (?:appointment|appt|booking|time|date)|confirm(?:ing)? (?:my|our|the) (?:appointment|appt|booking|time|visit|cleaning)|running late|are you (?:still )?coming|where are you(?! (?:guys )?(?:located|based|from|at|out of))|on (?:your|the) way|(?:i|we) (?:have|got|had) (?:an? )?(?:appointment|appt|booking)|(?:i'?m|we'?re) (?:booked|scheduled) (?:for|on))\b/)
       || (!prepQ && !notes.length && has(t, /\balready (?:booked|scheduled)\b/))
       || (!prepQ && !notes.length && has(t, /\bmy (?:appointment|appt|booking)\b/) && !has(t, /\b(?:make|book|schedule|set up|get)\b/))) {
-      return out("change_existing", [reach(`We'll be happy to get that arranged. A team member will reach out to handle the change, since I can't update a booked appointment from Messenger. You can also reply to your Housecall Pro text or text ${TEXT_LINE}.`, `For an existing appointment, please reply to your Housecall Pro text or text ${TEXT_LINE} — Keith handles changes personally.`)], { phone: true });
+      return out("change_existing", [reach(`We'll be happy to get that arranged. A team member will reach out to handle the change, since I can't update a booked appointment from Messenger. You can also reply to your Housecall Pro text or text ${TEXT_LINE}.`, `For an existing appointment, please reply to your Housecall Pro text or text ${TEXT_LINE} — the owner handles changes personally.`)], { phone: true });
     }
     if (VENDOR_PITCH.test(t)) return out("human", [reach(VENDOR_REPLY, VENDOR_REPLY_SITE)], { phone: true });
     if (has(t, /\bhow long have you been\b|\bin business\b|\byears (?:of )?experience\b|\bhow many years\b/)) {
       if (!site) state.offeredKeith = true;
-      topic("about", reach("We're owner-operated — Keith runs the business and does the cleaning himself, and we have over 385 satisfied customers. I don't have the exact years here — want me to ask Keith?", `We're owner-operated — Keith runs the business and does the cleaning himself, and we have over 385 satisfied customers. For the exact years, text Keith at ${TEXT_LINE}.`));
+      topic("about", reach("We're owner-operated — the owner runs the business and does the cleaning himself, and we have over 385 satisfied customers. I don't have the exact years here — want me to ask the owner?", `We're owner-operated — the owner runs the business and does the cleaning himself, and we have over 385 satisfied customers. For the exact years, text us at ${TEXT_LINE}.`));
     }
     if (PM_STRONG_RE.test(t) && !PM_COMMERCIAL_RE.test(t)) return out("property_manager", offerLink(pmLines(t)));
     if (has(t, /\b(?:commercial|office building|offices|office (?:space|suite)|small office|(?<!(?:after|before|from|at|to) )church|restaurant|warehouse|property manag\w*|manage (?:an? |the |our )?(?:apartment|complex|building|propert\w*)|\d+ (?:rental )?units|(?:[2-9]|\d{2,3})[ -]?(?:rental |apartment |condo )?units?|(?:[2-9]|\d{2,3}) (?:rental (?:houses|homes|properties|units)|rentals|apartments|condos|townhomes|houses|homes|properties)|apartment complex(?:es)?|(?:own|manage|run) (?:an? |the |our |my )?apartment (?:complex|building)s?|\d ?-?plex(?:es)?|(?:tri|quad|four|five|six)[ -]?plex(?:es)?|volume (?:pricing|discount|rate)|multiple (?:units|properties|rentals|houses)|several (?:units|properties|rentals)|bulk (?:pricing|rate|discount)|hotel|daycare|storefront)\b|\b(?:do|can) you (?:do|clean) (?:an? |my |our )?office\b/) || (has(t, /\boffice\b/) && has(t.replace(/(\d),(?=\d{3}\b)/g, "$1"), /\b\d{3,6}\s*(?:square (?:feet|foot)|sq\.?\s*f(?:ee)?t\.?|sqft|sf)\b/)) || (has(t, /\bbusiness(?:es)?\b/) && !has(t, /\b(?:in business|been in|your business|the business|my (?:home|house)|business days?|business hours)\b/))) {
       if (has(t, /\b(?:\d+ (?:rental )?units|(?:[2-9]|\d{2,3})[ -]?(?:rental |apartment |condo )?units?|(?:[2-9]|\d{2,3}) (?:rental (?:houses|homes|properties|units)|rentals|apartments|condos|townhomes|houses|homes|properties)|apartment complex(?:es)?|(?:own|manage|run) (?:an? |the |our |my )?apartment (?:complex|building)s?|\d ?-?plex(?:es)?|(?:tri|quad|four|five|six)[ -]?plex(?:es)?|volume|multiple (?:units|properties|rentals|houses)|several (?:units|properties|rentals)|bulk)\b/)) {
         return out("property_manager", offerLink(pmLines(t)));
       }
-      if (lastIntentBefore === "commercial") return out("commercial", [reach("Thanks — I've added that for Keith, and he'll get back to you with a quote.", `Thanks — please text that to Keith at ${TEXT_LINE} along with a couple of photos, and he'll get back to you with a quote.`)], { phone: true });
-      return out("commercial", [reach("Commercial jobs get a personal quote. Send a quick description (rough size and type of space) and a couple of photos here, and Keith will get back to you.", `Commercial jobs get a personal quote. Text a quick description and a couple of photos to ${TEXT_LINE} and Keith will get back to you.`)], { phone: true });
+      if (lastIntentBefore === "commercial") return out("commercial", [reach("Thanks — I've added that for the owner, and he'll get back to you with a quote.", `Thanks — please text that to the owner at ${TEXT_LINE} along with a couple of photos, and he'll get back to you with a quote.`)], { phone: true });
+      return out("commercial", [reach("Commercial jobs get a personal quote. Send a quick description (rough size and type of space) and a couple of photos here, and the owner will get back to you.", `Commercial jobs get a personal quote. Text a quick description and a couple of photos to ${TEXT_LINE} and the owner will get back to you.`)], { phone: true });
     }
     if (has(t, /\bhigh[- ]?rises?\b/) || (has(t, /\bdowntown\b/) && has(t, /\b(?:lofts?|apartments?|condos?|tower|floor)\b/)) || has(t, /\b(?:[5-9]|1\d|2\d)(?:st|nd|rd|th) floor\b|\b(?:fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth) floor\b/)) {
       state.declined = "highrise";
       return out("area", ["Sorry — we don't service downtown high-rise apartment buildings. If you're in a house, townhome or low-rise apartment within about 15 miles of downtown Wichita, we'd love to help."]);
     }
     if (scope.found && !scope.wholeHouse && (scope.rooms + scope.rugs > 20 || scope.halls > 6 || scope.stairs > 4)) {
-      return out("layout_review", [reach("A home that size gets a personal quote, so I'm passing this to Keith — he'll get back to you here.", `A home that size gets a personal quote — text the room count to Keith at ${TEXT_LINE} and he'll price it.`)], { phone: true });
+      return out("layout_review", [reach("A home that size gets a personal quote, so I'm passing this to the owner — he'll get back to you here.", `A home that size gets a personal quote — text the room count to the owner at ${TEXT_LINE} and he'll price it.`)], { phone: true });
     }
 
     /* --- work we don't price here --- */
@@ -1588,7 +1588,7 @@ export function createConversation(init = {}) {
       }
     }
     if (has(t, /\b(?:thanksgiving|christmas(?: eve)?|xmas|new year'?s?(?: eve| day)?|easter|memorial day|labor day|july 4(?:th)?|4th of july|independence day|black friday)\b/) && !has(t, /\b(?:before|after|by)\b/)) {
-      return out("booking", ["Holiday availability depends on Keith's schedule — the live calendar only shows days that are actually open:", bookingUrl]);
+      return out("booking", ["Holiday availability depends on the owner's schedule — the live calendar only shows days that are actually open:", bookingUrl]);
     }
     const weekendRequest = (namesWeekendDate(t) && !has(t, /\b(?:last|since|ago|cleaned|moved|was|were|did|came)\b/)) || has(t, /\b(?:saturdays?|sundays?|weekends?|sat|sun)\b(?! ?(?:room|porch|down))/)
       && has(t, /\b(?:book|schedule|can (?:you|u|i)|could you|come|available|availability|work for|this|next|on|need|want|appointment|appt|slot|time|possible|chance|only|day off|days off|off work|any way|exception|squeeze|fit (?:me|us|it) in|instead|what about|how about)\b/)
@@ -1604,7 +1604,7 @@ export function createConversation(init = {}) {
     if ((has(t, /\b(?:area )?rugs?\b/) || (woolBefore && rugDims)) && woolBefore && !has(t, /\b(?:synthetic|polyester|nylon|olefin|another|other|second|different|new) rug\b|\b(?:synthetic|polyester|nylon|olefin)\b/)) {
       const ftM = t.replace(/(\d),(?=\d{3}\b)/g, "$1").match(/\b(\d+(?:\.\d+)?)\s*(?:square (?:feet|foot)|sq\.?\s*ft\.?|sqft|sf)\b/);
       const bigFloor = ftM && Number(ftM[1]) > 600 && has(t, /\b(?:hard ?wood|wood floors?|hard floors?|laminate|vinyl|lvp)\b/);
-      return out("rug", ["Just a reminder — we can't clean wool or other natural-fiber rugs, so that rug isn't one we can take on." + (bigFloor ? " " + reach("Hard-floor areas over 600 square feet need a personal scope review before we quote them, so I'm passing that part to Keith — he'll get back to you here.", `Hard-floor areas over 600 square feet need a personal scope review — text a description and a photo to Keith at ${TEXT_LINE}.`) : "")], bigFloor ? { phone: true } : {});
+      return out("rug", ["Just a reminder — we can't clean wool or other natural-fiber rugs, so that rug isn't one we can take on." + (bigFloor ? " " + reach("Hard-floor areas over 600 square feet need a personal scope review before we quote them, so I'm passing that part to the owner — he'll get back to you here.", `Hard-floor areas over 600 square feet need a personal scope review — text a description and a photo to the owner at ${TEXT_LINE}.`) : "")], bigFloor ? { phone: true } : {});
     }
     if (has(t, /\b(?:area )?rugs?\b/)) {
       if (has(t.replace(/\b(?:not|isn'?t|no|never|not made of|not a) (?:a |an |made of )?(?:wool|silk|jute|sisal|seagrass|natural[- ]fiber|organic)\b/g, " "), /\b(?:wool|silk|jute|sisal|seagrass|natural[- ]fiber|organic)\b/)) {
@@ -1612,13 +1612,13 @@ export function createConversation(init = {}) {
         return out("rug", ["We do not clean rugs made of wool or other organic or natural material — but we'd be glad to help with carpet or standard synthetic rugs."]);
       }
       if (has(t, /\b(?:oversized|over[- ]?sized|non[- ]?standard|antique|persian|oriental|hand[- ]?(?:made|knotted|woven|tufted)|delicate|huge|room[- ]sized?|heirloom|vintage)\b/) || rugTooBig) {
-        // the carpet part of the job can still be priced before the rug goes to Keith
+        // the carpet part of the job can still be priced before the rug goes to the owner
         const carpetPart = scope.found && !scope.wholeHouse && scope.rooms + scope.halls + scope.stairs >= 2 && scope.rooms <= 20 && scope.halls <= 6 && scope.stairs <= 4 && !hasScope();
         if (carpetPart) { state.rooms = scope.rooms; state.halls = scope.halls; state.stairs = scope.stairs; state.rugs = 0; state.quoted = true; }
-        return out("rug_price", [...(carpetPart ? [quoteLine(scopeNow(), state.pets)] : []), reach("That kind of rug needs a quick look before we can price it, so I'm passing it to Keith — he'll get back to you here.", `That kind of rug needs a quick look before we can price it — text a photo to Keith at ${TEXT_LINE}.`)], { phone: true });
+        return out("rug_price", [...(carpetPart ? [quoteLine(scopeNow(), state.pets)] : []), reach("That kind of rug needs a quick look before we can price it, so I'm passing it to the owner — he'll get back to you here.", `That kind of rug needs a quick look before we can price it — text a photo to the owner at ${TEXT_LINE}.`)], { phone: true });
       }
       if (has(t, /\b(?:big|large|giant|really big|very big)\b/) && !rugDims) {
-        return out("rug", [reach("Happy to help with the rug! About how big is it (like 8x10)? Standard rugs count as one room, and very large ones get a quick look from Keith first.", "Happy to help with the rug! About how big is it (like 8x10)? Standard rugs count as one room, and very large ones need a quick look first.")]);
+        return out("rug", [reach("Happy to help with the rug! About how big is it (like 8x10)? Standard rugs count as one room, and very large ones get a quick look from the owner first.", "Happy to help with the rug! About how big is it (like 8x10)? Standard rugs count as one room, and very large ones need a quick look first.")]);
       }
       if (has(t, /\b(?:tiny|throw|bath ?mat|door ?mat|small rug)\b/)) {
         return out("rug", ["We do not clean extremely small rugs that our machinery can't handle. Standard area rugs are no problem!"]);
@@ -1638,7 +1638,7 @@ export function createConversation(init = {}) {
       const cap = tileQ ? (whole || (bath && kitchen) || kitchenPlus ? 400 : bath ? 100 : kitchen ? 150 : 400) : 600;
       const special = has(t, /\b(?:natural stone|marble|travertine|slate|granite|unsealed|sanding|refinish\w*|showers?|walls?|heavy buildup|heavy build ?up|mold|mildew|countertops?)\b/);
       if (special || (footage !== null && (footage <= 0 || footage > cap)) || (tileQ && baths !== null && baths > 2)) {
-        return out("layout_review", [reach(floorQ && footage > 600 ? "Hard-floor areas over 600 square feet need a personal scope review before we quote them, so I'm passing this to Keith — he'll get back to you here." : "That one needs a personal scope review before we can quote it, so I'm passing it to Keith — he'll get back to you here.", `That one needs a personal scope review before we can quote it — text a description and a photo to Keith at ${TEXT_LINE}.`)], { phone: true });
+        return out("layout_review", [reach(floorQ && footage > 600 ? "Hard-floor areas over 600 square feet need a personal scope review before we quote them, so I'm passing this to the owner — he'll get back to you here." : "That one needs a personal scope review before we can quote it, so I'm passing it to the owner — he'll get back to you here.", `That one needs a personal scope review before we can quote it — text a description and a photo to the owner at ${TEXT_LINE}.`)], { phone: true });
       }
       if (asksAboutPrice(t) || footage !== null || bath || kitchen || whole) {
         let pick;
@@ -1724,7 +1724,7 @@ export function createConversation(init = {}) {
     const scopeChanged = applyScope(scope, t, { adding: startsAdding, inclusionQ });
     if (scopeChanged && state.unsupported) state.unsupported = false;
     if (scopeChanged && !state.wholeHouse && (state.rooms + state.rugs > 20 || state.halls > 6 || state.stairs > 4)) {
-      return out("layout_review", [reach("A home that size gets a personal quote, so I'm passing this to Keith — he'll get back to you here.", `A home that size gets a personal quote — text the room count to Keith at ${TEXT_LINE} and he'll price it.`)], { phone: true });
+      return out("layout_review", [reach("A home that size gets a personal quote, so I'm passing this to the owner — he'll get back to you here.", `A home that size gets a personal quote — text the room count to the owner at ${TEXT_LINE} and he'll price it.`)], { phone: true });
     }
 
     // haggling / freebies: prices are set
@@ -1824,7 +1824,7 @@ export function createConversation(init = {}) {
     if (has(t, /\be-?mail\b/) && !has(t, /\bconfirmation\b/)) topic("contact", reach(`The quickest way to reach us is right here in Messenger, or by text at ${TEXT_LINE}.`, `The quickest way to reach us is right here in the chat, or by text at ${TEXT_LINE}.`));
     if (has(t, /\b(?:do|can|does) (?:you|y'?all|your company)(?: guys)? (?:clean|do|offer|handle) (?:carpets?|carpeting|carpet cleaning)\b/) && !scope.found && !furniture.any) topic("carpet", `Yes — carpet cleaning is what we do! The ${money(PRICES.standard)} special covers ${COVER}, plus tax.`);
     if (has(t, /\b(?:phone (?:number)?|number to call|your number|what(?:'s| is)? (?:the |your )?number|which number|can i call|call you|text you|contact (?:number|info)|call me|call back)\b/)) topic("contact", `You can text us anytime at ${TEXT_LINE}, or I can help right here.`);
-    const jobLengthQ = has(t, /\bhow long (?:is|will|would) (?:the tech|the guy|your guy|he|keith|you|y'?all|you guys)(?: gonna| going to)? (?:be )?(?:here|there|at my|at the|in my|working|take)\b|\bhow long (?:does|will|would|should) (?:the |it |a |your )?(?:cleaning|job|process|appointment|appt|visit|it take you|you be|cleaning process|it take|it last|take)\b|\bhow long (?:is|are) (?:the |an? |your )?(?:appointment|appt|visit|job|cleaning|service)s?\b|\bhow long (?:are|will) you (?:be )?(?:there|here)\b|\bhow long does the cleaning\b|\bhow (?:much time|many hours)\b/) && !has(t, /\bdry\b/);
+    const jobLengthQ = has(t, /\bhow long (?:is|will|would) (?:the tech|the guy|your guy|he|(?:keith|the owner|owner)|you|y'?all|you guys)(?: gonna| going to)? (?:be )?(?:here|there|at my|at the|in my|working|take)\b|\bhow long (?:does|will|would|should) (?:the |it |a |your )?(?:cleaning|job|process|appointment|appt|visit|it take you|you be|cleaning process|it take|it last|take)\b|\bhow long (?:is|are) (?:the |an? |your )?(?:appointment|appt|visit|job|cleaning|service)s?\b|\bhow long (?:are|will) you (?:be )?(?:there|here)\b|\bhow long does the cleaning\b|\bhow (?:much time|many hours)\b/) && !has(t, /\bdry\b/);
     const dryMethodQ = has(t, /\bdry[ -]?clean\w*|\bsteam or dry\b|\bdry or steam\b|\bdry (?:method|process)\b|\bsteam clean\w*\b/);
     if (jobLengthQ) topic("duration", JOB_LENGTH_REPLY);
     else if (!dryMethodQ && has(t, /\b(?:dry time|to dry|drying|dries|dry|until (?:it'?s |they'?re )?dry|walk on|wet|damp|furniture back|go back on|get back on|back on (?:it|the carpet)|use the rooms?|walk on it|(?:go|come|get) back in|let (?:the )?(?:pets?|dogs?|cats?|kids?) (?:back )?(?:in|on)|how long (?:before|until) (?:the )?(?:pets?|kids?|dogs?|cats?|we|i|they|people|everyone)\b)\b/)) topic("drying", DRY_REPLY + (has(t, /\bwalk|\bkids?\b|\bpets?\b|\bdogs?\b|\bcats?\b|back (?:on|in)/) ? " Keep foot traffic light until it's fully dry." : ""));
@@ -1837,7 +1837,7 @@ export function createConversation(init = {}) {
     else if (has(t, /\b(?:furniture|couch|sofa|stuff|everything|things)\b/) && has(t, /\b(?:move|moving|shove|push|clear|out of the way|take out|empty)\b/) && !has(t, /\bmov(?:e|ing) ?(?:out|in)\b|\bbefore (?:the |our )?(?:furniture|stuff) (?:arrives|comes|gets here|is delivered)\b/)) topic("prep", FURNITURE_MOVE_REPLY);
     else if (has(t, /\b(?:move (?:the |my |our )?(?:furniture|couch|sofa|beds?|anything|stuff|things)|move furniture|need to move)\b/)) topic("prep", FURNITURE_MOVE_REPLY);
     else if (has(t, /\b(?:prepare|prep|before you (?:come|arrive)|get ready)\b/) && !has(t, /\btext\b|\bheads[- ]up\b|\bcall (?:me )?(?:before|first)\b/)) topic("prep", "Just pick up small items like toys, clothes and breakables. " + FURNITURE_MOVE_REPLY + " No special vacuuming needed.");
-    if (has(t, /\b(?:payment|how (?:do|can|would) i pay|pay (?:with|by|after|before|upfront|up front|cash|card)|cash|credit cards?|debit|take cards?|card payments?|venmo|zelle|apple pay|cash ?app|paypal|personal checks?|take checks?|take (?:a )?check|accept checks?|write (?:you )?a check|(?:by|with) (?:a )?check|is (?:a )?check|checks? (?:ok|okay|fine|accepted)|pay (?:you |him |keith |the tech )?(?:at the door|in person|on site|at the job|when you (?:come|get here|arrive|finish|are done)|that day|day of)|do (?:i|we) pay|when do (?:i|we) pay)\b/) || /^(?:how about |what about |do you take |do you accept |and |personal )?checks?\??$/.test(t) || (has(t, /\bdeposit\b/) && !has(t, /\b(?:security deposit|(?:get|getting) (?:my|our) deposit|deposit back|move ?out|moving|landlord)\b/))) {
+    if (has(t, /\b(?:payment|how (?:do|can|would) i pay|pay (?:with|by|after|before|upfront|up front|cash|card)|cash|credit cards?|debit|take cards?|card payments?|venmo|zelle|apple pay|cash ?app|paypal|personal checks?|take checks?|take (?:a )?check|accept checks?|write (?:you )?a check|(?:by|with) (?:a )?check|is (?:a )?check|checks? (?:ok|okay|fine|accepted)|pay (?:you |him |(?:keith|the owner|owner) |the tech )?(?:at the door|in person|on site|at the job|when you (?:come|get here|arrive|finish|are done)|that day|day of)|do (?:i|we) pay|when do (?:i|we) pay)\b/) || /^(?:how about |what about |do you take |do you accept |and |personal )?checks?\??$/.test(t) || (has(t, /\bdeposit\b/) && !has(t, /\b(?:security deposit|(?:get|getting) (?:my|our) deposit|deposit back|move ?out|moving|landlord)\b/))) {
       const app = (t.match(/\b(venmo|zelle|cash ?app|paypal)\b/) || [])[1];
       const cashOnly = /^(?:ok |okay |alright |so |then )?(?:cash|card|credit card|debit card|debit|apple pay)(?: (?:then|is fine|works|it is|please|works for me|is good))?[.!]*$/.test(t);
       topic("payment", cashOnly ? (/cash/.test(t) ? "Cash works great — you can just pay at the job." : "That works — we send a payment link right after the job, and you can pay by card or Apple Pay.")
@@ -1859,14 +1859,14 @@ export function createConversation(init = {}) {
     else if (has(t, /\b(?:hidden fees?|extra fees?|any fees|travel fee|trip charge)\b/)) topic("fees", "Your price is the package price you're quoted, plus tax — Housecall Pro shows your exact total before you confirm.");
     if (has(t, /\b(?:insured|insurance|licensed|license|bonded)\b/)) topic("insured", has(t, /\bcertificate\b|\bcoi\b|\bproof of insurance\b/) ? COI_REPLY : has(t, /\b(?:insured|insurance)\b/) ? INSURED_REPLY : "We're insured.");
     if (has(t, /\b(?:certified|certification|iicrc|cri)\b/)) topic("certified", CERT_REPLY);
-    if (has(t, /\b(?:hiring|job openings?|employment)\b|\b(?:can i|could i|want to|looking to|apply to|like to) work for you\b/)) topic("hiring", reach("Thanks for asking! That's a question for Keith — he'll see it here.", `Thanks for asking! That's a question for Keith — you can text him at ${TEXT_LINE}.`));
-    if (has(t, /\b(?:leave (?:a |you a )?review|write (?:a )?review|amazing job|great job|did a great)\b/)) return out("thanks", [has(t, /\b(?:leave (?:a |you a )?review|write (?:a )?review)\b/) ? reach("Thank you so much — that means a lot to Keith! We don't use Google reviews right now, so your message here is the best way to share it — he'll see it.", "Thank you so much — that means a lot to Keith! We don't use Google reviews right now, but we really appreciate you saying so.") : "Thank you so much — that means a lot to Keith!"]);
-    if (has(t, /\b(?:reviews?|ratings?|references?)\b|\b(?:are you|is he|is keith|are y'?all)(?: guys)? (?:any )?good\b|\bany good\b|\bhow good (?:are|is)\b/)) topic("reviews", /\b(?:google|yelp|facebook|bbb|angi|thumbtack|nextdoor)\b|\bwhere (?:can|do|could) i (?:see|read|find|check|look)\b|\b(?:link|website) (?:to|for|with) (?:your |the )?reviews\b/.test(t) ? "We don't use Google reviews right now — but we have over 385 satisfied customers and a 4.9 out of 5 rating from 229 customer reviews." : "We have over 385 satisfied customers and a 4.9 out of 5 rating from 229 customer reviews.");
+    if (has(t, /\b(?:hiring|job openings?|employment)\b|\b(?:can i|could i|want to|looking to|apply to|like to) work for you\b/)) topic("hiring", reach("Thanks for asking! That's a question for the owner — he'll see it here.", `Thanks for asking! That's a question for the owner — you can text us at ${TEXT_LINE}.`));
+    if (has(t, /\b(?:leave (?:a |you a )?review|write (?:a )?review|amazing job|great job|did a great)\b/)) return out("thanks", [has(t, /\b(?:leave (?:a |you a )?review|write (?:a )?review)\b/) ? reach("Thank you so much — that means a lot to the owner! We don't use Google reviews right now, so your message here is the best way to share it — he'll see it.", "Thank you so much — that means a lot to the owner! We don't use Google reviews right now, but we really appreciate you saying so.") : "Thank you so much — that means a lot to the owner!"]);
+    if (has(t, /\b(?:reviews?|ratings?|references?)\b|\b(?:are you|is he|is (?:keith|the owner|owner)|are y'?all)(?: guys)? (?:any )?good\b|\bany good\b|\bhow good (?:are|is)\b/)) topic("reviews", /\b(?:google|yelp|facebook|bbb|angi|thumbtack|nextdoor)\b|\bwhere (?:can|do|could) i (?:see|read|find|check|look)\b|\b(?:link|website) (?:to|for|with) (?:your |the )?reviews\b/.test(t) ? "We don't use Google reviews right now — but we have over 385 satisfied customers and a 4.9 out of 5 rating from 229 customer reviews." : "We have over 385 satisfied customers and a 4.9 out of 5 rating from 229 customer reviews.");
     if (has(t, /\b(?:apartments?|condos?|townhouses?|townhomes?|duplex(?:es)?|mobile homes?|trailers?|manufactured homes?)\b/) && !(notes.length && has(t, /\b(?:receipt|invoice|proof)\b/))) topic("apartment", has(t, /\b(?:mobile homes?|trailers?|manufactured homes?)\b/) ? "Yes, we clean mobile and manufactured homes, as well as houses, apartments, condos and townhomes." : "Yes, we clean apartments, condos and townhomes. (We can't do downtown high-rises.)");
     if (has(t, /\bcan (?:i|we) (?:be|stay) (?:home|there|inside)\b|\b(?:is it ok|ok|okay|fine) (?:if|for) (?:i|we|me|us) (?:to )?(?:be|stay) (?:home|there)\b/)) topic("access", "Of course — you're welcome to be home while we work. Just keep foot traffic light until the carpet is fully dry, about 1.5 to 2 hours.");
     else if (has(t, /\b(?:be home|stay home|need to be there|have to be there|garage code|door code|lockbox|key ?pad|not (?:be )?home|get in without|let (?:yourself|yourselves|you) in|without me (?:there|home|being)|while i'?m (?:at work|gone|away|out)|(?:vacant|empty)\b[^.?!]*\?|won'?t be (?:home|there)|unlocked|leave (?:the )?door|lock up|be at work)\b/)) topic("access", "You don't need to stay home the whole time — a garage code or unlocked door is fine, especially on a vacant move-in or move-out, and we're happy to lock up after. Just put access details in the notes when you book.");
-    if (has(t, /\b(?:stanley steemer|chemdry|zerorez|oxi ?fresh|other compan\w*|competitors?)\b/)) topic("compare", has(t, /\b(?:water|moisture|wet|soak\w*|dry)\b/) ? "We use low-moisture encapsulation too — very little water, so carpets usually dry in about 1.5 to 2 hours." : `We're owner-operated — Keith does the cleaning himself. The ${money(PRICES.standard)} special covers ${COVER}, plus tax, and carpets dry in about 1.5 to 2 hours.`);
-    if (has(t, /\bhow many (?:people|guys|techs?|workers|employees)\b|\bcrew\b|\bis it just (?:you|keith|one (?:guy|person|man))\b|\bjust you\b|\bone[- ]man (?:show|operation|team|business)\b|\bwho (?:actually )?does the (?:cleaning|work)\b|\bwho (?:will be|is|would be|'?s) (?:coming|doing|cleaning)\b|\bwho(?:'s| is) coming\b|\bwho comes\b|\b(?:will|would) (?:it|you) be (?:you|keith|the one)\b|\bbe the one (?:coming|doing|cleaning)\b|\bwho does the (?:cleaning|work)\b|\bdo you (?:send|have) (?:employees|a crew|helpers|subcontractors?)\b|\bsubcontract\w*\b/)) topic("about", has(t, /\bcrew\b|\bteam\b|\bemployees\b|\bhelpers\b|\bsubcontract/) ? "No crew — we're owner-operated, and Keith does the cleaning himself." : "We're owner-operated — Keith does the cleaning himself.");
+    if (has(t, /\b(?:stanley steemer|chemdry|zerorez|oxi ?fresh|other compan\w*|competitors?)\b/)) topic("compare", has(t, /\b(?:water|moisture|wet|soak\w*|dry)\b/) ? "We use low-moisture encapsulation too — very little water, so carpets usually dry in about 1.5 to 2 hours." : `We're owner-operated — the owner does the cleaning himself. The ${money(PRICES.standard)} special covers ${COVER}, plus tax, and carpets dry in about 1.5 to 2 hours.`);
+    if (has(t, /\bhow many (?:people|guys|techs?|workers|employees)\b|\bcrew\b|\bis it just (?:you|(?:keith|the owner|owner)|one (?:guy|person|man))\b|\bjust you\b|\bone[- ]man (?:show|operation|team|business)\b|\bwho (?:actually )?does the (?:cleaning|work)\b|\bwho (?:will be|is|would be|'?s) (?:coming|doing|cleaning)\b|\bwho(?:'s| is) coming\b|\bwho comes\b|\b(?:will|would) (?:it|you) be (?:you|(?:keith|the owner|owner)|the one)\b|\bbe the one (?:coming|doing|cleaning)\b|\bwho does the (?:cleaning|work)\b|\bdo you (?:send|have) (?:employees|a crew|helpers|subcontractors?)\b|\bsubcontract\w*\b/)) topic("about", has(t, /\bcrew\b|\bteam\b|\bemployees\b|\bhelpers\b|\bsubcontract/) ? "No crew — we're owner-operated, and the owner does the cleaning himself." : "We're owner-operated — the owner does the cleaning himself.");
     if (has(t, /\b(?:what'?s the catch|is there a catch|any catch|too good to be true|is (?:the |that |this )?\$?99 (?:real|legit|for real)|hidden catch)\b/)) topic("special", `No catch — ${money(PRICES.minimum)} plus tax covers up to 3 areas, and ${money(PRICES.standard)} plus tax covers ${COVER}. Bigger homes add ${money(PRICES.extra)} plus tax for each area beyond the ${money(PRICES.standard)} package. Pet treatment (${money(PRICES.petMinimum)} or ${money(PRICES.pet)}) is only if you need it.`);
     if (has(t, /\bpet (?:treatment|package|price|version|special|one)\b/) && has(t, /\b(?:whole house or|just (?:the )?spots|why|what is|what'?s (?:the|in|different)|whats different|what does|what do(?:es)? (?:it|that) do|actually do|how does|worth|difference|different)\b/)) topic("pet", `The pet package covers the whole job — up to 5 rooms, two halls and one staircase for ${money(PRICES.pet)}, or up to 3 rooms for ${money(PRICES.petMinimum)}. With pets we often need extra time for hair removal, and it includes an enzymatic treatment that breaks down pet urine and odor.`);
     if (has(t, /\b(?:gated|gate code|locked (?:front |main |lobby |building )?(?:entrance|entry|door|lobby|gate|building)|(?:entrance|entry|lobby|front door) is locked|secured (?:building|entry)|(?:building|complex|apartment|entry|door) is (?:secured|locked|gated|secure)|secure building|locked building|buzzer|fob|call box|key card|front desk|concierge|controlled access|access controlled|security desk)\b/)) topic("access", "If the building is secured, just tell us how to get in — put the gate code or buzzer info in the notes when you book — so we can plan and coordinate access.");
@@ -1889,12 +1889,12 @@ export function createConversation(init = {}) {
     if (has(t, /\b(?:water|electricity|electric|power|outlets?|hose|hook ?up|utilities)\b/) && !has(t, /\bwater (?:damage|stains?|heater)\b|\b(?:stanley|steemer|chemdry|zerorez|oxi ?fresh|much water|a lot of water|less water|use water)\b/) && has(t, /\b(?:need|use|require|have to|provide|do you|turn on|on)\b/)) topic("utilities", UTILITIES_REPLY);
     if (has(t, /\b(?:fragrances?|scents?|scented|unscented|perfumes?|perfumed|smell of the|strong smells?|chemical smells?|fumes)\b/) || (has(t, /\bsmells?\b/) && has(t, /\b(?:sensitive|headaches?|allergic|bother)\b/))) topic("fragrance", FRAGRANCE_REPLY);
     if (has(t, /\bpark(?:ing)?\b(?! city)/) && !has(t, /\bpark city\b/)) topic("parking", PARKING_REPLY);
-    if (has(t, /\b(?:guarantee|satisf\w*|unhappy with|(?:don'?t|do not) like (?:how|the result)|how it turns out|not happy with (?:it|the (?:results?|job))|what if (?:i'?m|we'?re) (?:not happ|unhapp)y|redo|re[- ]?clean)\b/) && !has(t, /\b(?:smell|odou?r|urine|pee|stains?|spots?)\b/) || has(t, /\b(?:comes?|coming) back\b|\breappear\w*|\bwicks? (?:back|up)\b/) && has(t, /\b(?:what if|what happens if|if|in case)\b/)) topic("satisfaction", SATISFACTION_REPLY + " Keith arranges any return visit personally.");
+    if (has(t, /\b(?:guarantee|satisf\w*|unhappy with|(?:don'?t|do not) like (?:how|the result)|how it turns out|not happy with (?:it|the (?:results?|job))|what if (?:i'?m|we'?re) (?:not happ|unhapp)y|redo|re[- ]?clean)\b/) && !has(t, /\b(?:smell|odou?r|urine|pee|stains?|spots?)\b/) || has(t, /\b(?:comes?|coming) back\b|\breappear\w*|\bwicks? (?:back|up)\b/) && has(t, /\b(?:what if|what happens if|if|in case)\b/)) topic("satisfaction", SATISFACTION_REPLY + " the owner arranges any return visit personally.");
     if (has(t, /\b(?:walk[- ]?in closets?|closets?)\b/)) topic("included", CLOSET_REPLY);
-    if (has(t, /\b(?:scotch ?gu?ard|protectant|protector|stain guard|stain protection)\b/)) topic("protector", `Carpet protector isn't on our standard menu. If you'd like to ask Keith about it for your job, text ${TEXT_LINE}.`);
+    if (has(t, /\b(?:scotch ?gu?ard|protectant|protector|stain guard|stain protection)\b/)) topic("protector", `Carpet protector isn't on our standard menu. If you'd like to ask the owner about it for your job, text ${TEXT_LINE}.`);
     if (has(t, /\bbasements?\b/) && has(t, /\b(?:do you|can you|clean|count|include)\b/) && !scope.found) topic("included", "Yes — a carpeted basement counts like any other room.");
     if (has(t, /\b(?:website|web ?site|web ?page|url|online)\b/) && has(t, /\b(?:what(?:'s| is)?|your|do you have|got a|link|address)\b/) && !has(t, /\bbook\w*\b/)) topic("website", "Our website is wichitacarpetcleaningservices.com.");
-    if (has(t, /\bscam\b|\blegit(?:imate)?\b|\bis (?:this|it|that) (?:for )?real\b|\bare you (?:guys )?real\b|\bfor real\?/) && !pastJob && !has(t, /\byou (?:guys )?are (?:a )?scam/)) topic("about", `${has(t, /\bscam\b/) ? "Not at all" : "Yes"} — we're a real local business in Wichita, owner-operated by Keith, with over 385 satisfied customers. You pay after the job is done.`);
+    if (has(t, /\bscam\b|\blegit(?:imate)?\b|\bis (?:this|it|that) (?:for )?real\b|\bare you (?:guys )?real\b|\bfor real\?/) && !pastJob && !has(t, /\byou (?:guys )?are (?:a )?scam/)) topic("about", `${has(t, /\bscam\b/) ? "Not at all" : "Yes"} — we're a real local business in Wichita, owner-operated, with over 385 satisfied customers. You pay after the job is done.`);
     if ((has(t, /\b(?:difference|different|vs\.?|versus|compare)\b/) && has(t, /\b99\b/) && has(t, /\b149\b/)) || (has(t, /\b149\b|\bpet (?:package|special|version|price)\b/) && has(t, /\b(?:include|includes|included|cover|covers|get|what'?s in|for pets)\b/) && !scope.found)) topic("pet", PET_DIFF_REPLY);
     if (has(t, /\b(?:do|does|can) (?:you|y'?all|u)(?: guys)? (?:have|offer|do|provide)\b[^.?!]{0,12}\bpet (?:treatment|cleaning|odor|stain|urine)\b|\bwhat (?:is|'s) (?:the |your )?pet treatment\b/) && !has(t, /\b149\b/)) {
       const base = hasScope() ? quote({ ...scopeNow(), pets: false }) : null, petQ = hasScope() ? quote({ ...scopeNow(), pets: true }) : null;
@@ -2082,12 +2082,12 @@ export function createConversation(init = {}) {
     const question = (/\?/.test(t) || /^(?:can|could|do|does|did|is|are|will|would|how|what|why|when|where|who|which|should|may)\b/.test(t)) && t.split(" ").length >= 3;
     if (question) state.unknownQ = (state.unknownQ || 0) + 1;
     if (state.unknownCount >= 3 && state.unknownQ) {
-      return out("human", [reach("I'll have Keith answer this one personally — he'll reply here as soon as he can.", `I want to make sure you get the right answer — please text Keith at ${TEXT_LINE}, or tell me how many rooms and I'll get you a price right here.`)], site ? {} : { phone: true });
+      return out("human", [reach("I'll have the owner answer this one personally — he'll reply here as soon as he can.", `I want to make sure you get the right answer — please text us at ${TEXT_LINE}, or tell me how many rooms and I'll get you a price right here.`)], site ? {} : { phone: true });
     }
     if (question) {
-      if (site) return out("unknown", [`I'm not sure I understood that one. Keith can answer it if you text ${TEXT_LINE} — or tell me how many rooms, hallways and stairs and I'll get you a price right here.`]);
+      if (site) return out("unknown", [`I'm not sure I understood that one. The owner can answer it if you text ${TEXT_LINE} — or tell me how many rooms, hallways and stairs and I'll get you a price right here.`]);
       state.offeredKeith = true;
-      return out("unknown", [`I'm not sure I understood that one — want me to have Keith answer it?`]);
+      return out("unknown", [`I'm not sure I understood that one — want me to have the owner answer it?`]);
     }
     // an introduction or small talk ("my name is Dorothy, my son said to message you", "I keep seeing your ads"): a warm hello, no interrogation
     {
@@ -2100,21 +2100,21 @@ export function createConversation(init = {}) {
     // "it's a two story" / "split level": a layout, not a count yet
     if (!hasScope() && /\b(?:story|stor(?:e|ey)y?|stories|levels?|split|ranch|bi-?level|tri-?level|upstairs|downstairs)\b/.test(t)) return out("unknown", ["Got it! How many rooms, hallways and staircases are we cleaning across the floors?"]);
     if (!question && askedBefore && state.unknownCount === 1 && (mentionsPets(t) || lastIntentBefore === "pet")) return out("unknown", ["Sounds good — that works for us!"]);
-    if (state.unknownCount >= 3) return out("unknown", [`No problem — whenever you're ready, tell me the rooms and I'll get you a price. You can also text Keith at ${TEXT_LINE}.`]);
+    if (state.unknownCount >= 3) return out("unknown", [`No problem — whenever you're ready, tell me the rooms and I'll get you a price. You can also text us at ${TEXT_LINE}.`]);
     if (state.unknownCount === 2) return out("unknown", [hasScope() ? "Sorry if I wasn't clear! I can send the link to pick a weekday time, or answer any question about the cleaning." : `Sorry if I wasn't clear! Just tell me how many rooms, hallways and stairs you need cleaned and I'll give you the price — or ask me anything about our service.`]);
     return out("unknown", [hasScope()
       ? "Happy to help! Want the link to pick a weekday time, or is there something else I can answer?"
       : `Happy to help! ${ASK_ROOMS}`]);
   }
 
-  /* ---------- directives path: the AI decided what the customer meant; every word below is Keith's approved wording ---------- */
+  /* ---------- directives path: the AI decided what the customer meant; every word below is the owner's approved wording ---------- */
   const PHONE = { phone: true };
-  const D_CHANGE = () => reach(`We'll be happy to get that arranged. A team member will reach out to handle the change, since I can't update a booked appointment from Messenger. You can also reply to your Housecall Pro text or text ${TEXT_LINE}.`, `For an existing appointment, please reply to your Housecall Pro text or text ${TEXT_LINE} — Keith handles changes personally.`);
-  const D_CONFIRM = () => reach("I can't see or confirm an existing appointment from Messenger. I've flagged this conversation for a person to check the booking and follow up with you. I haven't confirmed or changed your appointment.", `I can't see bookings from this website chat — please reply to your Housecall Pro text or text ${TEXT_LINE}, and Keith will check it for you.`);
-  const D_ETA = () => reach("I can't see the live schedule from here — I've let Keith know you're checking, and he'll reply as soon as he can. You'll also get a text when he's about 10 to 15 minutes away.", `This website chat can't see the schedule — please reply to your Housecall Pro text or text Keith at ${TEXT_LINE}. You'll also get a text when he's about 10 to 15 minutes away.`);
-  const D_SIZE = () => reach("A home that size gets a personal quote, so I'm passing this to Keith — he'll get back to you here.", `A home that size gets a personal quote — text the room count to Keith at ${TEXT_LINE} and he'll price it.`);
-  const D_REVIEW = (hardOver600 = false) => reach(hardOver600 ? "Hard-floor areas over 600 square feet need a personal scope review before we quote them, so I'm passing this to Keith — he'll get back to you here." : "That one needs a personal scope review before we can quote it, so I'm passing it to Keith — he'll get back to you here.", `That one needs a personal scope review before we can quote it — text a description and a photo to Keith at ${TEXT_LINE}.`);
-  const D_RUG_REVIEW = () => reach("That kind of rug needs a quick look before we can price it, so I'm passing it to Keith — he'll get back to you here.", `That kind of rug needs a quick look before we can price it — text a photo to Keith at ${TEXT_LINE}.`);
+  const D_CHANGE = () => reach(`We'll be happy to get that arranged. A team member will reach out to handle the change, since I can't update a booked appointment from Messenger. You can also reply to your Housecall Pro text or text ${TEXT_LINE}.`, `For an existing appointment, please reply to your Housecall Pro text or text ${TEXT_LINE} — the owner handles changes personally.`);
+  const D_CONFIRM = () => reach("I can't see or confirm an existing appointment from Messenger. I've flagged this conversation for a person to check the booking and follow up with you. I haven't confirmed or changed your appointment.", `I can't see bookings from this website chat — please reply to your Housecall Pro text or text ${TEXT_LINE}, and the owner will check it for you.`);
+  const D_ETA = () => reach("I can't see the live schedule from here — I've let the owner know you're checking, and he'll reply as soon as he can. You'll also get a text when he's about 10 to 15 minutes away.", `This website chat can't see the schedule — please reply to your Housecall Pro text or text us at ${TEXT_LINE}. You'll also get a text when he's about 10 to 15 minutes away.`);
+  const D_SIZE = () => reach("A home that size gets a personal quote, so I'm passing this to the owner — he'll get back to you here.", `A home that size gets a personal quote — text the room count to the owner at ${TEXT_LINE} and he'll price it.`);
+  const D_REVIEW = (hardOver600 = false) => reach(hardOver600 ? "Hard-floor areas over 600 square feet need a personal scope review before we quote them, so I'm passing this to the owner — he'll get back to you here." : "That one needs a personal scope review before we can quote it, so I'm passing it to the owner — he'll get back to you here.", `That one needs a personal scope review before we can quote it — text a description and a photo to the owner at ${TEXT_LINE}.`);
+  const D_RUG_REVIEW = () => reach("That kind of rug needs a quick look before we can price it, so I'm passing it to the owner — he'll get back to you here.", `That kind of rug needs a quick look before we can price it — text a photo to the owner at ${TEXT_LINE}.`);
   const D_THANKS_NEW = "You're welcome! Just message here if any questions come up.";
   const fmtJob = () => fmtQ(quote({ ...scopeNow(), pets: state.pets }));
   const jobName = () => (state.wholeHouse ? "the whole house" : describe(scopeNow()));
@@ -2158,20 +2158,20 @@ export function createConversation(init = {}) {
   }
 
   function directiveHandoff(d, t, topics, raw = t) {
-    // a follow-up to a handoff Keith already has: one short line, never the same paragraph again
-    // website: "can you at least put me on the schedule?" after being sent to Keith gets the booking link
+    // a follow-up to a handoff the owner already has: one short line, never the same paragraph again
+    // website: "can you at least put me on the schedule?" after being sent to the owner gets the booking link
     if (site && ["human", "callback", "other_keith"].includes(d.handoff) && ["wants_link", "how_to_book", "picked_time"].includes(d.booking) && lastIntentBefore === "human") {
-      return out("booking", [`Yes — you can book online here. Add a note that Keith already talked with you, and text him at ${TEXT_LINE} so he can confirm the details:`, bookingUrl]);
+      return out("booking", [`Yes — you can book online here. Add a note that the owner already talked with you, and text us at ${TEXT_LINE} so we can confirm the details:`, bookingUrl]);
     }
     if (D_FOLLOW_UPS.has(d.handoff) && (lastIntentBefore === D_HANDOFF_INTENT[d.handoff] || (site && state.siteHandoff === D_HANDOFF_INTENT[d.handoff]))) {
       const appt = d.handoff.startsWith("existing_");
       const thanks = d.closing === "thanks" || d.closing === "goodbye" || d.closing === "ok";
       let line = site
-        ? (thanks ? `You're welcome — thanks for letting us know. Texting Keith at ${TEXT_LINE} is the best way to make sure he sees it.`
-          : `This chat can't pass messages along — please include that when you text Keith at ${TEXT_LINE}${appt ? " or reply to your Housecall Pro text" : ""}, so he has everything.`)
-        : (thanks ? "You're welcome! Keith will reply here as soon as he can." : "Thanks — I've added that for Keith, and he'll reply here as soon as he can.");
+        ? (thanks ? `You're welcome — thanks for letting us know. Texting the owner at ${TEXT_LINE} is the best way to make sure he sees it.`
+          : `This chat can't pass messages along — please include that when you text us at ${TEXT_LINE}${appt ? " or reply to your Housecall Pro text" : ""}, so he has everything.`)
+        : (thanks ? "You're welcome! The owner will reply here as soon as he can." : "Thanks — I've added that for the owner, and he'll reply here as soon as he can.");
       // the same follow-up line twice in a row reads like a broken record
-      if (state.lastReply === line) line = site ? `Got it — add that to your text to Keith at ${TEXT_LINE} and he'll take it from there.` : "Got it — Keith will see that too.";
+      if (state.lastReply === line) line = site ? `Got it — add that to your text to the owner at ${TEXT_LINE} and he'll take it from there.` : "Got it — the owner will see that too.";
       return out(D_HANDOFF_INTENT[d.handoff], [line], PHONE);
     }
     switch (d.handoff) {
@@ -2184,27 +2184,27 @@ export function createConversation(init = {}) {
       case "existing_confirm": {
         // late or a no-show: say sorry first
         if (/\bsupposed to (?:be here|come|show)\b|\b(?:an|a half|\d+) hours? (?:ago|late)\b|\bstill (?:not here|waiting)\b|\bnever showed\b|\bno ?show\b|\b(?:is|are|was|were) late\b|\brunning late\b/.test(t))
-          return out("confirm_existing", [reach(`I'm so sorry for the wait — I've let Keith know right now, and he'll reply as soon as he can. You can also text him at ${TEXT_LINE}.`, `I'm so sorry for the wait — please text Keith at ${TEXT_LINE} so he can check right away.`)], PHONE);
+          return out("confirm_existing", [reach(`I'm so sorry for the wait — I've let the owner know right now, and he'll reply as soon as he can. You can also text us at ${TEXT_LINE}.`, `I'm so sorry for the wait — please text us at ${TEXT_LINE} so we can check right away.`)], PHONE);
         return out("confirm_existing", [D_ETA_RE.test(t) || topics.has("on_the_way") ? D_ETA() : D_CONFIRM()], PHONE);
       }
-      case "billing": return out("human", [reach("Thanks — I've passed your billing question to Keith, and he'll reply here as soon as he can.", `For billing questions, please text Keith at ${TEXT_LINE} and he'll sort it out.`)], PHONE);
+      case "billing": return out("human", [reach("Thanks — I've passed your billing question to the owner, and he'll reply here as soon as he can.", `For billing questions, please text us at ${TEXT_LINE} and we'll sort it out.`)], PHONE);
       case "callback": {
-        if (site && (/\(?\b\d{3}\)?[-. ]?\d{3}[-. ]?\d{4}\b/.test(t) || /\bcall me\b|\bwait for (?:him|keith|a call|your call)\b/.test(t))) return out("human", [`This website chat can't pass your number along, so Keith won't see it here — please text him at ${TEXT_LINE} and he'll get back to you.`], PHONE);
+        if (site && (/\(?\b\d{3}\)?[-. ]?\d{3}[-. ]?\d{4}\b/.test(t) || /\bcall me\b|\bwait for (?:him|(?:keith|the owner|owner)|a call|your call)\b/.test(t))) return out("human", [`This website chat can't pass your number along, so the owner won't see it here — please text us at ${TEXT_LINE} and we'll get back to you.`], PHONE);
         const wantsText = /\btext me\b/.test(t) && !/\bcall\b/.test(t);
-        // website: texting Keith is the way to reach him, and a new job can still be booked right now
+        // website: texting the owner is the way to reach him, and a new job can still be booked right now
         if (site && !["change_existing", "confirm_existing"].includes(state.siteHandoff) && !/\b(?:my|our|the) (?:appointment|appt|booking)\b/.test(t))
-          return out("human", [`Text Keith at ${TEXT_LINE} and he'll get back to you as soon as he can. You can also pick any open weekday time on the booking calendar right now:`, bookingUrl], PHONE);
-        return out("human", [reach(callbackLine(t, wantsText), `Text Keith at ${TEXT_LINE} and he'll get back to you as soon as he can.`)], PHONE);
+          return out("human", [`Text us at ${TEXT_LINE} and we'll get back to you as soon as we can. You can also pick any open weekday time on the booking calendar right now:`, bookingUrl], PHONE);
+        return out("human", [reach(callbackLine(t, wantsText), `Text us at ${TEXT_LINE} and we'll get back to you as soon as we can.`)], PHONE);
       }
       case "cant_use_link":
-        // Messenger: Keith books it personally, and the chat stays open to collect what he needs (rooms, a good weekday)
+        // Messenger: the owner books it personally, and the chat stays open to collect what he needs (rooms, a good weekday)
         if (!site) {
           state.manualBooking = true;
-          return out("keith_booking", ["No problem at all — Keith can set it up with you personally, and I've let him know. To help him, tell me how many rooms, hallways and stairs, and which weekday works best for you."], { notify: "booking" });
+          return out("keith_booking", ["No problem at all — the owner can set it up with you personally, and I've let him know. To help him, tell me how many rooms, hallways and stairs, and which weekday works best for you."], { notify: "booking" });
         }
         if (/\b(?:can'?t|cannot|hard to|trouble|difficult\w*) (?:type|typing|text|texting|see|read)\b|\bmy (?:hands|eyes|vision)\b|\bby phone\b|\b(?:talk|speak) to (?:someone|somebody|a person)\b/.test(t))
-          return out("human", [`Sorry about the trouble! Text Keith at ${TEXT_LINE} and he'll set it up with you personally by text. Messaging us on Facebook works too.`], PHONE);
-        return out("human", [reach("No problem at all — I've asked Keith to set it up with you personally. He'll reply here as soon as he can.", `No problem at all — text Keith at ${TEXT_LINE} and he'll set it up with you personally.`)], PHONE);
+          return out("human", [`Sorry about the trouble! Text us at ${TEXT_LINE} and we'll set it up with you personally by text. Messaging us on Facebook works too.`], PHONE);
+        return out("human", [reach("No problem at all — I've asked the owner to set it up with you personally. He'll reply here as soon as he can.", `No problem at all — text us at ${TEXT_LINE} and we'll set it up with you personally.`)], PHONE);
       case "weekend_booking": {
         // nothing in the words says a weekend ("a swan sday works" is voice-to-text for Wednesday): don't refuse a weekday
         if (!state.weekendLast && !/\b(?:sat\w*|sun\w*|weekends?|s[áa]bados?|domingos?|fin(?:es)? de semana)\b/.test(t)) return out("booking", [state.linkSent ? "Just to confirm — which weekday works best for you? The booking link above shows the open times." : "Just to confirm — which weekday works best for you? The live calendar shows the open times:", ...(state.linkSent ? [] : [bookingUrl])]);
@@ -2213,42 +2213,42 @@ export function createConversation(init = {}) {
       }
       case "commercial":
         if (PM_RE.test(t) && !PM_COMMERCIAL_RE.test(t) && lastIntentBefore !== "commercial") return out("property_manager", offerLink(pmLines(t)));
-        if (lastIntentBefore === "commercial" && /\b(?:weekends?|saturdays?|sundays?)\b/.test(t)) return out("commercial", [`${WEEKEND_LINE} ` + reach("Keith will work out a weekday time with you along with the quote.", `Text Keith at ${TEXT_LINE} and he'll work out a weekday time with you along with the quote.`)], PHONE);
+        if (lastIntentBefore === "commercial" && /\b(?:weekends?|saturdays?|sundays?)\b/.test(t)) return out("commercial", [`${WEEKEND_LINE} ` + reach("The owner will work out a weekday time with you along with the quote.", `Text us at ${TEXT_LINE} and we'll work out a weekday time with you along with the quote.`)], PHONE);
         if (lastIntentBefore === "commercial") {
-          if (/@|\bemail/.test(t)) return out("commercial", [reach("Keith will send the quote himself — I've added your note, and he'll reply here.", `This chat can't send email quotes — text the details and a couple of photos to Keith at ${TEXT_LINE}, and he'll get you a quote.`)], PHONE);
-          const line = reach("Thanks — I've added that for Keith, and he'll get back to you with a quote.", `Thanks — please text that to Keith at ${TEXT_LINE} along with a couple of photos, and he'll get back to you with a quote.`);
-          return out("commercial", [state.lastReply === line ? reach("Got it — Keith will see that too.", `Got it — add that to your text to Keith at ${TEXT_LINE}.`) : line], PHONE);
+          if (/@|\bemail/.test(t)) return out("commercial", [reach("The owner will send the quote himself — I've added your note, and he'll reply here.", `This chat can't send email quotes — text the details and a couple of photos to the owner at ${TEXT_LINE}, and he'll get you a quote.`)], PHONE);
+          const line = reach("Thanks — I've added that for the owner, and he'll get back to you with a quote.", `Thanks — please text that to the owner at ${TEXT_LINE} along with a couple of photos, and he'll get back to you with a quote.`);
+          return out("commercial", [state.lastReply === line ? reach("Got it — the owner will see that too.", `Got it — add that to your text to the owner at ${TEXT_LINE}.`) : line], PHONE);
         }
-        return out("commercial", [reach("Commercial jobs get a personal quote. Send a quick description (rough size and type of space) and a couple of photos here, and Keith will get back to you.", `Commercial jobs get a personal quote. Text a quick description and a couple of photos to ${TEXT_LINE} and Keith will get back to you.`)], PHONE);
+        return out("commercial", [reach("Commercial jobs get a personal quote. Send a quick description (rough size and type of space) and a couple of photos here, and the owner will get back to you.", `Commercial jobs get a personal quote. Text a quick description and a couple of photos to ${TEXT_LINE} and the owner will get back to you.`)], PHONE);
       case "multi_unit":
         // "my house and my mom's house" are two homes, not "units"
         if (!/\b(?:units?|apartments?|complex(?:es)?|buildings?|propert(?:y|ies)|rentals?|plex(?:es)?|duplex(?:es)?|triplex(?:es)?|condos|townhomes|doors)\b/.test(t))
-          return out("commercial", [reach("More than one home in a visit gets a personal quote from Keith. Send the room counts for each home here, and he'll get back to you.", `More than one home in a visit gets a personal quote from Keith — text the room counts for each home to ${TEXT_LINE} and he'll get back to you.`)], PHONE);
+          return out("commercial", [reach("More than one home in a visit gets a personal quote from the owner. Send the room counts for each home here, and he'll get back to you.", `More than one home in a visit gets a personal quote from the owner — text the room counts for each home to ${TEXT_LINE} and he'll get back to you.`)], PHONE);
         return out("property_manager", offerLink(pmLines(t)));
       case "oversized_rug":
-        if (!site) { const again = lastIntentBefore === "keith_review" && state.reviewKind === "rug"; state.reviewKind = "rug"; return out("keith_review", [again ? "Keith has the rug details — he'll reach out here." : "That rug needs a quick look before we can price it — I've let Keith know, and he'll reach out here. Meanwhile, I'm happy to help with anything else."], again ? {} : { notify: "review" }); }
+        if (!site) { const again = lastIntentBefore === "keith_review" && state.reviewKind === "rug"; state.reviewKind = "rug"; return out("keith_review", [again ? "The owner has the rug details — he'll reach out here." : "That rug needs a quick look before we can price it — I've let the owner know, and he'll reach out here. Meanwhile, I'm happy to help with anything else."], again ? {} : { notify: "review" }); }
         if (lastIntentBefore === "rug_price") {
-          // follow-ups (dye, a ballpark, wear): Keith answers those with the photo — don't repeat the same line
-          const again = /photo to price that rug/.test(state.lastReply || "") || /Keith can answer that with the photo/.test(state.lastReply || "");
-          return out("rug_price", [again ? reach("Got it — Keith will see that too and can answer it once he has the photo.", `Keith can answer that with the photo too — include it when you text ${TEXT_LINE}.`) : reach(`Keith will need a photo to price that rug and answer questions like that — send it here or text it to ${TEXT_LINE}.`, `Keith will need a photo to price that rug — text it to ${TEXT_LINE}.`)], PHONE);
+          // follow-ups (dye, a ballpark, wear): the owner answers those with the photo — don't repeat the same line
+          const again = /photo to price that rug/.test(state.lastReply || "") || /the owner can answer that with the photo/.test(state.lastReply || "");
+          return out("rug_price", [again ? reach("Got it — the owner will see that too and can answer it once he has the photo.", `The owner can answer that with the photo too — include it when you text ${TEXT_LINE}.`) : reach(`The owner will need a photo to price that rug and answer questions like that — send it here or text it to ${TEXT_LINE}.`, `The owner will need a photo to price that rug — text it to ${TEXT_LINE}.`)], PHONE);
         }
         return out("rug_price", [D_RUG_REVIEW()], PHONE);
       case "large_home": return out("layout_review", [D_SIZE()], PHONE);
       case "unpriced_item": {
         // the piece is named only when the customer's own words name a known off-menu item
         const piece = readFurniture(t).unpriced;
-        if (!site) { state.reviewKind = "item"; return out("keith_review", [piece ? `The ${piece === "benches" ? "bench" : piece.replace(/s$/, "")} isn't on our standard menu, so it needs a quick look before we can price it — I've let Keith know, and he'll reach out here.` : "That one needs a quick look before we can price it — I've let Keith know, and he'll reach out here."], { notify: "review" }); }
+        if (!site) { state.reviewKind = "item"; return out("keith_review", [piece ? `The ${piece === "benches" ? "bench" : piece.replace(/s$/, "")} isn't on our standard menu, so it needs a quick look before we can price it — I've let the owner know, and he'll reach out here.` : "That one needs a quick look before we can price it — I've let the owner know, and he'll reach out here."], { notify: "review" }); }
         return out("layout_review", [piece ? furnitureLine({ items: {}, unpriced: piece }, site) : D_REVIEW()], PHONE);
       }
       case "human":
         if (VENDOR_PITCH.test(t)) return out("human", [reach(VENDOR_REPLY, VENDOR_REPLY_SITE)], PHONE);
-        if (/\b(?:useless|not helping|not helpful|frustrat\w*|wtf|stupid|ridiculous|going in circles)\b/.test(t)) return out("human", [reach("I'm sorry for the frustration. I've let Keith know, and he'll reply here as soon as he can.", `I'm sorry for the frustration. Please text Keith at ${TEXT_LINE} and he'll get right back to you.`)], PHONE);
-        if (/\b(?:ask|check with|tell|message|have|get) keith\b/.test(t)) return out("human", [reach("Sure — I've asked Keith, and he'll reply here as soon as he can.", `This chat can't message Keith directly — please text him at ${TEXT_LINE} and he'll get right back to you.`)], PHONE);
+        if (/\b(?:useless|not helping|not helpful|frustrat\w*|wtf|stupid|ridiculous|going in circles)\b/.test(t)) return out("human", [reach("I'm sorry for the frustration. I've let the owner know, and he'll reply here as soon as he can.", `I'm sorry for the frustration. Please text us at ${TEXT_LINE} and we'll get right back to you.`)], PHONE);
+        if (/\b(?:ask|check with|tell|message|have|get) (?:keith|the owner|owner)\b/.test(t)) return out("human", [reach("Sure — I've asked the owner, and he'll reply here as soon as he can.", `This chat can't message the owner directly — please text us at ${TEXT_LINE} and we'll get right back to you.`)], PHONE);
         return out("human", site
-          ? [`Absolutely — text Keith at ${TEXT_LINE} or message us on Facebook and he'll get right back to you.`]
+          ? [`Absolutely — text us at ${TEXT_LINE} or message us on Facebook and we'll get right back to you.`]
           : humanHandoff(raw), PHONE);
       default: // other_keith
-        return out("human", [reach("I'll have Keith answer this one personally — he'll reply here as soon as he can.", `I want to make sure you get the right answer — please text Keith at ${TEXT_LINE}, or tell me how many rooms and I'll get you a price right here.`)], PHONE);
+        return out("human", [reach("I'll have the owner answer this one personally — he'll reply here as soon as he can.", `I want to make sure you get the right answer — please text us at ${TEXT_LINE}, or tell me how many rooms and I'll get you a price right here.`)], PHONE);
     }
   }
 
@@ -2277,7 +2277,7 @@ export function createConversation(init = {}) {
       case "heavy_furniture": return again ? furnitureShort(t) : "We move smaller items like couches, loveseats, ottomans and coffee tables, then put them back. We don't move large furniture, beds, entertainment centers or large appliances — clear those if you want the carpet under them cleaned; otherwise we clean around them.";
       case "prep": return again ? "Just pick up small items and breakables — no special vacuuming needed." : "Just pick up small items like toys, clothes and breakables. " + FURNITURE_MOVE_REPLY + " No special vacuuming needed.";
       case "vacuum": return VACUUM_REPLY;
-      case "satisfaction": return again ? "Yes — if that happens, we're happy to come back out and fix it. Keith arranges any return visit personally." : SATISFACTION_REPLY + " Keith arranges any return visit personally.";
+      case "satisfaction": return again ? "Yes — if that happens, we're happy to come back out and fix it. The owner arranges any return visit personally." : SATISFACTION_REPLY + " the owner arranges any return visit personally.";
       case "payment": case "checks": case "cash": case "cards": case "deposit": {
         const pay = ["payment", "checks", "cash", "cards", "deposit"].filter((x) => topics.has(x));
         if (id !== pay[0]) return null; // one payment answer covers them all
@@ -2305,7 +2305,7 @@ export function createConversation(init = {}) {
         // a couch that smells like the dog: our pet packages are carpet packages
         if (ctx.uphLine && !scoped && /\b(?:couch|sofa|loveseat|sectional|chair|recliner|upholstery|cushions?)\b/.test(t)) {
           if (!site) ctx.offerKeith = true;
-          return reach("Our pet treatment is priced for carpet, so for pet odor on upholstery I'd like Keith to take a look — want me to ask him?", `Our pet treatment is priced for carpet — for pet odor on upholstery, text Keith at ${TEXT_LINE} and he'll take a look.`);
+          return reach("Our pet treatment is priced for carpet, so for pet odor on upholstery I'd like the owner to take a look — want me to ask him?", `Our pet treatment is priced for carpet — for pet odor on upholstery, text us at ${TEXT_LINE} and we'll take a look.`);
         }
         return "Yes — pet treatment adds an enzyme that breaks down urine and odor, and it's only needed for accidents or odor." + (scoped ? ` For your job it would be ${fmtP(true)} instead of ${fmtP(false)}.` : ` It's ${money(PRICES.petMinimum)} for up to 3 areas, or ${money(PRICES.pet)} for ${COVER}, plus tax.`);
       }
@@ -2329,7 +2329,7 @@ export function createConversation(init = {}) {
       case "product_safety":
         if (/\ballerg\w*|\basthma\b/.test(t)) {
           if (!site) ctx.offerKeith = true;
-          return reach("I can't make health claims about allergies, so I don't want to guess on that one — want me to have Keith answer it?", `I can't make health claims about allergies — Keith can answer that one if you text ${TEXT_LINE}.`);
+          return reach("I can't make health claims about allergies, so I don't want to guess on that one — want me to have the owner answer it?", `I can't make health claims about allergies — the owner can answer that one if you text ${TEXT_LINE}.`);
         }
         if (again) return topics.has("be_home") || topics.has("home_access") ? null : "Just add a note when you book if anyone sensitive will be home, and keep foot traffic light until it's dry.";
         return /\bsafe\b|\bseguro\b/.test(t) && !/\b(?:not|un) ?safe\b/.test(t) ? SAFETY_YES_REPLY : SAFETY_REPLY;
@@ -2339,7 +2339,7 @@ export function createConversation(init = {}) {
         const oneVisit = /\b(?:one|1|same|single) (?:visit|day|trip)\b|\ball in one\b|\btoo big\b|\bone day\b/.test(t);
         // a big home: don't promise the typical time
         const big = scoped && (state.wholeHouse || state.rooms + state.rugs > 5 || state.halls > 2 || state.stairs > 1);
-        return (oneVisit ? "Yes — it's all done in one visit. " : "") + (big ? "A typical job takes about 1.5 to 2 hours, and a home your size will take longer — Keith can give you a closer time estimate." : JOB_LENGTH_D);
+        return (oneVisit ? "Yes — it's all done in one visit. " : "") + (big ? "A typical job takes about 1.5 to 2 hours, and a home your size will take longer — the owner can give you a closer time estimate." : JOB_LENGTH_D);
       }
       case "method": return topics.has("steam") ? null : again ? METHOD_SHORT : METHOD_REPLY;
       case "steam":
@@ -2352,22 +2352,22 @@ export function createConversation(init = {}) {
         if (topics.has("scam")) return null;
         if (ctx.praise || /\b(?:leave|write|post) (?:a |you a )?review\b|\bwhere (?:can|do) i review\b/.test(t)) {
           return /\b(?:leave|write|post) (?:a |you a )?review\b|\bwhere (?:can|do) i review\b/.test(t)
-            ? reach("Thank you so much — that means a lot to Keith! We don't use Google reviews right now, so your message here is the best way to share it — he'll see it.", "Thank you so much — that means a lot to Keith! We don't use Google reviews right now, but we really appreciate you saying so.")
-            : "Thank you so much — that means a lot to Keith!";
+            ? reach("Thank you so much — that means a lot to the owner! We don't use Google reviews right now, so your message here is the best way to share it — he'll see it.", "Thank you so much — that means a lot to the owner! We don't use Google reviews right now, but we really appreciate you saying so.")
+            : "Thank you so much — that means a lot to the owner!";
         }
         // owner: no Google reviews as a service right now
         if (/\b(?:google|yelp|facebook|bbb|angi|thumbtack|nextdoor)\b|\bwhere (?:can|do|could) i (?:see|read|find|check|look)\b|\b(?:link|website) (?:to|for|with) (?:your |the )?reviews\b/.test(t)) return "We don't use Google reviews right now — " + "We have over 385 satisfied customers and a 4.9 out of 5 rating from 229 customer reviews.".replace(/^We/, "but we");
         return "We have over 385 satisfied customers and a 4.9 out of 5 rating from 229 customer reviews.";
-      case "crew": return /\bcrew\b|\bteam\b|\bemployees\b|\bhelpers\b|\bsubcontract/.test(t) ? "No crew — we're owner-operated, and Keith does the cleaning himself." : "We're owner-operated — Keith does the cleaning himself.";
+      case "crew": return /\bcrew\b|\bteam\b|\bemployees\b|\bhelpers\b|\bsubcontract/.test(t) ? "No crew — we're owner-operated, and the owner does the cleaning himself." : "We're owner-operated — the owner does the cleaning himself.";
       case "identity": case "is_keith":
         if (id === "is_keith" && topics.has("identity")) return null;
         // "is this a real company?" is the legit question, not "are you a bot?"
-        if (/\b(?:real|legit\w*|actual) (?:company|business)\b|\bis (?:this|it) (?:a )?(?:real|legit)\b/.test(t) && !/\b(?:bot|ai|robot|person|human|automated)\b/.test(t)) return "Yes — we're a real local business in Wichita, owner-operated by Keith, with over 385 satisfied customers. You pay after the job is done.";
+        if (/\b(?:real|legit\w*|actual) (?:company|business)\b|\bis (?:this|it) (?:a )?(?:real|legit)\b/.test(t) && !/\b(?:bot|ai|robot|person|human|automated)\b/.test(t)) return "Yes — we're a real local business in Wichita, owner-operated, with over 385 satisfied customers. You pay after the job is done.";
         // "is the man who comes the owner?" is about who cleans, not who's typing
-        if (/\b(?:who comes|man who|guy who|person who|lady who|who (?:will )?(?:come|clean|do)|technician|tech who|who does the (?:work|cleaning))\b/.test(t)) return "We're owner-operated — Keith, the owner, does the cleaning himself.";
+        if (/\b(?:who comes|man who|guy who|person who|lady who|who (?:will )?(?:come|clean|do)|technician|tech who|who does the (?:work|cleaning))\b/.test(t)) return "We're owner-operated — the owner, the owner, does the cleaning himself.";
         return site ? IDENTITY_REPLY_SITE : IDENTITY_REPLY;
       case "scam": {
-        const body = "we're a real local business in Wichita, owner-operated by Keith, with over 385 satisfied customers. You pay after the job is done.";
+        const body = "we're a real local business in Wichita, owner-operated, with over 385 satisfied customers. You pay after the job is done.";
         // "is this a scam?" → "Not at all"; "are you legit / real?" → "Yes"; anything else → just the facts
         // "Not at all" only answers "is this a scam?"; "Yes" only answers "are you legit/real?"
         // "a real company or a scam?" is answered by what we are, not "not at all"
@@ -2378,7 +2378,7 @@ export function createConversation(init = {}) {
       }
       case "competitor":
         if (topics.has("pet_treatment_info") || topics.has("odor")) return null;
-        return /\b(?:water|moisture|wet|soak\w*|dry)\b/.test(t) ? "We use low-moisture encapsulation — very little water, so carpets usually dry in about 1.5 to 2 hours." : topics.has("prices_set") || (scoped && state.quoted) ? "We're owner-operated — Keith does the cleaning himself." : `We're owner-operated — Keith does the cleaning himself. The ${money(PRICES.standard)} special covers ${COVER}, plus tax, and carpets dry in about 1.5 to 2 hours.`;
+        return /\b(?:water|moisture|wet|soak\w*|dry)\b/.test(t) ? "We use low-moisture encapsulation — very little water, so carpets usually dry in about 1.5 to 2 hours." : topics.has("prices_set") || (scoped && state.quoted) ? "We're owner-operated — the owner does the cleaning himself." : `We're owner-operated — the owner does the cleaning himself. The ${money(PRICES.standard)} special covers ${COVER}, plus tax, and carpets dry in about 1.5 to 2 hours.`;
       case "utilities":
         if (/\b(?:windows?|doors?|hoses?|cold|heat|cracked|open)\b/.test(t)) return "Nothing needs to run through a window or door — we just plug into an outlet for electricity, and water isn't required.";
         return UTILITIES_REPLY;
@@ -2408,14 +2408,14 @@ export function createConversation(init = {}) {
       case "unsupported_service": state.unsupported = true; return D_UNSUPPORTED;
       case "other_trades": return ctx.again ? "Sorry — that's not something we do at all right now, including at your home. We're glad to help with carpet, rugs, upholstery, tile or hard floors anytime." : "We only do carpet, rug, upholstery, tile and hard-floor cleaning, so that's outside what we do — sorry!";
       case "water_damage":
-        // not in the owner's facts: Keith looks at water damage himself (fail-closed) — he's told, and the chat stays open
+        // not in the owner's facts: the owner looks at water damage himself (fail-closed) — he's told, and the chat stays open
         if (!site) ctx.notifyKeith = true;
-        return again ? reach("Keith has the water damage details — he'll reach out here.", `For the water damage, texting Keith at ${TEXT_LINE} with a photo is the fastest way to reach him.`) : reach("Water damage is something Keith would want to look at personally — I've let him know, and he'll reach out here.", `Water damage is something Keith would want to look at personally — text a photo and a description to ${TEXT_LINE}.`);
+        return again ? reach("The owner has the water damage details — he'll reach out here.", `For the water damage, texting the owner at ${TEXT_LINE} with a photo is the fastest way to reach him.`) : reach("Water damage is something the owner would want to look at personally — I've let him know, and he'll reach out here.", `Water damage is something the owner would want to look at personally — text a photo and a description to ${TEXT_LINE}.`);
       case "repair": return "We don't do carpet repair, stretching or installation — just cleaning. A carpet installer can help with that, and we'd be glad to clean it afterward.";
       case "website": return "Our website is wichitacarpetcleaningservices.com.";
       case "phone": return topics.has("email") || topics.has("existing_contact") ? null : `You can text us anytime at ${TEXT_LINE}, or I can help right here.`;
       case "email": return topics.has("existing_contact") ? null : reach(`The quickest way to reach us is right here in Messenger, or by text at ${TEXT_LINE}.`, `The quickest way to reach us is right here in the chat, or by text at ${TEXT_LINE}.`);
-      case "hiring": return reach("Thanks for asking! That's a question for Keith — he'll see it here.", `Thanks for asking! That's a question for Keith — you can text him at ${TEXT_LINE}.`);
+      case "hiring": return reach("Thanks for asking! That's a question for the owner — he'll see it here.", `Thanks for asking! That's a question for the owner — you can text us at ${TEXT_LINE}.`);
       case "travel_fee": return ctx.outOfArea ? null : "No travel fee — it's the same package price anywhere in our service area, plus tax.";
       case "tax_policy": return D_TAX;
       case "upholstery_menu": return ctx.uphLine ? null : furnitureLine({ items: {}, unpriced: null }, site);
@@ -2435,26 +2435,26 @@ export function createConversation(init = {}) {
         if (topics.has("mobile_homes")) return null;
         return "Yes, we clean apartments, condos and townhomes. (We can't do downtown high-rises.)";
       case "mobile_homes":
-        // not in the owner's facts: Keith answers it (fail-closed)
+        // not in the owner's facts: the owner answers it (fail-closed)
         if (!site) ctx.offerKeith = true;
-        return reach("Good question — I'd like Keith to answer that one. Want me to ask him?", `Good question — Keith can answer that one if you text ${TEXT_LINE}.`);
+        return reach("Good question — I'd like the owner to answer that one. Want me to ask him?", `Good question — the owner can answer that one if you text ${TEXT_LINE}.`);
       case "high_rise": return ctx.blocked === D_HIGHRISE ? null : D_HIGHRISE;
       case "on_base": return ctx.blocked === D_BASE ? null : D_BASE;
-      case "protector": return `Carpet protector isn't on our standard menu. If you'd like to ask Keith about it for your job, text ${TEXT_LINE}.`;
+      case "protector": return `Carpet protector isn't on our standard menu. If you'd like to ask the owner about it for your job, text ${TEXT_LINE}.`;
       case "invoice": return "Every job gets an invoice with a link that acts as proof of service — you can show it to your landlord or property manager.";
       case "photos":
         if (site) return `This website chat can't receive photos — text them to ${TEXT_LINE}.`;
-        // nobody looks at photos sent to the bot, so only promise a look when Keith is asked
+        // nobody looks at photos sent to the bot, so only promise a look when the owner is asked
         ctx.offerKeith = true;
-        return "Sure — you can send it here, but I can't look at photos myself. Want me to have Keith take a look?";
+        return "Sure — you can send it here, but I can't look at photos myself. Want me to have the owner take a look?";
       case "voice_message": return "Sorry — I can't play voice messages here. Could you type it out? I'll answer right away.";
       case "location_pin": return ctx.areaLine || ctx.blocked ? null : "I can't tell the town from a map pin here — what town or ZIP code is it? We cover about 15 miles around downtown Wichita.";
       case "combo_same_visit": { const cl = comboLine(t, ctx); return cl && !scoped && /\bcarpets?\b|\brooms?\b/.test(t) && !ctx.carpet ? `${cl} ${ASK_ROOMS}` : cl; }
       case "cancellation_policy": return "There's no cancellation fee — just give us as much notice as you can.";
       case "existing_contact":
-        // "how do I reach Keith?" gets the text line; only an existing appointment gets the change wording
-        if (/\b(?:appointment|appt|booking|booked|reschedul\w*|cancel\w*|my (?:cleaning|visit))\b/.test(t)) return `For an existing appointment, please reply to your Housecall Pro text or text ${TEXT_LINE} — Keith handles changes personally.`;
-        return reach(`You can text Keith at ${TEXT_LINE}, or message right here in Messenger.`, `You can text Keith at ${TEXT_LINE}, or message us on Facebook.`);
+        // "how do I reach the owner?" gets the text line; only an existing appointment gets the change wording
+        if (/\b(?:appointment|appt|booking|booked|reschedul\w*|cancel\w*|my (?:cleaning|visit))\b/.test(t)) return `For an existing appointment, please reply to your Housecall Pro text or text ${TEXT_LINE} — the owner handles changes personally.`;
+        return reach(`You can text us at ${TEXT_LINE}, or message right here in Messenger.`, `You can text us at ${TEXT_LINE}, or message us on Facebook.`);
       case "special_info":
         if (/\b(?:coupon|promo|code|voucher)\b/.test(t)) return `No code needed — those are our regular prices: ${money(PRICES.minimum)} plus tax covers up to 3 rooms, and the ${money(PRICES.standard)} special covers ${COVER}, plus tax.`;
         return SPECIAL_REPLY;
@@ -2519,7 +2519,7 @@ export function createConversation(init = {}) {
   function dryLine(t, again, ctx) {
     if (/\b(?:still (?:damp|wet|moist)|(?:damp|wet) (?:after|still)|hours? ago|is (?:that|this|it) normal|not dry yet|isn'?t dry)\b/.test(t)) {
       if (!site) ctx.offerKeith = true;
-      return "Carpet usually dries in about 1.5 to 2 hours, but airflow, humidity and carpet conditions make a big difference. " + reach("If it's still damp after that, want me to have Keith check in?", `If it's still damp after that, text Keith at ${TEXT_LINE}.`);
+      return "Carpet usually dries in about 1.5 to 2 hours, but airflow, humidity and carpet conditions make a big difference. " + reach("If it's still damp after that, want me to have the owner check in?", `If it's still damp after that, text us at ${TEXT_LINE}.`);
     }
     if (/\b(?:fans?|airflow|a\/?c|air condition\w*|dehumidifier|open (?:the )?windows?|heat(?:er)?)\b/.test(t)) return "Dry time depends on airflow, humidity and carpet conditions" + (again ? "." : " — usually about 1.5 to 2 hours.");
     if (D_PUT_BACK_RE.test(t) && again) return "Same goes for that — wait until the carpet is fully dry, about 1.5 to 2 hours, before putting it back.";
@@ -2599,7 +2599,7 @@ export function createConversation(init = {}) {
     const tomorrowName = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"][(todayWd + 1) % 7];
     const days = d.days.filter((x) => !(b === "tomorrow" && x === tomorrowName)).map((x) => D_DAYNAME[x]);
     const list = (xs) => (xs.length > 1 ? `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}` : xs[0]);
-    const askWork = /\b(?:do|does) (?:you|u|y'?all|he|keith|your (?:guy|tech)) (?:work|come out|come|do|go|clean)\b|\bare (?:you|y'?all) (?:open|working)\b|\b(?:work|open) (?:on )?(?:mon|tues|wednes|thurs|fri)days\b/.test(t) && tod.kind !== "outside";
+    const askWork = /\b(?:do|does) (?:you|u|y'?all|he|(?:keith|the owner|owner)|your (?:guy|tech)) (?:work|come out|come|do|go|clean)\b|\bare (?:you|y'?all) (?:open|working)\b|\b(?:work|open) (?:on )?(?:mon|tues|wednes|thurs|fri)days\b/.test(t) && tod.kind !== "outside";
     const dayLead = (xs) => (xs.length >= 5 ? "We work all five weekdays — the live calendar shows every open time, and you'll get a confirmation text right away:"
       : xs.length > 1 ? `You can see the open times for ${list(xs)} on the live calendar and grab one — you'll get a confirmation text right away:`
       : askWork && xs[0] !== "tomorrow" ? `Yes — we work ${xs[0]}s. The live calendar shows the open times, and you'll get a confirmation text right away:`
@@ -2665,13 +2665,13 @@ export function createConversation(init = {}) {
     restated = [];
     topicIntent = "";
     state.turns += 1;
-    // weekends are a firm no: a weekend question the AI couldn't place gets the weekdays-only answer, not a Keith offer
+    // weekends are a firm no: a weekend question the AI couldn't place gets the weekdays-only answer, not a the owner offer
     if (d.unanswered && /\b(?:saturdays?|sundays?|weekends?)\b/i.test(d.unanswered)) d = { ...d, unanswered: null, topics: [...new Set([...d.topics, "weekend_info"])] };
-    // "ask Keith if he can do Saturday" read as a person/Keith request is still a weekend booking request — never handed to Keith
+    // "ask the owner if he can do Saturday" read as a person/the owner request is still a weekend booking request — never handed to the owner
     if (["human", "other_keith", "callback", "cant_use_link"].includes(d.handoff) && isWeekendJobAsk(t)
       && !/\b(?:useless|not helping|not helpful|frustrat\w*|wtf|stupid|ridiculous|going in circles)\b/.test(t)
       && !(d.handoff === "callback" && !/\b(?:come|appointment|appt|clean|cleaning|book|schedule|exception)\b/.test(t))) d = { ...d, handoff: "weekend_booking" };
-    // "yes please ask Keith" right after the weekdays-only answer is the same weekend request
+    // "yes please ask the owner" right after the weekdays-only answer is the same weekend request
     if (state.weekendLast && ["human", "other_keith"].includes(d.handoff) && WEEKEND_KEITH_FOLLOW_RE.test(t) && t.split(" ").length <= 12) d = { ...d, handoff: "weekend_booking" };
     // the AI's own-words answer, only when every detail checks out against the facts it cites
     let factAnswer = d.answer ? checkFactAnswer(d.answer, raw, [state.rooms, state.halls, state.stairs, state.rugs, state.rooms + state.rugs, state.rooms + state.rugs + state.halls + state.stairs]) : null;
@@ -2702,7 +2702,7 @@ export function createConversation(init = {}) {
     }
     if (/\b(?:can'?t|cannot|won'?t|wont) be (?:home|there)\b|\bwork (?:all week|m-?f\b|monday (?:through|thru|-|to) friday|9 ?(?:-|to) ?5|during the day|days)\b|\bat work all (?:day|week)\b/.test(t) && !d.topics.some((x) => ["home_access", "be_home", "door_code"].includes(x)) && !d.handoff) d = { ...d, topics: [...d.topics, "home_access"] };
     const topics = new Set(d.topics);
-    // "yes" to "want me to have Keith answer it?": Keith gets the question, and the chat stays open (it isn't a handoff)
+    // "yes" to "want me to have the owner answer it?": the owner gets the question, and the chat stays open (it isn't a handoff)
     const offered = state.offeredKeith;
     state.offeredKeith = false;
     const pq0 = d.price_question;
@@ -2710,7 +2710,7 @@ export function createConversation(init = {}) {
     let keithNote = false;
     if (offered && !d.handoff && d.answer_yes_no === "yes" && hasContent0) keithNote = true;
     else if (offered && (d.answer_yes_no === "yes" || d.handoff === "human" || (d.closing === "ok" && /^(?:ok|okay|k|sure|ok sure|sure thing|go ahead|please)\b[\s!.]*$/.test(t))) && !hasContent0) {
-      return out("keith_question", ["Done — I've asked Keith to answer, and he'll reply here as soon as he can. In the meantime, I'm happy to help with anything else."], { notify: "question" });
+      return out("keith_question", ["Done — I've asked the owner to answer, and he'll reply here as soon as he can. In the meantime, I'm happy to help with anything else."], { notify: "question" });
     }
     // "she left spots on the sofa, can you do that?" with the sofa read as an item is a price, not a complaint about us
     if (d.handoff === "complaint" && d.upholstery && Object.values(d.upholstery.items).some((n) => n > 0) && !/\b(?:you (?:guys )?(?:left|did|cleaned|came|ruined|missed|stained)|your (?:tech|guy|cleaning|work)|after (?:you|the cleaning)|last (?:time|visit)|came back|still dirty|refund)\b/.test(t)) d = { ...d, handoff: null };
@@ -2722,46 +2722,46 @@ export function createConversation(init = {}) {
     // details sent after a website handoff (a name, a date, "can someone confirm?") belong to that handoff
     const D_FOLLOW_KEY = { change_existing: "existing_change", confirm_existing: "existing_confirm", complaint: "complaint", human: "callback" };
     if (!d.handoff && D_FOLLOW_KEY[lastIntentBefore] && !d.job && !d.upholstery && !d.floors && !d.rug && !d.topics.length && !factAnswer && pq0 === "none" && !d.unanswered && !d.closing) d = { ...d, handoff: D_FOLLOW_KEY[lastIntentBefore] };
-    // Keith is already booking this one by hand: take the details (and price them) instead of repeating the intake
+    // the owner is already booking this one by hand: take the details (and price them) instead of repeating the intake
     if (d.handoff === "cant_use_link" && !site && state.manualBooking) {
       const content = d.job || d.upholstery || d.floors || d.rug || d.pets || d.days.length || d.time || d.booking !== "none" || d.price_question !== "none" || d.topics.length || (d.area && (d.area.town || d.area.zip));
       if (content) d = { ...d, handoff: null, booking: d.booking === "none" ? "wants_link" : d.booking };
       else {
-        const ASK = "tell me here what you'd like cleaned (rooms, hallways, stairs, any furniture) and which weekday works best, and I'll pass it all to Keith.";
+        const ASK = "tell me here what you'd like cleaned (rooms, hallways, stairs, any furniture) and which weekday works best, and I'll pass it all to the owner.";
         if (/\bcan i (?:just )?(?:tell|say|type|message|give|send)\b/.test(t)) return out("keith_booking", [`Yes, please — ${ASK}`]);
-        if (/tell me here what you'd like cleaned/.test(state.lastReply || "")) return out("keith_booking", ["Got it — Keith has your request and will reach out here. Whenever you're ready, just tell me what you'd like cleaned and a good weekday."]);
+        if (/tell me here what you'd like cleaned/.test(state.lastReply || "")) return out("keith_booking", ["Got it — the owner has your request and will reach out here. Whenever you're ready, just tell me what you'd like cleaned and a good weekday."]);
         return out("keith_booking", [`Sorry about that! No problem — just ${ASK}`]);
       }
     }
-    // a wool rug from a flood is still a wool rug: the decline answers it (no "text Keith a photo" for something we won't clean)
+    // a wool rug from a flood is still a wool rug: the decline answers it (no "text us a photo" for something we won't clean)
     if (d.topics.includes("wool_rug") && d.topics.includes("water_damage") && !/\bcarpets?\b|\bfloors?\b|\bpad\b/.test(t)) { d = { ...d, topics: d.topics.filter((x) => x !== "water_damage") }; topics.delete("water_damage"); }
-    // commercial is with Keith: discounts and price questions about it aren't answered with home prices
+    // commercial is with the owner: discounts and price questions about it aren't answered with home prices
     if ((state.siteHandoff === "commercial" || lastIntentBefore === "commercial") && !d.job && !d.handoff && d.topics.length && d.topics.every((x) => ["discount_other", "discount_apply", "prices_set", "military_discount", "travel_fee"].includes(x)))
-      return out("commercial", [reach("Keith prices commercial and recurring work personally — I've added that for him, and he'll include it with your quote.", `Keith prices commercial and recurring work personally — mention it when you text him at ${TEXT_LINE}, and he'll include it with your quote.`)], PHONE);
+      return out("commercial", [reach("The owner prices commercial and recurring work personally — I've added that for him, and he'll include it with your quote.", `The owner prices commercial and recurring work personally — mention it when you text us at ${TEXT_LINE}, and we'll include it with your quote.`)], PHONE);
     // only a service we don't offer is on the table: nothing to book
     if (state.declinedSvcTurn && state.turns - state.declinedSvcTurn <= 3 && !hasScope() && !Object.keys(state.furn || {}).length && !d.job && !d.upholstery && !d.floors && !d.rug && !d.handoff && (d.booking !== "none" || d.days.length) && !d.topics.some((x) => !["next_available", "lead_time", "slot_times", "same_day", "other_trades", "unsupported_service"].includes(x)))
       return out("info", ["Since that's not something we clean, there's nothing to book for it — but we're glad to help with carpet, rugs, upholstery, tile or hard floors anytime."]);
-    // water damage is with Keith: a price question about it (or more details) doesn't get our room prices
+    // water damage is with the owner: a price question about it (or more details) doesn't get our room prices
     if (waterOpen() && !d.job && !d.upholstery && !d.floors && !d.rug && !d.handoff && !d.closing && d.booking === "none" && !d.unanswered && d.topics.every((x) => ["water_damage", "odor", "dry_time"].includes(x)) && !(d.area && (d.area.town || d.area.zip))) {
-      if (d.price_question !== "none") return out("info", [reach("Keith will price the water damage once he's looked at it — he'll reach out here.", `Keith will price the water damage once he's seen a photo — text it to ${TEXT_LINE}.`) + " If you'd also like a regular cleaning quote, just tell me how many rooms."]);
+      if (d.price_question !== "none") return out("info", [reach("The owner will price the water damage once he's looked at it — he'll reach out here.", `The owner will price the water damage once he's seen a photo — text it to ${TEXT_LINE}.`) + " If you'd also like a regular cleaning quote, just tell me how many rooms."]);
       if (!d.answer) return out("info", [WATER_FOLLOW()]);
     }
     if (d.handoff) return directiveHandoff(d, t, topics, raw);
-    // a commercial job Keith already has: timing is part of his quote, not the residential calendar
+    // a commercial job the owner already has: timing is part of his quote, not the residential calendar
     if (lastIntentBefore === "commercial" && (d.booking !== "none" || d.days.length || d.time || /\b(?:weekends?|saturdays?|sundays?)\b/.test(t))) {
-      if (/\b(?:weekends?|saturdays?|sundays?)\b/.test(t)) return out("commercial", [`${WEEKEND_LINE} ` + reach("Keith will work out a weekday time with you along with the quote.", `Text Keith at ${TEXT_LINE} and he'll work out a weekday time with you along with the quote.`)]);
-      return out("commercial", [reach("For commercial jobs, timing — including before or after hours — is Keith's call. He'll work that out with you along with the quote.", `For commercial jobs, timing — including before or after hours — is Keith's call. Text him at ${TEXT_LINE} and he'll work it out with you along with the quote.`)]);
+      if (/\b(?:weekends?|saturdays?|sundays?)\b/.test(t)) return out("commercial", [`${WEEKEND_LINE} ` + reach("The owner will work out a weekday time with you along with the quote.", `Text us at ${TEXT_LINE} and we'll work out a weekday time with you along with the quote.`)]);
+      return out("commercial", [reach("For commercial jobs, timing — including before or after hours — is the owner's call. He'll work that out with you along with the quote.", `For commercial jobs, timing — including before or after hours — is the owner's call. Text him at ${TEXT_LINE} and he'll work it out with you along with the quote.`)]);
     }
     const sendLines = []; // lines that must go out first (site contact details)
     // a website visitor leaving a phone number, email or name: nobody reads this chat later
     if (site && (/\(?\b\d{3}\)?[-. ]?\d{3}[-. ]?\d{4}\b/.test(raw || "") || /\S+@\S+\.\w{2,}/.test(raw || "") || /\bpass (?:my name|my number|this|it|that) (?:along|on)\b|\b(?:leave|take) my (?:name|number)\b|\bmy (?:number|cell|phone|email) is\b|\b(?:call|text|reach|email) me at\b/.test(t))) {
       const booking = d.booking !== "none" || d.job || d.days.length;
-      sendLines.push(booking ? "No need to send your details here — this chat can't pass them along. Just enter your name, address and mobile number when you book on the link." : `This chat can't pass messages along, so please text ${TEXT_LINE} or message us on Facebook Messenger, and Keith will get back to you.`);
+      sendLines.push(booking ? "No need to send your details here — this chat can't pass them along. Just enter your name, address and mobile number when you book on the link." : `This chat can't pass messages along, so please text ${TEXT_LINE} or message us on Facebook Messenger, and the owner will get back to you.`);
     }
 
-    // rugs and floors that need Keith's eyes win before anything is priced — but a wool decline beats a size review
+    // rugs and floors that need the owner's eyes win before anything is priced — but a wool decline beats a size review
     let r = d.rug;
-    // things Keith prices himself (an oversized rug, natural stone, an off-menu piece): he's told, and the rest still gets answered
+    // things the owner prices himself (an oversized rug, natural stone, an off-menu piece): he's told, and the rest still gets answered
     let review = null;
     const woolBefore = saidHas("wool");
     const woolNow = Boolean(r && (r.material === "wool_or_natural" || (woolBefore && r.material === "unknown" && !/\b(?:another|other|second|different|new|synthetic)\b/.test(t))));
@@ -2770,7 +2770,7 @@ export function createConversation(init = {}) {
       const dims = [r.length, r.width].filter((x) => x != null && x > 0);
       const tooBig = dims.length === 2 ? Math.min(...dims) > 8 || Math.max(...dims) > 10 : dims.length === 1 && dims[0] > 10;
       if (r.antique_or_oriental || tooBig) {
-        review = { kind: "rug", line: lastIntentBefore === "keith_review" && state.reviewKind === "rug" ? reach("Keith has the rug details — he'll reach out here.", `Keith will need a photo to price that rug — text it to ${TEXT_LINE}.`) : reach("That rug needs a quick look before we can price it — I've let Keith know, and he'll reach out here.", `That kind of rug needs a quick look before we can price it — text a photo to Keith at ${TEXT_LINE}.`) };
+        review = { kind: "rug", line: lastIntentBefore === "keith_review" && state.reviewKind === "rug" ? reach("The owner has the rug details — he'll reach out here.", `The owner will need a photo to price that rug — text it to ${TEXT_LINE}.`) : reach("That rug needs a quick look before we can price it — I've let the owner know, and he'll reach out here.", `That kind of rug needs a quick look before we can price it — text a photo to the owner at ${TEXT_LINE}.`) };
         // the rug isn't part of the carpet count
         r = null; d = { ...d, rug: null, job: d.job ? { ...d.job, rugs: 0 } : null };
       }
@@ -2784,7 +2784,7 @@ export function createConversation(init = {}) {
       // a kitchen over 150 sq ft fits the 400 sq ft whole-floor clean & seal
       const cap = tile ? (f.where === "bathroom" ? 100 : 400) : 600;
       if (f.special || (f.sqft !== null && (f.sqft <= 0 || f.sqft > cap))) {
-        review = { kind: "floor", line: lastIntentBefore === "keith_review" && state.reviewKind === "floor" ? reach("Keith has those details — he'll reach out here.", `Keith will need a photo and a description — text them to ${TEXT_LINE}.`) : reach(!tile && f.sqft > 600 ? "Hard-floor areas over 600 square feet need a quick look before we can price them — I've let Keith know, and he'll reach out here." : "That one needs a quick look before we can price it — I've let Keith know, and he'll reach out here.", !tile && f.sqft > 600 ? `Hard-floor areas over 600 square feet need a quick look before we can price them — text a description and a photo to Keith at ${TEXT_LINE}.` : `That one needs a quick look before we can price it — text a description and a photo to Keith at ${TEXT_LINE}.`) };
+        review = { kind: "floor", line: lastIntentBefore === "keith_review" && state.reviewKind === "floor" ? reach("The owner has those details — he'll reach out here.", `The owner will need a photo and a description — text them to ${TEXT_LINE}.`) : reach(!tile && f.sqft > 600 ? "Hard-floor areas over 600 square feet need a quick look before we can price them — I've let the owner know, and he'll reach out here." : "That one needs a quick look before we can price it — I've let the owner know, and he'll reach out here.", !tile && f.sqft > 600 ? `Hard-floor areas over 600 square feet need a quick look before we can price them — text a description and a photo to the owner at ${TEXT_LINE}.` : `That one needs a quick look before we can price it — text a description and a photo to the owner at ${TEXT_LINE}.`) };
       }
       const ft = f.sqft;
       const pick = tile
@@ -2796,7 +2796,7 @@ export function createConversation(init = {}) {
         : tile ? `Tile & grout, plus tax: ${PRICES.tile.map(([n, p]) => `${n} ${money(p)}`).join("; ")}. Larger areas need a quick review first.`
         : `Hard floors, plus tax: ${PRICES.hardFloor.map(([n, p]) => `${n} ${money(p)}`).join("; ")}.`;
     }
-    // upholstery: off-menu pieces go to Keith; priced pieces are saved for the total
+    // upholstery: off-menu pieces go to the owner; priced pieces are saved for the total
     let u = d.upholstery;
     const tf = readFurniture(t);
     // furniture listed right after the furniture-moving answer is about moving it, not cleaning it
@@ -2820,7 +2820,7 @@ export function createConversation(init = {}) {
       if (other.length) {
         const piece = readFurniture(t).unpriced || other[0].toLowerCase();
         const pieceName = piece === "benches" ? "bench" : piece.replace(/s$/, "");
-        review = { kind: "item", line: reach(`The ${pieceName} isn't on our standard menu, so it needs a quick look before we can price it — I've let Keith know, and he'll reach out here.`, `The ${pieceName} isn't on our standard menu, so it needs a quick look before we can price it — text a photo to Keith at ${TEXT_LINE}.`) };
+        review = { kind: "item", line: reach(`The ${pieceName} isn't on our standard menu, so it needs a quick look before we can price it — I've let the owner know, and he'll reach out here.`, `The ${pieceName} isn't on our standard menu, so it needs a quick look before we can price it — text a photo to the owner at ${TEXT_LINE}.`) };
       }
       const items = {};
       for (const [k, n] of Object.entries(u.items)) if (n > 0) items[D_UPH[k]] = n;
@@ -3117,7 +3117,7 @@ export function createConversation(init = {}) {
     let linkMode = null;
     if (!blocked && !quietClose && !emergency && !ctx.outOfArea) {
       // a new price no longer pushes the link (owner, Oct 6): we offer it and send it when they say yes.
-      // A customer who can't use the link still gets passed to Keith.
+      // A customer who can't use the link still gets passed to the owner.
       if ((carpetChanged || floorPriced) && state.manualBooking && !site) linkMode = "send";
       if (topics.has("next_available") || topics.has("slot_times")) linkMode = "send";
       // a weekend question always gets the weekday booking link (owner rule)
@@ -3170,22 +3170,22 @@ export function createConversation(init = {}) {
       else if (d.answer_yes_no === "no") post.push({ text: "No problem at all! We're here whenever you need us — just send a message.", prio: 3 });
     }
     if (review) { pre.push({ text: review.line, prio: 6 }); state.reviewKind = review.kind; }
-    if (keithNote) post.push({ text: "I've also asked Keith about your earlier question — he'll reply here as soon as he can.", prio: 2 });
-    // a second question in a row we can't answer: don't offer again — pass both to Keith (Messenger) / one short line (website)
-    // a follow-up about a service we just said we don't do: no Keith offer (it would give false hope)
+    if (keithNote) post.push({ text: "I've also asked the owner about your earlier question — he'll reply here as soon as he can.", prio: 2 });
+    // a second question in a row we can't answer: don't offer again — pass both to the owner (Messenger) / one short line (website)
+    // a follow-up about a service we just said we don't do: no the owner offer (it would give false hope)
     if (topics.has("other_trades") || topics.has("unsupported_service")) state.declinedSvcTurn = state.turns;
     else if (d.unanswered && state.declinedSvcTurn && state.turns - state.declinedSvcTurn <= 2 && !d.job && !hasScope()) {
       d = { ...d, unanswered: null };
       post.push({ text: "Since that's not something we clean, I'm afraid we can't help with that part — sorry! We're glad to help with carpet, rugs, upholstery, tile or hard floors anytime.", prio: 2 });
     }
-    // a second question in a row we can't answer: offer to pass both (only a yes sends anything to Keith)
+    // a second question in a row we can't answer: offer to pass both (only a yes sends anything to the owner)
     if (d.unanswered && offered && !site && !keithNote) {
       d = { ...d, unanswered: null };
       state.offeredKeith = true;
-      post.push({ text: "That one's for Keith too — want me to pass both questions to him?", prio: 2 });
+      post.push({ text: "That one's for the owner too — want me to pass both questions to him?", prio: 2 });
     } else if (d.unanswered && site && lastIntentBefore === "unknown") {
       d = { ...d, unanswered: null };
-      post.push({ text: `Keith can answer that one too — just include it when you text him at ${TEXT_LINE}.`, prio: 2 });
+      post.push({ text: `The owner can answer that one too — just include it when you text us at ${TEXT_LINE}.`, prio: 2 });
     }
     if (d.unanswered && !hasScope() && (state.declined === "highrise" || state.declined === "base" || state.inArea === false) && !keithNote) {
       d = { ...d, unanswered: null };
@@ -3193,12 +3193,12 @@ export function createConversation(init = {}) {
     }
     if (d.unanswered) {
       if (!site) state.offeredKeith = true;
-      // when other parts were answered, the Keith offer is for the rest — never "I don't want to guess" after an answer
+      // when other parts were answered, the the owner offer is for the rest — never "I don't want to guess" after an answer
       const other = pre.some((x) => x.prio !== 7) || Boolean(linkMode);
       // name the question when the AI's summary of it is a plain "whether …" clause (never prices, numbers or links)
       const uq = String(d.unanswered || "").trim().replace(/[.?!]+$/, "");
-      const named = /^(?:whether|how|what|if|when|which|why|who)\b[a-z ,'-]{8,90}$/i.test(uq) && !/\b(?:keith|free|discount|guarantee|refund|price|cost|\$)/i.test(uq) ? uq.replace(/\byou\b/gi, "we").replace(/\byour\b/gi, "our") : "";
-      post.push({ text: other ? reach(named ? `As for ${named}, want me to ask Keith?` : "For your other question, want me to have Keith answer it?", named ? `As for ${named}, Keith can answer that if you text ${TEXT_LINE}.` : `For your other question, Keith can answer that if you text ${TEXT_LINE}.`) : reach("Good question — Keith can answer that one. Want me to ask him?", `Good question — Keith can answer that one if you text ${TEXT_LINE}.`), prio: 2 });
+      const named = /^(?:whether|how|what|if|when|which|why|who)\b[a-z ,'-]{8,90}$/i.test(uq) && !/\b(?:(?:keith|the owner|owner)|free|discount|guarantee|refund|price|cost|\$)/i.test(uq) ? uq.replace(/\byou\b/gi, "we").replace(/\byour\b/gi, "our") : "";
+      post.push({ text: other ? reach(named ? `As for ${named}, want me to ask the owner?` : "For your other question, want me to have the owner answer it?", named ? `As for ${named}, the owner can answer that if you text ${TEXT_LINE}.` : `For your other question, the owner can answer that if you text ${TEXT_LINE}.`) : reach("Good question — the owner can answer that one. Want me to ask him?", `Good question — the owner can answer that one if you text ${TEXT_LINE}.`), prio: 2 });
     }
     const all = () => [...pre, ...post];
     if (!all().length && !linkMode && !extraLink) return null;
@@ -3248,11 +3248,11 @@ export function createConversation(init = {}) {
     }
     const preOut = items.filter((x) => x.sec === 0).map((x) => x.text), postOut = items.filter((x) => x.sec === 1).map((x) => x.text);
     let linkPart = [];
-    // a customer Keith is booking by hand gets no link, just the hand-off of the details
+    // a customer the owner is booking by hand gets no link, just the hand-off of the details
     let notify = keithNote ? "question" : (review || ctx.notifyKeith) && !site ? "review" : null;
     if (state.manualBooking && !site && (extraLink || linkMode)) {
       const dayNames = d.days.map((x) => D_DAYNAME[x]);
-      linkPart = [dayNames.length ? `I'll pass ${dayNames.length > 1 ? dayNames.slice(0, -1).join(", ") + " or " + dayNames.at(-1) : dayNames[0]} along to Keith so he can confirm a time with you.` : "I'll pass this along to Keith so he can set up a time with you."];
+      linkPart = [dayNames.length ? `I'll pass ${dayNames.length > 1 ? dayNames.slice(0, -1).join(", ") + " or " + dayNames.at(-1) : dayNames[0]} along to the owner so he can confirm a time with you.` : "I'll pass this along to the owner so he can set up a time with you."];
       notify = "booking";
       extraLink = null; linkMode = null;
     }
@@ -3275,8 +3275,8 @@ export function createConversation(init = {}) {
       : closing || d.answer_yes_no === "no" ? "thanks"
       : extraLink || linkMode ? "booking"
       : d.unanswered ? "unknown" : "info";
-    // the line about Keith answering their other question belongs with the answers, before the booking link
-    const keithAsk = (x) => /Keith can answer|ask Keith\?|have Keith answer|pass both questions/.test(x);
+    // the line about the owner answering their other question belongs with the answers, before the booking link
+    const keithAsk = (x) => /the owner can answer|ask the owner\?|have the owner answer|pass both questions/.test(x);
     return out(intent, [...preOut, ...postOut.filter(keithAsk), ...linkPart, ...postOut.filter((x) => !keithAsk(x))], notify ? { notify } : {});
   }
 
@@ -3348,7 +3348,7 @@ export function createConversation(init = {}) {
             return out("price", [`Got it — so that area isn't carpet. How many carpeted rooms, hallways and stairs does that leave? Right now I have ${jobName()} at ${fmtJob()}.`]);
           return out("price", [`Got it — still ${fmtJob()} for ${jobName()}.`]);
         }
-        // the AI read this message as nothing that needs Keith; a broad text match ("both sides", "small business") doesn't hand it off
+        // the AI read this message as nothing that needs the owner; a broad text match ("both sides", "small business") doesn't hand it off
         if (tr && tr.phone && BRAIN_HANDOFFS.has(tr.intent) && !textHandoffStands(tr.intent, msg?.text)) {
           for (const k of Object.keys(state)) delete state[k];
           Object.assign(state, JSON.parse(saved));
