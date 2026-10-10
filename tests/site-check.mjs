@@ -47,7 +47,7 @@ const servicePages = [
   'services/tile-grout-cleaning/index.html',
   'services/hard-floor-cleaning/index.html',
 ];
-const guidePages = ['low-moisture-carpet-cleaning/index.html', 'service-area/index.html', 'appointment-preparation/index.html', 'property-managers/index.html', 'derby-carpet-cleaning/index.html', 'how-long-does-carpet-take-to-dry/index.html', 'pet-urine-carpet-cleaning/index.html', 'how-often-to-clean-carpet/index.html', 'move-out-carpet-cleaning/index.html'];
+const guidePages = ['low-moisture-carpet-cleaning/index.html', 'service-area/index.html', 'appointment-preparation/index.html', 'property-managers/index.html', 'derby-carpet-cleaning/index.html', 'how-long-does-carpet-take-to-dry/index.html', 'pet-urine-carpet-cleaning/index.html', 'how-often-to-clean-carpet/index.html', 'move-out-carpet-cleaning/index.html', 'commercial-carpet-cleaning/index.html'];
 const pages = ['index.html', '404.html', 'booking-confirmed/index.html', 'privacy-policy/index.html', 'terms-of-service/index.html', 'data-deletion/index.html', 'accessibility/index.html', ...servicePages, ...guidePages];
 for (const page of pages) {
   const content = readFileSync(resolve(root, page), 'utf8');
