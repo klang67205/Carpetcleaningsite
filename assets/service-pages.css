@@ -61,3 +61,7 @@
 @media(max-width:850px){.service-hero{padding:64px 24px}.service-facts,.service-intro,.service-notes{grid-template-columns:1fr}.service-intro{gap:24px}.service-facts{margin-top:38px}.service-price-row{grid-template-columns:1fr}.service-price-row strong{font-size:1.2rem}.service-ready{padding:72px 24px}}
 @media(max-width:850px){.content-section{padding:72px 24px}.process-grid{grid-template-columns:1fr 1fr}.fit-grid,.area-grid,.proof-band{grid-template-columns:1fr}.area-list{grid-template-columns:repeat(2,1fr)}.comparison{display:block;overflow-x:auto}.comparison th,.comparison td{min-width:180px}.proof-band{padding:72px 24px;gap:30px}}
 @media(max-width:560px){.process-grid,.area-list{grid-template-columns:1fr}}
+
+/* before/after photos keep their true shape */
+.proof-image { aspect-ratio: auto; }
+.proof-image img { height: auto; object-fit: contain; }

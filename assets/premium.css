@@ -1473,3 +1473,12 @@ footer { grid-template-columns: 2fr 1fr 1fr 1fr; }
 .area-strip a:not(.button) { color: var(--green); font-weight: 750; }
 .area-strip .button { flex: none; }
 @media (max-width: 850px) { .area-strip { flex-direction: column; align-items: stretch; } .area-strip .button { width: 100%; } }
+
+/* cro-7: before/after photos keep their true shape (no cropping, stretching, staggering or motion) */
+.result-media, .result-crop-bottom, .result-room, .result-crop-top { aspect-ratio: auto !important; }
+.result-media img { height: auto !important; object-fit: contain; transition: none; }
+.result-figure:hover .result-media img { transform: none; }
+.results-secondary, .result-featured { transform: none !important; }
+.results-grid { align-items: start; animation: none !important; }
+.hero-proof-img img { aspect-ratio: 1161 / 546; object-fit: contain; }
+@media (min-width: 561px) and (max-width: 900px) { .results-secondary { grid-template-columns: 1fr 1fr; grid-template-rows: none; } }
