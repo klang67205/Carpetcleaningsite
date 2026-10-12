@@ -1480,5 +1480,5 @@ footer { grid-template-columns: 2fr 1fr 1fr 1fr; }
 .result-figure:hover .result-media img { transform: none; }
 .results-secondary, .result-featured { transform: none !important; }
 .results-grid { align-items: start; animation: none !important; }
-.hero-proof-img img { aspect-ratio: 1161 / 546; object-fit: contain; }
+.hero-proof-img img { aspect-ratio: 470 / 237; object-fit: contain; }
 @media (min-width: 561px) and (max-width: 900px) { .results-secondary { grid-template-columns: 1fr 1fr; grid-template-rows: none; } }
