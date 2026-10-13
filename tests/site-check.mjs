@@ -47,7 +47,7 @@ const servicePages = [
   'services/tile-grout-cleaning/index.html',
   'services/hard-floor-cleaning/index.html',
 ];
-const guidePages = ['low-moisture-carpet-cleaning/index.html', 'service-area/index.html', 'appointment-preparation/index.html', 'property-managers/index.html', 'derby-carpet-cleaning/index.html', 'how-long-does-carpet-take-to-dry/index.html', 'pet-urine-carpet-cleaning/index.html', 'how-often-to-clean-carpet/index.html', 'move-out-carpet-cleaning/index.html', 'commercial-carpet-cleaning/index.html'];
+const guidePages = ['low-moisture-carpet-cleaning/index.html', 'service-area/index.html', 'appointment-preparation/index.html', 'property-managers/index.html', 'derby-carpet-cleaning/index.html', 'how-long-does-carpet-take-to-dry/index.html', 'pet-urine-carpet-cleaning/index.html', 'how-often-to-clean-carpet/index.html', 'move-out-carpet-cleaning/index.html', 'commercial-carpet-cleaning/index.html', 'carpet-cleaning-cost-wichita/index.html'];
 const pages = ['index.html', '404.html', 'booking-confirmed/index.html', 'privacy-policy/index.html', 'terms-of-service/index.html', 'data-deletion/index.html', 'accessibility/index.html', ...servicePages, ...guidePages];
 for (const page of pages) {
   const content = readFileSync(resolve(root, page), 'utf8');
@@ -105,7 +105,7 @@ const areaGuide = readFileSync(resolve(root, 'service-area/index.html'), 'utf8')
 for (const value of ['Wichita', 'Derby', 'Andover', 'Goddard', 'Maize', 'Newton is outside', 'On-base military housing is not serviced']) assert.ok(areaGuide.includes(value), `Missing service-area detail: ${value}`);
 assert.match(html, /<h1>Wichita-area carpet cleaning\./, 'Homepage must describe the broader Wichita-area coverage accurately');
 const sitemap = readFileSync(resolve(root, 'sitemap.xml'), 'utf8');
-for (const path of ['/low-moisture-carpet-cleaning/', '/service-area/', '/appointment-preparation/', '/property-managers/', '/derby-carpet-cleaning/', '/how-long-does-carpet-take-to-dry/', '/pet-urine-carpet-cleaning/', '/how-often-to-clean-carpet/', '/move-out-carpet-cleaning/']) assert.ok(sitemap.includes(`https://wichitacarpetcleaningservices.com${path}`), `Missing sitemap entry: ${path}`);
+for (const path of ['/low-moisture-carpet-cleaning/', '/service-area/', '/appointment-preparation/', '/property-managers/', '/derby-carpet-cleaning/', '/how-long-does-carpet-take-to-dry/', '/pet-urine-carpet-cleaning/', '/how-often-to-clean-carpet/', '/move-out-carpet-cleaning/', '/carpet-cleaning-cost-wichita/']) assert.ok(sitemap.includes(`https://wichitacarpetcleaningservices.com${path}`), `Missing sitemap entry: ${path}`);
 const preparationGuide = readFileSync(resolve(root, 'appointment-preparation/index.html'), 'utf8');
 for (const value of ['Clear loose items', 'Protect breakables', 'Plan furniture', 'Keep pets comfortable', 'There is no cancellation fee']) assert.ok(preparationGuide.includes(value), `Missing preparation guidance: ${value}`);
 assert.doesNotMatch(preparationGuide, /must (?:crate|remove)|pets? away|required to vacuum/i, 'Preparation guide must remain helpful rather than bossy');
@@ -192,3 +192,10 @@ for (const slug of ['pet-urine-carpet-cleaning', 'how-often-to-clean-carpet', 'm
   for (const value of ['$99', '$149', 'Plus applicable tax', 'Monday through Friday', 'FAQPage']) assert.ok(guide.includes(value), `Missing ${slug} detail: ${value}`);
   for (const value of ['guarantee', 'safe for kids', 'safe for pets', 'no mold', 'allerg', 'discount', '% off']) assert.doesNotMatch(guide, new RegExp(value, 'i'), `Unsupported claim in ${slug}: ${value}`);
 }
+
+const costGuide = readFileSync(resolve(root, 'carpet-cleaning-cost-wichita/index.html'), 'utf8');
+for (const value of ['$75', '$85', '$99', '$149', '$15', 'Plus applicable tax', 'Monday through Friday', 'FAQPage', 'Closets stay included', 'Permanent stain or odor removal cannot be promised', '../services/upholstery-cleaning/', '../#pricing']) assert.ok(costGuide.includes(value), `Missing price-guide detail: ${value}`);
+for (const value of ['guarantee', 'safe for kids', 'safe for pets', 'no mold', 'allerg', 'discount', '% off', 'cheapest', 'free estimate', 'volume']) assert.doesNotMatch(costGuide, new RegExp(value, 'i'), `Unsupported claim in price guide: ${value}`);
+for (const price of costGuide.matchAll(/\$(\d+)/g)) assert.ok(['75', '85', '99', '149', '15'].includes(price[1]), `Unpublished price in price guide: $${price[1]}`);
+const lowMoistureLinks = readFileSync(resolve(root, 'low-moisture-carpet-cleaning/index.html'), 'utf8');
+assert.ok(lowMoistureLinks.includes('href="../carpet-cleaning-cost-wichita/"'), 'Low-moisture page must link the price guide');
