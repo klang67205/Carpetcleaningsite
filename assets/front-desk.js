@@ -977,6 +977,20 @@ export function createConversation(init = {}) {
   // a time or day in the customer's words ("monday", "tomorrow", "mornings", "10:30", "the 15th", "anytime")
   const SPECIFIC_RE = /\b(?:mon|tue|wed|thu|fri|sat|sun)(?:day|nesday|sday|rsday|urday|ursday|esday)?s?\b|\btomorrow\b|\btoday\b|\b(?:this|next) week\b|\bmornings?\b|\bafternoons?\b|\b\d{1,2}(?::\d\d)?\s*(?:am|pm|a\.m\.|p\.m\.)\b|\b\d{1,2}:\d\d\b|\bat \d{1,2}\b|\b\d{1,2}\/\d{1,2}\b|\b\d{1,2}(?:st|nd|rd|th)\b|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\.?\s+\d{1,2}\b/;
   const SOONEST_RE = /\b(?:soonest|earliest|asap|as soon as|next (?:available|opening|open)|any ?(?:time|day|thing)|whenever|whatever(?:'s| is)? (?:open|soonest|first|available)|no preference|doesn'?t matter|don'?t care|flexible|first available|when(?:ever)? (?:is|are) (?:your )?(?:next|soonest|first)|when can you|when are you)\b/;
+  /** The next two open start times, e.g. "Monday, Oct 19 at 10:30 AM or 1:00 PM" (null without live times). */
+  function nextTwoOpen() {
+    const S = slotsNow; if (!S) return null;
+    const picks = [];
+    for (const d of S.days) {
+      if (!d.bookable) continue;
+      for (const x of d.raw) if (picks.length < 2) picks.push([d, x]);
+      if (picks.length >= 2) break;
+    }
+    if (!picks.length) return null;
+    if (picks.length === 2 && picks[0][0] === picks[1][0]) return `${picks[0][0].label} at ${ampm(picks[0][1])} or ${ampm(picks[1][1])}`;
+    return picks.map(([d, x]) => `${d.label} at ${ampm(x)}`).join(" or ");
+  }
+
   function applySlots(r, text, linkBefore = state.linkSent) {
     if (!slotsNow || !r || !Array.isArray(r.bubbles) || !r.bubbles.length || r.phone) return r;
     const t = norm(text);
@@ -984,9 +998,12 @@ export function createConversation(init = {}) {
     const offerI = r.bubbles.findIndex((b) => b.includes(LINK_OFFER));
     if (offerI >= 0 && !SPECIFIC_RE.test(t) && !SOONEST_RE.test(t)) {
       const bubbles = [...r.bubbles];
-      bubbles[offerI] = bubbles[offerI].replace(LINK_OFFER, DAY_ASK);
+      // ...and right after a price, name the two soonest real openings so they can just pick one
+      const soon = nextTwoOpen();
+      bubbles[offerI] = bubbles[offerI].replace(LINK_OFFER, soon ? `${DAY_ASK} The soonest I have is ${soon}.` : DAY_ASK);
       state.lastReply = bubbles.filter((b) => b !== bookingUrl).join(" | ").slice(0, 400);
-      return { ...r, bubbles };
+      // slots: true keeps those exact days and times from being reworded by the AI polish step
+      return soon ? { ...r, bubbles, slots: true } : { ...r, bubbles };
     }
     // "how do I book?" / "yes, let's book": ask what day suits them before listing times (unless they asked for the link itself)
     if (r.bubbles.includes(bookingUrl) && !linkBefore && !SPECIFIC_RE.test(t) && !SOONEST_RE.test(t) && !/\blink\b|\bcalendar\b|\bsend it\b/.test(t) && !r.bubbles.some((b) => b.includes(WEEKEND_LINE) || b.includes(WEEKEND_AGAIN) || /same-day/.test(b))) {
