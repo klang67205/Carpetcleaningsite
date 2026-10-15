@@ -76,6 +76,12 @@ for (const page of [...servicePages, ...guidePages]) {
   for (const value of ['og:site_name', 'og:image', 'og:image:alt', 'twitter:card', 'twitter:title', 'twitter:description', 'twitter:image']) {
     assert.ok(content.includes(value), `Missing branded social preview metadata (${value}) in ${page}`);
   }
+  for (const name of ['og:image', 'twitter:image']) {
+    const image = content.match(new RegExp(`(?:property|name)="${name}" content="([^"]+)"`))?.[1];
+    assert.ok(image, `Missing ${name} in ${page}`);
+    assert.match(image, /^https:\/\/wichitacarpetcleaningservices\.com\/assets\/results\/(?:room|spot)-before-after\.jpg$/, `${name} must be a real job photo, not brand artwork, in ${page}`);
+    assert.ok(existsSync(resolve(root, image.replace('https://wichitacarpetcleaningservices.com/', ''))), `Missing share image file for ${page}`);
+  }
 }
 
 for (const page of guidePages) {
