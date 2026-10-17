@@ -900,7 +900,7 @@ export function createConversation(init = {}) {
   const orList = (xs) => (xs.length <= 1 ? xs.join("") : xs.length === 2 ? `${xs[0]} or ${xs[1]}` : `${xs.slice(0, -1).join(", ")} or ${xs.at(-1)}`);
   const SLOT_DAY = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
   const SLOT_DAY_RE = /\b(sun|mon|tue|wed|thu|fri|sat)(?:days?|s|\.)?(?:day|nesday|sday|rsday|urday|ursday|esday)?\b/g;
-  const TIME_ASK_RE = /\bwhen\b|\bavailab\w*|\bopenings?\b|\bopen (?:times?|slots?|days?)\b|\bsoonest\b|\bearliest\b|\bnext (?:week|available|opening|open)\b|\bthis week\b|\btomorrow\b|\btoday\b|\btonight\b|\bsame[- ]day\b|\bwhat times?\b|\btime ?slots?\b|\bslots?\b|\bschedul\w*|\bbook\w*|\bcome (?:out|by|over)\b|\bfit (?:me|us) in\b|\b(?:sun|mon|tue|wed|thu|fri|sat)(?:day|nesday|sday|rsday|urday|ursday|esday)?s?\b|\bmorning\b|\bafternoon\b|\bweekday\b|\bany ?time\b|\bdates?\b|\b\d{1,2}\/\d{1,2}\b|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\.?\s+\d{1,2}\b|\b\d{1,2}(?:st|nd|rd|th)\b/;
+  const TIME_ASK_RE = /\bwhen\b|\bavailab\w*|\bopenings?\b|\bopen (?:times?|slots?|days?)\b|\bsoonest\b|\bearliest\b|\bnext (?:week|available|opening|open)\b|\bthis week\b|\btomorrow\b|\btoday\b|\btonight\b|\bsame[- ]day\b|\bwhat times?\b|\btime ?slots?\b|\bslots?\b|\bschedul\w*|\bbook\w*|\bcome (?:out|by|over)\b|\bfit (?:me|us) in\b|\b(?:sun|mon|tue|wed|thu|fri|sat)(?:day|nesday|sday|rsday|urday|ursday|esday)?s?\b|\bmorning\b|\bafternoon\b|\bweekday\b|\bany ?time\b|\bdates?\b|\b\d{1,2}\/\d{1,2}\b|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\.?\s+\d{1,2}\b|\b\d{1,2}(?:st|nd|rd|th)\b|\b(?:first|1st|second|2nd|third|3rd|fourth|4th|last|early|mid|middle|late|end|beginning|start)\b[^.?!]{0,20}?\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b|\bweek of\b|\b(?:end|last part|last week|late|rest) of (?:the |this )?month\b|\b(?:in|during|for) (?:jan|feb|mar|apr|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b|\bwhat (?:do|does|did) (?:you|u|y'?all) have\b/;
   function slotSentence(t) {
     const S = slotsNow; if (!S) return null;
     const todayP = clockNow();
@@ -936,6 +936,47 @@ export function createConversation(init = {}) {
       if (MON[dm[1]]) { mo = MON[dm[1]]; day = +dm[2]; } else if (dm[2] && /\//.test(dm[0])) { mo = +dm[1]; day = +dm[2]; } else day = +(dm[1] || dm[2]);
       const hit = S.days.find((d) => +d.date.slice(8) === day && (mo == null || +d.date.slice(5, 7) === mo) && d.date >= today);
       if (hit) { asked.length = 0; asked.push(hit.date); }
+    }
+    // a stretch of days: "first week of November", "early November", "end of the month", "week of the 26th", "in November"
+    {
+      const FULL = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const plus = (iso, n) => new Date(Date.parse(`${iso}T12:00:00Z`) + n * 86400000).toISOString().slice(0, 10);
+      const pad = (n) => String(n).padStart(2, "0");
+      const yearFor = (mo) => { const y = +today.slice(0, 4); return mo < +today.slice(5, 7) ? y + 1 : y; };
+      const PARTS = { first: [1, 7], "1st": [1, 7], beginning: [1, 7], start: [1, 7], early: [1, 10], second: [8, 14], "2nd": [8, 14], third: [15, 21], "3rd": [15, 21], fourth: [22, 28], "4th": [22, 28], mid: [10, 20], middle: [10, 20], late: [20, 31], end: [22, 31], last: [24, 31] };
+      let range = null, label = "";
+      const pm = /\b(first|1st|second|2nd|third|3rd|fourth|4th|last|early|mid|middle|late|end|beginning|start)\b[^.?!]{0,20}?\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/.exec(t);
+      const em = /\b(?:end|last part|last week|late|rest) of (?:the |this )?month\b/.exec(t);
+      const inm = /\b(?:in|during|for) (jan|feb|mar|apr|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b/.exec(t);
+      if (pm) {
+        const mo = MON[pm[2]], [a, b] = PARTS[pm[1]], y = yearFor(mo);
+        const last = new Date(Date.UTC(y, mo, 0)).getUTCDate();
+        range = [`${y}-${pad(mo)}-${pad(a)}`, `${y}-${pad(mo)}-${pad(Math.min(b, last))}`];
+        label = /\bweek\b/.test(pm[0]) ? `the ${pm[1]} week of ${FULL[mo - 1]}` : `${{ end: "the end of", beginning: "the start of", start: "the start of", mid: "mid", middle: "mid" }[pm[1]] || pm[1]} ${FULL[mo - 1]}`;
+      } else if (em) {
+        const y = +today.slice(0, 4), mo = +today.slice(5, 7), last = new Date(Date.UTC(y, mo, 0)).getUTCDate();
+        range = [`${y}-${pad(mo)}-${pad(Math.max(1, last - 9))}`, `${y}-${pad(mo)}-${pad(last)}`];
+        label = `the end of ${FULL[mo - 1]}`;
+      } else if (/\bweek of\b/.test(t) && asked.length === 1) {
+        range = [asked[0], plus(asked[0], 6)];
+        const [, mo, d] = asked[0].split("-").map(Number);
+        label = `the week of ${FULL[mo - 1].slice(0, 3)} ${d}`;
+      } else if (inm && !dm && !asked.length) {
+        const mo = MON[inm[1]], y = yearFor(mo);
+        range = [`${y}-${pad(mo)}-01`, `${y}-${pad(mo)}-${pad(new Date(Date.UTC(y, mo, 0)).getUTCDate())}`];
+        label = FULL[mo - 1];
+      }
+      if (range) {
+        if (range[1] < today) range = null;
+      }
+      if (range) {
+        const xs = open.filter((d) => d.date >= range[0] && d.date <= range[1]);
+        if (xs.length) return `For ${label}, the open ${partWord ? partWord + " " : ""}times are ${xs.slice(0, 2).map((d) => dayPhrase(d)).join("; ")}${xs.length > 2 ? "; and more after that" : ""}.`;
+        const lastSeen = S.days.length ? S.days[S.days.length - 1].date : today;
+        if (range[0] > lastSeen) return `I can see about three weeks ahead, so ${label} isn't showing on my end yet, but the booking calendar goes further out.`;
+        const n = soonest(range[1]);
+        return `${label.charAt(0).toUpperCase() + label.slice(1)} is booked up${n ? ` — the soonest open time after that is ${n}` : ""}.`;
+      }
     }
     const lines = [];
     for (const date of asked.slice(0, 2)) {
@@ -975,8 +1016,35 @@ export function createConversation(init = {}) {
   // a reply about booking or times gets the real open times in place of the generic "the calendar shows what's open"
   const GENERIC_TIMES = /(?:^|(?<=[.!?]\s))[^.!?]*(?:start times are usually|usual start times are|earliest usual start time|is one of our usual weekday start times|open times are on the live calendar|openings are on the live calendar)[^.!?]*[.!?:]\s*/gi;
   // a time or day in the customer's words ("monday", "tomorrow", "mornings", "10:30", "the 15th", "anytime")
-  const SPECIFIC_RE = /\b(?:mon|tue|wed|thu|fri|sat|sun)(?:day|nesday|sday|rsday|urday|ursday|esday)?s?\b|\btomorrow\b|\btoday\b|\b(?:this|next) week\b|\bmornings?\b|\bafternoons?\b|\b\d{1,2}(?::\d\d)?\s*(?:am|pm|a\.m\.|p\.m\.)\b|\b\d{1,2}:\d\d\b|\bat \d{1,2}\b|\b\d{1,2}\/\d{1,2}\b|\b\d{1,2}(?:st|nd|rd|th)\b|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\.?\s+\d{1,2}\b/;
+  const SPECIFIC_RE = /\b(?:mon|tue|wed|thu|fri|sat|sun)(?:day|nesday|sday|rsday|urday|ursday|esday)?s?\b|\btomorrow\b|\btoday\b|\b(?:this|next) week\b|\bmornings?\b|\bafternoons?\b|\b\d{1,2}(?::\d\d)?\s*(?:am|pm|a\.m\.|p\.m\.)\b|\b\d{1,2}:\d\d\b|\bat \d{1,2}\b|\b\d{1,2}\/\d{1,2}\b|\b\d{1,2}(?:st|nd|rd|th)\b|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\.?\s+\d{1,2}\b|\b(?:first|1st|second|2nd|third|3rd|fourth|4th|last|early|mid|middle|late|end|beginning|start)\b[^.?!]{0,20}?\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b|\bweek of\b|\b(?:end|last part|last week|late|rest) of (?:the |this )?month\b|\b(?:in|during|for) (?:jan|feb|mar|apr|jun|jul|aug|sep|oct|nov|dec)[a-z]*\b|\bwhat (?:do|does|did) (?:you|u|y'?all) have\b/;
   const SOONEST_RE = /\b(?:soonest|earliest|asap|as soon as|next (?:available|opening|open)|any ?(?:time|day|thing)|whenever|whatever(?:'s| is)? (?:open|soonest|first|available)|no preference|doesn'?t matter|don'?t care|flexible|first available|when(?:ever)? (?:is|are) (?:your )?(?:next|soonest|first)|when can you|when are you)\b/;
+  /** The next two open start times, e.g. "Monday, Oct 19 at 10:30 AM or 1:00 PM" (null without live times). */
+  function nextTwoOpen() {
+    const S = slotsNow; if (!S) return null;
+    const picks = [];
+    for (const d of S.days) {
+      if (!d.bookable) continue;
+      for (const x of d.raw) if (picks.length < 2) picks.push([d, x]);
+      if (picks.length >= 2) break;
+    }
+    if (!picks.length) return null;
+    if (picks.length === 2 && picks[0][0] === picks[1][0]) return `${picks[0][0].label} at ${ampm(picks[0][1])} or ${ampm(picks[1][1])}`;
+    return picks.map(([d, x]) => `${d.label} at ${ampm(x)}`).join(" or ");
+  }
+
+  /** A price with no next step is a dead end: ask what day works and name the two soonest openings. */
+  function askDayAfterPrice(r) {
+    if (!slotsNow || !r || !Array.isArray(r.bubbles) || !r.bubbles.length || r.phone || r.notify) return r;
+    if (DIRECTIVE_HANDOFFS.includes(String(state.lastIntent || "")) || ["human", "keith_booking", "commercial", "layout_review", "rug_price", "stop", "complaint"].includes(String(state.lastIntent || ""))) return r;
+    const all = r.bubbles.join(" ");
+    if (r.bubbles.includes(bookingUrl) || !/\$\d/.test(all) || all.includes(DAY_ASK) || /booking link above/.test(all) || /\?\s*$/.test(r.bubbles[r.bubbles.length - 1])) return r;
+    const soon = nextTwoOpen();
+    const bubbles = [...r.bubbles];
+    bubbles[bubbles.length - 1] = `${bubbles[bubbles.length - 1]} ${DAY_ASK}${soon ? ` The soonest I have is ${soon}.` : ""}`;
+    state.lastReply = bubbles.join(" | ").slice(0, 400);
+    return { ...r, bubbles, slots: true };
+  }
+
   function applySlots(r, text, linkBefore = state.linkSent) {
     if (!slotsNow || !r || !Array.isArray(r.bubbles) || !r.bubbles.length || r.phone) return r;
     const t = norm(text);
@@ -984,9 +1052,12 @@ export function createConversation(init = {}) {
     const offerI = r.bubbles.findIndex((b) => b.includes(LINK_OFFER));
     if (offerI >= 0 && !SPECIFIC_RE.test(t) && !SOONEST_RE.test(t)) {
       const bubbles = [...r.bubbles];
-      bubbles[offerI] = bubbles[offerI].replace(LINK_OFFER, DAY_ASK);
+      // ...and right after a price, name the two soonest real openings so they can just pick one
+      const soon = nextTwoOpen();
+      bubbles[offerI] = bubbles[offerI].replace(LINK_OFFER, soon ? `${DAY_ASK} The soonest I have is ${soon}.` : DAY_ASK);
       state.lastReply = bubbles.filter((b) => b !== bookingUrl).join(" | ").slice(0, 400);
-      return { ...r, bubbles };
+      // slots: true keeps those exact days and times from being reworded by the AI polish step
+      return soon ? { ...r, bubbles, slots: true } : { ...r, bubbles };
     }
     // "how do I book?" / "yes, let's book": ask what day suits them before listing times (unless they asked for the link itself)
     if (r.bubbles.includes(bookingUrl) && !linkBefore && !SPECIFIC_RE.test(t) && !SOONEST_RE.test(t) && !/\blink\b|\bcalendar\b|\bsend it\b/.test(t) && !r.bubbles.some((b) => b.includes(WEEKEND_LINE) || b.includes(WEEKEND_AGAIN) || /same-day/.test(b))) {
@@ -2201,6 +2272,13 @@ export function createConversation(init = {}) {
         return out("human", [reach(callbackLine(t, wantsText), `Text us at ${TEXT_LINE} and we'll get back to you as soon as we can.`)], PHONE);
       }
       case "cant_use_link":
+        // "I don't see a link": send it (once) instead of handing off — the customer was ready to book
+        if (!site && !state.linkResent && /\b(?:don'?t|do not|didn'?t|did not|can'?t|cannot|cant|dont|didnt|never) (?:see|find|get|got|have|received?)\b[^.?!]{0,25}\blink\b|\bno link\b|\bwhere(?:'s| is) (?:the|that|your) link\b|\blink (?:isn'?t|is not|doesn'?t|does not|didn'?t|did not|won'?t) (?:show|work|come|load|open)/.test(t)) {
+          state.linkResent = true;
+          state.linkSent = true;
+          const soon = nextTwoOpen();
+          return { ...out("booking", [`Sorry about that — here's the booking link.${soon ? ` The soonest I have is ${soon}.` : ""} Pick any open weekday time, and you'll get a confirmation text right away:`, bookingUrl]), slots: true };
+        }
         // Messenger: the owner books it personally, and the chat stays open to collect what he needs (rooms, a good weekday)
         if (!site) {
           state.manualBooking = true;
@@ -3311,9 +3389,11 @@ export function createConversation(init = {}) {
           state.turns += 1;
           return applySlots(out("booking", ["Great! " + BOOK_INTRO, bookingUrl]), m ? `yes ${m[1]}${m[2] ? " at " + m[2] : ""}` : msg.text);
         }
+        // "ok sounds good", "how do I book", "let's do it", "send the link": ready to book — give the times and the link
+        const READY_RE = /^(?:(?:yes|yeah|yep|sure|ok|okay|k|perfect|great|awesome|cool|alright|all right)\b[\s,!.]*)*(?:that )?(?:sounds? (?:good|great|perfect)|works?(?: for me)?|let'?s (?:do it|book(?: it)?|go)|book (?:it|me|that)|i'?d like to book|i want to book|i'?ll (?:take it|book)|how (?:do|can) i (?:book|schedule|sign up)|go ahead|send (?:it|me the link|the link)|please)?[\s!.]*$/;
         // the answer to "Is there a day and time that works best?": the closest real openings, and the link
-        if (slotsNow && (state.lastReply || "").includes(DAY_ASK) && (SPECIFIC_RE.test(tn) || SOONEST_RE.test(tn) || /^(?:yes|yeah|yep|sure|ok|okay|please)\b[\s!.]*$/.test(tn)) && !/\b(?:how much|price|cost|rooms?|halls?|stairs?|pets?|dogs?|cats?|sat\w*|sun\w*|weekends?)\b/.test(tn)) {
-          const s = slotSentence(SOONEST_RE.test(tn) || !SPECIFIC_RE.test(tn) ? "soonest" : tn);
+        if (slotsNow && (state.lastReply || "").includes(DAY_ASK) && (SPECIFIC_RE.test(tn) || SOONEST_RE.test(tn) || /^(?:yes|yeah|yep|sure|ok|okay|please)\b[\s!.]*$/.test(tn) || READY_RE.test(tn)) && !/\b(?:how much|price|cost|rooms?|halls?|stairs?|pets?|dogs?|cats?|sat\w*|sun\w*|weekends?)\b/.test(tn)) {
+          const s = slotSentence(SPECIFIC_RE.test(tn) ? tn : "soonest"); // a named day or stretch wins over "anything"
           if (s) {
             state.turns += 1;
             const nudge = !SPECIFIC_RE.test(tn) && !SOONEST_RE.test(tn) ? " Or tell me a day that suits you better." : "";
@@ -3321,8 +3401,25 @@ export function createConversation(init = {}) {
             return { ...r, slots: true };
           }
         }
+        // "no, just the couch" after a furniture price: that's the whole job — confirm it and move to a day
+        if (/How many rooms, hallways and stairs are we cleaning\?|carpets cleaned at the same time/.test(state.lastReply || "") && !/\d/.test(tn) && /^(?:no|nope|nah)\b|\b(?:just|only) (?:the )?(?:couch|sofa|sectional|furniture|upholstery|that|it)\b|\bno carpets?\b/.test(tn)) {
+          const fm = /\b((?:small |large )?(?:sectional|sofa \+ loveseat|sofa|loveseat|recliner or accent chair|recliner|accent chair|dining chairs?|couch))\b[^$|]{0,40}?\$(\d+)/i.exec(state.lastReply || "");
+          const pieces = ((state.lastReply || "").match(/\$\d+/g) || []).length;
+          if (fm && pieces > 1 && /Upholstery, plus tax|priced separately/.test(state.lastReply || "")) {
+            state.turns += 1;
+            const soon = nextTwoOpen();
+            const r = out("other-services", [`Got it — just the furniture, no carpet. ${soon ? `${DAY_ASK} The soonest I have is ${soon}.` : LINK_OFFER}`]);
+            return soon ? { ...r, slots: true } : r;
+          }
+          if (fm) {
+            state.turns += 1;
+            const soon = nextTwoOpen();
+            const r = out("other-services", [`Got it — just the ${fm[1].toLowerCase()}. That's $${fm[2]} plus tax. ${soon ? `${DAY_ASK} The soonest I have is ${soon}.` : LINK_OFFER}`]);
+            return soon ? { ...r, slots: true } : r;
+          }
+        }
         const linkBefore = state.linkSent;
-        return applySlots(this.incoming0(msg), msg && msg.text, linkBefore);
+        return askDayAfterPrice(applySlots(this.incoming0(msg), msg && msg.text, linkBefore));
       } finally { slotsNow = null; }
     },
     incoming0(msg) {
