@@ -1,0 +1,50 @@
+/* Rotation 1 polish layer: loaded last on every page. Readability, tap targets and the booking hand-off note.
+   Keeps the existing palette (--green, --accent, --muted, --line) and changes no layout. */
+
+/* Small labels never render under 12px (eyebrows, the "Services" line in the logo, photo labels). */
+.eyebrow,
+.brand small,
+.hero-proof-img span,
+.result-label,
+.proof-image span,
+.review-quotes figcaption { font-size: max(12px, .75rem) !important; }
+
+/* WCAG 2.2 target size (2.5.8): header links and stand-alone text links get at least a 24px-tall hit area. */
+.site-header nav a { display: inline-flex; align-items: center; min-height: 24px; padding-block: 2px; }
+a[href="../#results"], a[href="#results"] { display: inline-flex; align-items: center; min-height: 24px; padding-block: 2px; }
+
+/* Booking hand-off note: says what happens on the next screen before people leave the site. */
+.handoff-note { max-width: 62ch; font-size: max(14px, .9rem); line-height: 1.5; }
+.handoff-hero { margin: 12px 0 0; color: #d6ded9; }
+.service-ready .handoff-note { margin-inline: auto; }
+
+/* The comparison table scrolls sideways on phones; show focus when reached by keyboard. */
+table.comparison:focus-visible { outline: 3px solid var(--accent, #d8f04b); outline-offset: 3px; }
+
+/* Visible keyboard focus everywhere, in the brand accent on top of a dark ring for contrast on light and dark bands. */
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 3px solid #102b22; outline-offset: 2px; box-shadow: 0 0 0 6px var(--accent, #d8f04b);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+
+/* Policy pages: section headings and lists in the support layout. */
+.support-main h2 { margin: 36px 0 10px; font-size: 1.45rem; line-height: 1.2; color: var(--ink, #0a1511); }
+.support-main ul, .support-main ol { max-width: 720px; padding-left: 1.2em; color: #46534e; font-size: 1.05rem; line-height: 1.6; }
+.support-main li + li { margin-top: 8px; }
+.support-main .policy-updated { margin-top: -12px; font-size: max(14px, .9rem); color: var(--muted, #62706a); }
+.support-links a { display: inline-flex; align-items: center; min-height: 24px; }
+
+/* Hero text is visible from the first frame: the entrance slides it into place instead of fading it in from opacity 0
+   (an invisible hero delays Largest Contentful Paint and shows a blank hero in link previews and slow loads). */
+@keyframes premium-rise {
+  from { opacity: 1; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Phones: the floating chat button sits at the right edge; keep hero buttons and notes clear of it (as .hero-link already is). */
+@media (max-width: 850px) {
+  .hero .actions, .handoff-hero, .hero .trust-row { padding-right: 64px; }
+}

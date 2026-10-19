@@ -965,7 +965,7 @@ export function createConversation(seed = {}) {
       return reply(
         state,
         "review",
-        "Wichita Carpet Cleaning Services has a 4.9 out of 5 rating from 230 customer reviews on Housecall Pro. The complete, unfiltered review history is available on Housecall Pro.",
+        "Wichita Carpet Cleaning Services has a 4.9 out of 5 rating from over 230 customer reviews on Housecall Pro. The complete, unfiltered review history is available on Housecall Pro.",
       );
     }
     if (intents.includes("insured")) {
