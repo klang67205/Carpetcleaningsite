@@ -746,7 +746,7 @@ export const FACTS = {
   homes: "We clean houses, apartments, condos and townhomes. We don't service downtown high-rise apartment buildings or on-base military housing.",
   hours: "We work weekdays only — Monday through Friday, 7 AM to 5 PM. We're closed Saturday and Sunday. Usual start times are 8:00 AM, 10:30 AM, 1:00 PM and 3:30 PM (3:30 PM is the latest start), and the live calendar shows what's open.",
   lead_time: LEAD_TIME_REPLY,
-  booking_menu: "On the booking page, pick “Standard Carpet Cleaning” for the $99 package, “Pet-Treatment Carpet Cleaning” for $149, or “Small-Job Pet Treatment” for $85, and add any extra areas there.",
+  booking_menu: "On the booking page, choose “Carpet Cleaning - Build Your Visit,” then your package: “Up to 5 rooms + 2 halls + 1 standard staircase - general cleaning” for $99, the same package with enzymatic pet treatment for $149, or “Up to 3 rooms - enzymatic pet treatment” for $85. Add extra areas with “Additional area / room / hallway / standard staircase.”",
   booking: "You book online with the booking link: pick your own day and time from the live weekday openings, and you get a confirmation text right away. Someone else (a family member) can book for you — just use the service address and a mobile number.",
   after_booking: "After booking you get a confirmation text, and we collect the service address and a mobile number. You also get a text about 10 to 15 minutes before we arrive.",
   notes: "Anything special — access details, gate or lockbox codes, sensitivities or discounts — goes in the notes when you book.",
@@ -872,6 +872,8 @@ const PAY_TO_BOOK_RE = /\b(?:pay|payment|charge|charged|card)\b[^.?!]{0,30}\b(?:
 const SQFT_HOME_RE = /\b\d{1,2},?\d{3}\s*(?:sq\.?\s*f(?:ee)?t|sqft|square f(?:ee|oo)t)\b|\b(?:huge|very large|really big|massive) (?:house|home)\b/;
 const ROOM_COUNT_RE = /\b(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:bed ?rooms?|rooms?|areas?)\b/;
 const OLD_URINE_RE = /\b(?:old|months?|years?|set[- ]in|soaked|dried|weeks)\b[^.?!]{0,40}\b(?:urine|pee|peed|accidents?|odou?r|smells?|stains?)\b|\b(?:urine|pee|peed|accidents?)\b[^.?!]{0,40}\b(?:old|months?|years?|set[- ]in|soaked|dried)\b/;
+const WHICH_MENU_RE = /\bwhich (?:one|service|option|package|item|choice|button)\b[^.?!]{0,40}\b(?:pick|choose|select|book|click|tap|use)\b|\bwhat (?:do|should) (?:i|we) (?:pick|choose|select|click|tap)\b|\bwhich do i (?:pick|choose|select)\b|\bwhat (?:service|option|package) (?:do|should) (?:i|we)\b/;
+const MENU_FORM = "Carpet Cleaning - Build Your Visit";
 const OLD_URINE_LINE = "Old urine that has soaked into the pad can leave some odor or staining, so we can't promise it will all come out, but the enzyme treatment gives it the best chance.";
 
 export function createConversation(init = {}) {
@@ -3130,8 +3132,8 @@ export function createConversation(init = {}) {
       else if (pq === "included" && !justQuoted && !["catch", "special_info", "whole_house_info", "still_available"].some((x) => topics.has(x))) carpet.push(q.kind === "minimum" || q.kind === "pet-minimum" ? `For ${jobName()}, yours is our small-job price — ${fmtJob()} (up to 3 areas). The ${money(PRICES.standard)} special is for bigger jobs: ${COVER}.` : `Yes — the ${money(PRICES.standard)} special includes ${COVER}. For ${jobName()}, yours is ${fmtJob()}.`);
       // "which one do I pick?" while booking: name the menu item
       if ((which || (saidHas("which_service") && scopeChanged)) && (q.kind !== "minimum")) {
-        const label = q.kind === "pet-minimum" ? "Small-Job Pet Treatment" : q.base === PRICES.pet ? "Pet-Treatment Carpet Cleaning" : "Standard Carpet Cleaning";
-        carpet.push(`On the booking page, pick "${label}"${q.extras ? ` and add the ${q.extras} extra area${q.extras > 1 ? "s" : ""}` : ""}.`);
+        const label = q.kind === "pet-minimum" ? "Up to 3 rooms - enzymatic pet treatment" : q.base === PRICES.pet ? "Up to 5 rooms + 2 halls + 1 standard staircase - enzymatic pet treatment" : "Up to 5 rooms + 2 halls + 1 standard staircase - general cleaning";
+        carpet.push(`On the booking page, choose "Carpet Cleaning - Build Your Visit," then "${label}"${q.extras ? `, and set "Additional area / room / hallway / standard staircase" to ${q.extras}` : ""}.`);
       }
     } else if (!blocked && uphLine && !floorLine && (pq === "minimum" || pq === "total")) {
       // furniture only: the minimum is a carpet thing; "the total" is the furniture total
@@ -3426,6 +3428,17 @@ export function createConversation(init = {}) {
           }
         }
         // "do I have to pay to book?": a straight answer
+        // "which one do I pick on the booking page?": name the exact Housecall Pro choice for their job, with the link
+        if (WHICH_MENU_RE.test(tn) && !/\b(?:sofa|couch|chair|loveseat|sectional|upholster\w*|tile|grout|hardwood|hard[- ]floor)\b/.test(tn)) {
+          state.turns += 1; state.linkSent = true;
+          if (state.rooms || state.halls || state.stairs || state.wholeHouse) {
+            const q = quote({ ...scopeNow(), pets: state.pets });
+            const label = q.kind === "minimum" ? "Up to 3 areas - general cleaning" : q.kind === "pet-minimum" ? "Up to 3 rooms - enzymatic pet treatment" : q.base === PRICES.pet ? "Up to 5 rooms + 2 halls + 1 standard staircase - enzymatic pet treatment" : "Up to 5 rooms + 2 halls + 1 standard staircase - general cleaning";
+            const extra = q.extras ? `, and set "Additional area / room / hallway / standard staircase" to ${q.extras}` : "";
+            return out("booking", [`On the booking page, choose "${MENU_FORM}," then "${label}"${extra}. Here's the link:`, bookingUrl]);
+          }
+          return out("booking", [`On the booking page, choose "${MENU_FORM}." Then pick "Up to 3 areas - general cleaning" ($75), "Up to 3 rooms - enzymatic pet treatment" ($85), or the 5 rooms + 2 halls + 1 staircase package, general ($99) or with pet treatment ($149). Here's the link:`, bookingUrl]);
+        }
         if (PAY_TO_BOOK_RE.test(tn)) { state.turns += 1; return out("payment", ["No — there's no payment to book and no deposit. You pay after the job is done. " + PAYMENT_REPLY]); }
         // a big home described by square feet: carpet is priced by the room, so ask for rooms instead of guessing
         if (SQFT_HOME_RE.test(tn) && !ROOM_COUNT_RE.test(tn)) { state.turns += 1; return out("price", ["We price carpet by the room, not by square footage, so a bigger home is still priced by its rooms, hallways and stairs. How many carpeted rooms, hallways and stairs are there? Exceptionally large or unusual spaces can be reviewed before service."]); }
