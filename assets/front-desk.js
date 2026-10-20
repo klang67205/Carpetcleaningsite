@@ -874,6 +874,8 @@ const ROOM_COUNT_RE = /\b(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten
 const OLD_URINE_RE = /\b(?:old|months?|years?|set[- ]in|soaked|dried|weeks)\b[^.?!]{0,40}\b(?:urine|pee|peed|accidents?|odou?r|smells?|stains?)\b|\b(?:urine|pee|peed|accidents?)\b[^.?!]{0,40}\b(?:old|months?|years?|set[- ]in|soaked|dried)\b/;
 const WHICH_MENU_RE = /\bwhich (?:one|service|option|package|item|choice|button)\b[^.?!]{0,40}\b(?:pick|choose|select|book|click|tap|use)\b|\bwhat (?:do|should) (?:i|we) (?:pick|choose|select|click|tap)\b|\bwhich do i (?:pick|choose|select)\b|\bwhat (?:service|option|package) (?:do|should) (?:i|we)\b/;
 const MENU_FORM = "Carpet Cleaning - Build Your Visit";
+const DELETE_DATA_RE = /\bdelete my data\b|\b(?:delete|remove|erase|wipe)\b[^.?!]{0,25}\b(?:my|our)\b[^.?!]{0,15}\b(?:data|info(?:rmation)?|messages?|conversations?|chat|records?|details)\b/;
+const COMMERCIAL_SPACE_RE = /\b(?:commercial|office|offices|church|restaurant|warehouse|business|store|shop|clinic|school|daycare|salon|gym|suite|building|apartments?|units?|complex)\b/;
 const OLD_URINE_LINE = "Old urine that has soaked into the pad can leave some odor or staining, so we can't promise it will all come out, but the enzyme treatment gives it the best chance.";
 
 export function createConversation(init = {}) {
@@ -3441,7 +3443,9 @@ export function createConversation(init = {}) {
         }
         if (PAY_TO_BOOK_RE.test(tn)) { state.turns += 1; return out("payment", ["No — there's no payment to book and no deposit. You pay after the job is done. " + PAYMENT_REPLY]); }
         // a big home described by square feet: carpet is priced by the room, so ask for rooms instead of guessing
-        if (SQFT_HOME_RE.test(tn) && !ROOM_COUNT_RE.test(tn)) { state.turns += 1; return out("price", ["We price carpet by the room, not by square footage, so a bigger home is still priced by its rooms, hallways and stairs. How many carpeted rooms, hallways and stairs are there? Exceptionally large or unusual spaces can be reviewed before service."]); }
+        // "DELETE MY DATA" (the data-deletion page tells people to send this): acknowledge it and hand it to a person
+        if (DELETE_DATA_RE.test(tn)) { state.turns += 1; return out("human", [reach("Got it. I've passed your deletion request to the owner, who will remove the assistant records for this conversation. Booking, text and invoice records are kept in Housecall Pro; for those, reply to your Housecall Pro text or text (316) 232-8111.", "This website chat doesn't keep your messages after you close the tab. To have Messenger or booking records deleted, send DELETE MY DATA to our Facebook Page, or text (316) 232-8111.")], { phone: true }); }
+        if (SQFT_HOME_RE.test(tn) && !ROOM_COUNT_RE.test(tn) && !COMMERCIAL_SPACE_RE.test(tn)) { state.turns += 1; return out("price", ["We price carpet by the room, not by square footage, so a bigger home is still priced by its rooms, hallways and stairs. How many carpeted rooms, hallways and stairs are there? Exceptionally large or unusual spaces can be reviewed before service."]); }
         const linkBefore = state.linkSent;
         let res = askDayAfterPrice(applySlots(this.incoming0(msg), msg && msg.text, linkBefore));
         // a day, date or stretch of days the brain didn't follow: answer with the real open times and the link

@@ -7,7 +7,20 @@ window.dataLayer = window.dataLayer || [];
 function gtag() { window.dataLayer.push(arguments); }
 window.gtag = window.gtag || gtag;
 gtag("js", new Date());
-gtag("config", ID);
+// Send only the page address and campaign tags (utm_*, click IDs) to Analytics, never other query text,
+// so nothing a booking system or link might append to a URL reaches Google.
+function pageLocation() {
+  try {
+    const url = new URL(location.href);
+    const keep = new URLSearchParams();
+    url.searchParams.forEach((value, key) => { if (/^(utm_[a-z_]+|gclid|fbclid|gbraid|wbraid)$/i.test(key)) keep.set(key, value); });
+    const query = keep.toString();
+    return url.origin + url.pathname + (query ? `?${query}` : "");
+  } catch {
+    return location.origin + location.pathname;
+  }
+}
+gtag("config", ID, { page_location: pageLocation() });
 
 function load() {
   const script = document.createElement("script");
