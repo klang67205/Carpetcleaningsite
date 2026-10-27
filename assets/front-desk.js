@@ -874,6 +874,19 @@ const ROOM_COUNT_RE = /\b(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten
 const OLD_URINE_RE = /\b(?:old|months?|years?|set[- ]in|soaked|dried|weeks)\b[^.?!]{0,40}\b(?:urine|pee|peed|accidents?|odou?r|smells?|stains?)\b|\b(?:urine|pee|peed|accidents?)\b[^.?!]{0,40}\b(?:old|months?|years?|set[- ]in|soaked|dried)\b/;
 const WHICH_MENU_RE = /\bwhich (?:one|service|option|package|item|choice|button)\b[^.?!]{0,40}\b(?:pick|choose|select|book|click|tap|use)\b|\bwhat (?:do|should) (?:i|we) (?:pick|choose|select|click|tap)\b|\bwhich do i (?:pick|choose|select)\b|\bwhat (?:service|option|package) (?:do|should) (?:i|we)\b/;
 const MENU_FORM = "Carpet Cleaning - Build Your Visit";
+const DELETE_DATA_RE = /\bdelete my data\b|\b(?:delete|remove|erase|wipe)\b[^.?!]{0,25}\b(?:my|our)\b[^.?!]{0,15}\b(?:data|info(?:rmation)?|messages?|conversations?|chat|records?|details)\b/;
+const COMMERCIAL_SPACE_RE = /\b(?:commercial|office|offices|church|restaurant|warehouse|business|store|shop|clinic|school|daycare|salon|gym|suite|building|apartments?|units?|complex|tiles?|grout|hard ?floors?|hard-floors?|hardwood|wood floors?|vinyl|laminate|lvp|concrete|marble|stone)\b/;
+// Rotation 3 (Oct 27, 2026): close the way the owner does at the spots where chats were falling off.
+const WORK_CONSTRAINT_RE = /\b(?:get|gets|got|getting) off(?: of)? work\b|\boff (?:of )?work (?:at|until|till|til|by)\b|\b(?:i|we) (?:work|am at work|are at work) (?:until|till|til|days|all day|during the day|9 ?(?:-|to) ?5|8 ?(?:-|to) ?5|7 ?(?:-|to) ?[345])\b|\bi'?m at work (?:until|till|til|all day|during the day)\b|\b(?:don'?t|do not|didn'?t) (?:want to |wanna )?(?:have to )?(?:take|miss) (?:any )?(?:more )?(?:time )?off(?: of)? work\b|\bso i (?:don'?t|do not) have to take (?:time )?off\b|\b(?:any ?(?:way|thing|time)|anytime|something|appointments?|openings?|availability|available)\b[^.?!]{0,30}\bafter (?:work|[3-9](?::\d\d)?\s*(?:pm|p\.m\.|o'?clock)?|that)\b|\bafter (?:5|6|7)(?::\d\d)?\s*(?:pm|p\.m\.)? (?:preference|preferred|works best|is best|would be best)\b|\b(?:evenings?|after work) (?:only|preferred|works? best|(?:are|is) best)\b/;
+const LATEST_ASK_RE = /\bwhat(?:'s| is) (?:the |your )?latest\b|\blatest (?:appointment|appt|time|start|slot|opening|you (?:can|could|have|do))\b|\bhow late (?:can|do|will|could|would) (?:you|u|y'?all)\b|\b(?:last|latest) (?:appointment|appt|time ?slot|slot) (?:of the day|you have|available)\b|\banything (?:later|after (?:3|4|5)(?::\d\d)?)\b/;
+const SPECIAL_LENGTH_RE = /\bhow long (?:is|does|will|are) (?:the |your |this |that )?(?:\$?99 )?(?:special|deal|offer|promo\w*|sale|price)\b|\b(?:special|deal|offer|promo\w*|sale)\b[^.?!]{0,15}\b(?:going on|good (?:for|until|till|thru|through)|valid|last(?:s|ing)?|run(?:s|ning)? (?:until|till|through|out)|end(?:s|ing)?|expire\w*)\b|\bwhen (?:does|will) (?:the |your |this |that )?(?:special|deal|offer|promo\w*|sale) end\b|\bis (?:the |this |that )?(?:special|deal|offer|price) (?:still )?(?:going|good|valid|available) (?:until|till|thru|through|next|after)\b/;
+const LATE_START_RE = /\b(?:after|past) (?:4|5|6|7|8)(?::\d\d)?\s*(?:pm|p\.m\.|o'?clock)?\b[^.?!]{0,25}\b(?:work|open|available|possible|come|do|ok|okay)\b|\b(?:work|open|available|possible|come|do|anything|appointments?|openings?)\b[^.?!]{0,25}\b(?:after|past) (?:4|5|6|7|8)(?::\d\d)?\s*(?:pm|p\.m\.|o'?clock)?\b|\b(?:do|can|could) (?:you|u|y'?all) (?:do|come|work) (?:in the )?evenings?\b|\bevening (?:appointments?|openings?|times?|hours)\b/;
+const WILL_THINK_RE = /\b(?:get back to you|back to you|get back with you|let you know|think about it|talk to my (?:husband|wife|spouse|partner|hubby)|check with my|check my (?:schedule|calendar|time off)|convinc\w* (?:my |the )?(?:hubby|husband|wife|spouse|partner)|run it by|ask my (?:husband|wife|hubby|spouse|partner)|not (?:quite )?ready|reach (?:back )?out (?:soon|later|again)|check references)\b/;
+const R3_SCOPE_RE = /\$\d|\b(?:how much|price for|cost for|quote|rooms?|halls?|hallways?|stairs?|staircase|couch|sofa|sectional|loveseat|rugs?|tile|pets?|dogs?|cats?|urine)\b/;
+const NOT_HOME_LINE = "You don't need to be home for the cleaning — a lot of our customers leave a door unlocked or give us a garage code, and we lock up when we're done. You'll get a text when we're on the way, and the invoice comes by text after, so you can pay by card from work.";
+const BOOK_IN_CHAT_LINE = "Or if it's easier, just send your address and a good cell number here and we'll put you in for that time.";
+const OPEN_LIST_RE = /\bopen right now\b|\bisn't open, but\b|\bThe soonest I have is\b|\bopen (?:morning |afternoon )?times are\b|\bshows [^.]*open\b|\bthe next open\b/;
+const PICK_TIME_RE = /\b(\d{1,2})(?::(\d\d))?\s*(a\.?m\.?|p\.?m\.?)\b|\b(\d{1,2}):(\d\d)\b|\b(?:at|@|the|for)\s+(\d{1,2})(?::(\d\d))?\b|^(\d{1,2})(?::?(\d\d))?\s*(?:works?|is (?:good|great|fine|perfect)|please|sounds good|would be (?:good|great|perfect))?[\s!.]*$/;
 const OLD_URINE_LINE = "Old urine that has soaked into the pad can leave some odor or staining, so we can't promise it will all come out, but the enzyme treatment gives it the best chance.";
 
 export function createConversation(init = {}) {
@@ -884,7 +897,7 @@ export function createConversation(init = {}) {
     unknownCount: init.unknownCount ?? 0, turns: init.turns ?? 0, lastIntent: init.lastIntent ?? "",
     furn: init.furn ?? {}, unknownQ: init.unknownQ ?? 0, offeredKeith: init.offeredKeith ?? false, weekendLast: init.weekendLast ?? false, helpAsked: init.helpAsked ?? false, askedRooms: init.askedRooms ?? false, tileAsked: init.tileAsked ?? false,
     floorAsked: init.floorAsked ?? false, declined: init.declined ?? null, discountAsked: init.discountAsked ?? false, lastQuoteKey: init.lastQuoteKey ?? "", coverSaid: init.coverSaid ?? false,
-    floorItem: init.floorItem ?? null, reviewKind: init.reviewKind ?? "", askStreak: init.askStreak ?? 0, nonPetOdor: init.nonPetOdor ?? false, manualBooking: init.manualBooking ?? false, siteHandoff: init.siteHandoff ?? "", needRooms: init.needRooms ?? false, declinedSvcTurn: init.declinedSvcTurn ?? 0, openIssue: init.openIssue ?? "", openIssueTurn: init.openIssueTurn ?? 0, lastReply: init.lastReply ?? "", repeatCount: init.repeatCount ?? 0, carpetTalk: init.carpetTalk ?? false,
+    floorItem: init.floorItem ?? null, reviewKind: init.reviewKind ?? "", askStreak: init.askStreak ?? 0, nonPetOdor: init.nonPetOdor ?? false, manualBooking: init.manualBooking ?? false, siteHandoff: init.siteHandoff ?? "", needRooms: init.needRooms ?? false, declinedSvcTurn: init.declinedSvcTurn ?? 0, openIssue: init.openIssue ?? "", openIssueTurn: init.openIssueTurn ?? 0, lastReply: init.lastReply ?? "", repeatCount: init.repeatCount ?? 0, carpetTalk: init.carpetTalk ?? false, pickedTime: init.pickedTime ?? null,
     // answers already given in this conversation (topic ids and a few reply kinds), so a repeat ask gets one short line
     said: Array.isArray(init.said) ? [...init.said] : [],
     version: "front-desk-v2",
@@ -1514,6 +1527,9 @@ export function createConversation(init = {}) {
     const preScope = readScope(t);
     const preTotal = preScope.rooms + preScope.rugs + preScope.halls + preScope.stairs;
     const givesAddress = has(t, /\b\d{2,6}\s+(?:[nsew]\.?\s+|north |south |east |west )?[a-z0-9]+(?:\s[a-z0-9]+)?\s+(?:st|street|ave|avenue|rd|road|dr|drive|ln|lane|ct|court|blvd|boulevard|way|cir|circle|pl|place|ter|terrace|pkwy|parkway)\b/) || has(t, /\b(?:\(?\d{3}\)?[ .-]?\d{3}[ .-]?\d{4})\b/);
+    if (givesAddress && !site && state.pickedTime && state.pickedTime.label && !has(t, /\b(?:how much|price|cost|do you)\b/)) {
+      return out("booking", [`Got it, thank you! We'll get you entered for ${state.pickedTime.label}, and you'll get a confirmation text once it's on the schedule. If anything changes, just message here.`], { notify: "book_request" });
+    }
     if (givesAddress && !has(t, /\b(?:how much|price|cost|do you)\b/) && !(preScope.found && preTotal > 0 && !preScope.bare)) {
       return out("booking", ["Thanks! The booking calendar collects your address and phone number and sends your confirmation text — pick your time here:", bookingUrl]);
     }
@@ -1522,8 +1538,8 @@ export function createConversation(init = {}) {
       state.helpAsked = true;
       return out("human", [reach("I'll get the owner for you — he'll reply here as soon as he can.", `Text us at ${TEXT_LINE} or message us on Facebook and we'll get right back to you.`)], { phone: true });
     }
-    if (has(t, /\b(?:get back to you|back to you|be measuring|do some measuring|measure (?:it|first|and)|think about it|talk to my (?:husband|wife|spouse|partner)|check with my|check my (?:schedule|calendar|time off)|let you know|get back with you)\b/)) {
-      return out("thanks", ["No rush at all — just message here whenever you're ready."]);
+    if (has(t, /\b(?:get back to you|back to you|be measuring|do some measuring|measure (?:it|first|and)|think about it|talk to my (?:husband|wife|spouse|partner)|check with my|check my (?:schedule|calendar|time off)|let you know|get back with you|convinc\w* (?:my |the )?(?:hubby|husband|wife|spouse|partner)|run it by|ask my (?:husband|wife|hubby|spouse|partner)|not (?:quite )?ready(?: yet)?|reach (?:back )?out (?:soon|later|again)|check references|(?:i'?m |currently |will be )?(?:out of town|away|traveling) (?:until|till|til|right now|for)\b)\b/)) {
+      return out("thanks", [reach("No rush at all! I'll check back in with you soon in case any questions come up.", "No rush at all — just message here whenever you're ready.")]);
     }
     const taxQ = has(t, /\b(?:with tax|including tax|incl\.? tax|tax (?:rate|total|amount|included)|total (?:with|including|after) tax|after tax|before tax|is there (?:a |any )?tax|tax on (?:that|it|this|top)|plus tax\?|(?:does|do|is) (?:that|it|this|the (?:price|\$?\d+|special|package|deal|quote)|your prices?) (?:include|includes|included|including) (?:the )?tax|include tax|includes tax|tax included|charge tax|sales tax|how much (?:is )?(?:the )?tax|out the door|come to with tax)\b/);
     if (taxQ && !has(t, /\b(?:and|also|plus)\b[^.?!]*\b(?:do you|can you|service|come|how long|what|when|where|take)\b/) && !/\?[^?]*\?/.test(t)) {
@@ -3238,7 +3254,7 @@ export function createConversation(init = {}) {
     const outBye = state.inArea === false && !hasScope();
     if (closing === "just_booked") post.push({ text: "Thanks for booking! You'll get a confirmation text, and another text when we're about 10 to 15 minutes away. See you then!", prio: 3 });
     else if (closing === "not_interested") post.push({ text: "No problem at all! We're here whenever you need us — just send a message.", prio: 3 });
-    else if (closing === "will_think") post.push({ text: "No rush at all — just message here whenever you're ready.", prio: 3 });
+    else if (closing === "will_think") post.push({ text: reach("No rush at all! I'll check back in with you soon in case any questions come up.", "No rush at all — just message here whenever you're ready."), prio: 3 });
     else if (!hasContent && !linkMode && closing === "goodbye") post.push({ text: outBye ? OOA_BYE : "You too! We're here whenever you need us.", prio: 3 });
     else if (!hasContent && !linkMode && closing === "thanks") {
       if (outBye) post.push({ text: OOA_BYE, prio: 3 });
@@ -3381,6 +3397,73 @@ export function createConversation(init = {}) {
       return { bubbles: [hasScope() ? "Happy to help! Want the link to pick a weekday time, or is there something else I can answer?" : `Happy to help! ${ASK_ROOMS}`], intent: "error" };
     }
   }
+  /* ---------- Rotation 3: the falloff points, answered like the owner answers them ---------- */
+  /** The latest-start openings: 3:30 PM (else 1:00 PM) on the next two days that have it. */
+  function lateOpenings() {
+    const S = slotsNow; if (!S) return null;
+    for (const t of ["15:30", "13:00"]) {
+      const days = S.days.filter((d) => d.bookable && d.raw.includes(t)).slice(0, 2);
+      if (days.length) return { time: ampm(t), text: days.length === 2 ? `${days[0].label} or ${days[1].label} at ${ampm(t)}` : `${days[0].label} at ${ampm(t)}` };
+    }
+    return null;
+  }
+  /** "I don't get off work until 3:30", "what's your latest appointment?", "how long is the special?" */
+  function rotation3(tn) {
+    if (!tn || tn.length > 240 || /\b(?:sat\w*|sun\w*|weekends?)\b/.test(tn)) return null;
+    const work = WORK_CONSTRAINT_RE.test(tn), lateAsk = !work && LATE_START_RE.test(tn), latest = !work && (lateAsk || LATEST_ASK_RE.test(tn)), special = !work && !latest && SPECIAL_LENGTH_RE.test(tn) && tn.length <= 120;
+    if (!work && !latest && !special) return null;
+    if (R3_SCOPE_RE.test(tn) && !(work && !/\$\d|\bhow much\b/.test(tn))) return null;
+    if (/\b(?:my|our) (?:appointment|appt|cleaning) (?:is|was|on)\b|\breschedul\w*|\bcancel\w*/.test(tn)) return null;
+    state.turns += 1;
+    const soon = nextTwoOpen(), late = lateOpenings();
+    let text;
+    const homeSaid = state.said.includes("r3_home");
+    if (work || latest) markSaid("r3_home");
+    if ((work || lateAsk) && homeSaid) {
+      text = `We can't start after 3:30 PM, but you really don't need to be there — a door code, garage code or unlocked door works, and we lock up after.${late && late.time === "3:30 PM" ? ` If you'd like to be home, I have ${late.text}.` : ""}${soon ? ` Otherwise the soonest I have is ${soon}.` : ""} Which day works best?`;
+    } else if (work) {
+      const lateLine = late ? (late.time === "3:30 PM" ? `If you'd rather be there, 3:30 PM is our latest start — I have ${late.text}.` : `If you'd rather be there, 3:30 PM is our latest start (the next late opening is ${late.text}).`) : "If you'd rather be there, 3:30 PM is our latest start.";
+      text = `Totally understand. ${NOT_HOME_LINE} ${soon ? `The soonest I have is ${soon}. ` : ""}${lateLine} Did you have a day in mind?`;
+    } else if (latest) {
+      text = `${lateAsk ? "We don't start after 3:30 PM — that's our latest start" : "Our latest start is 3:30 PM"}${late && late.time === "3:30 PM" ? ` — the next ones open are ${late.text}` : ""}. And you don't need to be home — a door code or an unlocked door works, and we lock up after. Did you have a day in mind?`;
+    } else {
+      text = `It's not a limited-time deal — the $${PRICES.standard} special (up to 5 rooms, 2 hallways and a staircase, plus tax) is our everyday price, so there's no rush on that.${soon ? ` Whenever you're ready, the soonest I have is ${soon}.` : ""}`;
+    }
+    const r = out("booking", [text]);
+    return soon || late ? { ...r, slots: true } : r;
+  }
+  /** A time the customer picked out of the times we just listed ("3:30", "8:00 on Friday is great"): the open slot, or null. */
+  function pickedSlot(tn) {
+    const S = slotsNow; if (!S) return null;
+    const m = PICK_TIME_RE.exec(tn); if (!m) return null;
+    let h = +(m[1] || m[4] || m[6] || m[8]); const mi = +(m[2] || m[5] || m[7] || m[9] || 0);
+    const ap = (m[3] || "").replace(/\./g, "");
+    if (!(h >= 1 && h <= 12) && !(h >= 13 && h <= 18)) return null;
+    if (ap === "pm" && h < 12) h += 12; else if (!ap && h >= 1 && h <= 5) h += 12;
+    const want = `${String(h).padStart(2, "0")}:${String(mi).padStart(2, "0")}`;
+    // a bare number ("8", "at 1") only counts when it is one of the times we just listed (not "8 rooms")
+    if ((m[6] || m[8]) && !(state.lastReply || "").includes(ampm(want))) return null;
+    // the day: named in the message, else the days the last reply listed
+    let days = [];
+    const fmtD = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Chicago", year: "numeric", month: "2-digit", day: "2-digit" });
+    const today = fmtD.format(clockNow());
+    for (const dm of tn.matchAll(SLOT_DAY_RE)) { const wd = SLOT_DAY[dm[1]]; const d = S.days.find((x) => x.wd === wd && x.date > today); if (d) days.push(d); }
+    const md = /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\.?\s+(\d{1,2})(?:st|nd|rd|th)?\b/.exec(tn);
+    if (md) { const mon = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"].indexOf(md[1]) + 1; const d = S.days.find((x) => +x.date.slice(5, 7) === mon && +x.date.slice(8) === +md[2]); days = d ? [d] : days; }
+    if (!days.length) {
+      const last = state.lastReply || "";
+      days = S.days.filter((d) => last.includes(d.label));
+    }
+    const hits = days.filter((d) => d.bookable && d.raw.includes(want));
+    if (hits.length !== 1) return null;
+    return { date: hits[0].date, raw: want, label: `${hits[0].label} at ${ampm(want)}` };
+  }
+  /** Add the "send your address and we'll put you in" option after a picked, open time (Messenger only). */
+  function withBookInChat(r, slot) {
+    if (!slot || site || !r || !Array.isArray(r.bubbles)) return r;
+    state.pickedTime = slot;
+    return { ...r, bubbles: [...r.bubbles, BOOK_IN_CHAT_LINE] };
+  }
   return {
     state,
     /**
@@ -3391,6 +3474,27 @@ export function createConversation(init = {}) {
       slotsNow = validSlots(msg && msg.slots);
       try {
         const tn = norm(msg && msg.text);
+        // Rotation 3: work-hours limits, "what's your latest time?", "how long is the special?"
+        const r3 = rotation3(tn);
+        if (r3) return r3;
+        // "Monday works best, I'll get back to you": the times for that day, the link, and a promise to check back
+        if (slotsNow && !site && WILL_THINK_RE.test(tn) && SPECIFIC_RE.test(tn) && !/\b(?:how much|price|cost|rooms?|halls?|stairs?)\b/.test(tn)) {
+          const s = slotSentence(tn);
+          if (s) {
+            state.turns += 1; state.linkSent = true;
+            const r = out("booking", [`Sounds good! ${s} You can grab one here whenever you're ready:`, bookingUrl, "No rush at all — I'll check back in with you soon in case any questions come up."]);
+            return { ...r, slots: true };
+          }
+        }
+        // a time picked out of the times we just listed: confirm it, link it, and offer to book it right here
+        if (slotsNow && tn.length <= 80 && OPEN_LIST_RE.test(state.lastReply || "") && !/\b(?:how much|price|cost|rooms?|halls?|stairs?|pets?|sat\w*|sun\w*|weekends?|not|isn'?t|doesn'?t|can'?t|won'?t)\b/.test(tn)) {
+          const slot = pickedSlot(tn);
+          if (slot) {
+            state.turns += 1; state.linkSent = true;
+            const r = out("booking", [`${slot.label} is open — great choice! You can grab it here, and you'll get a confirmation text right away:`, bookingUrl]);
+            return withBookInChat({ ...r, slots: true }, slot);
+          }
+        }
         // "yes" to "Want me to send the link so you can grab one?" (offered with the open times) sends it
         if (!state.linkSent && /Want me to send the link so you can grab (?:one|it)\?$/.test(state.lastReply || "") && /^(?:yes|yeah|yep|yes please|sure|ok|okay|please|send it|go ahead|sounds good)\b[\s!.]*(?:please|thanks|thank you)?[\s!.]*$/.test(tn)) {
           // keep the day (and time) the offer was about: "Monday, Oct 12 shows …" → "monday"
@@ -3407,7 +3511,8 @@ export function createConversation(init = {}) {
             state.turns += 1;
             const nudge = !SPECIFIC_RE.test(tn) && !SOONEST_RE.test(tn) ? " Or tell me a day that suits you better." : "";
             const r = out("booking", [`${/ is open right now\.$/.test(s) ? "Good news — " : /^(?:yes|yeah|yep|sure|ok|okay|please)\b/.test(tn) ? "Great! " : ""}${s}${nudge} You can grab ${/ is open right now\.$|shows \d{1,2}:\d\d [AP]M open right now\.$/.test(s) ? "it" : "one"} here, and you'll get a confirmation text right away:`.replace(/^Good news — (\w)/, (m, c) => `Good news — ${c}`), bookingUrl]);
-            return { ...r, slots: true };
+            const one = / is open right now\.$/.test(s) ? pickedSlot(tn) : null;
+            return withBookInChat({ ...r, slots: true }, one);
           }
         }
         // "no, just the couch" after a furniture price: that's the whole job — confirm it and move to a day
@@ -3441,13 +3546,15 @@ export function createConversation(init = {}) {
         }
         if (PAY_TO_BOOK_RE.test(tn)) { state.turns += 1; return out("payment", ["No — there's no payment to book and no deposit. You pay after the job is done. " + PAYMENT_REPLY]); }
         // a big home described by square feet: carpet is priced by the room, so ask for rooms instead of guessing
-        if (SQFT_HOME_RE.test(tn) && !ROOM_COUNT_RE.test(tn)) { state.turns += 1; return out("price", ["We price carpet by the room, not by square footage, so a bigger home is still priced by its rooms, hallways and stairs. How many carpeted rooms, hallways and stairs are there? Exceptionally large or unusual spaces can be reviewed before service."]); }
+        // "DELETE MY DATA" (the data-deletion page tells people to send this): acknowledge it and hand it to a person
+        if (DELETE_DATA_RE.test(tn)) { state.turns += 1; return out("human", [reach("Got it. I've passed your deletion request to the owner, who will remove the assistant records for this conversation. Booking, text and invoice records are kept in Housecall Pro; for those, reply to your Housecall Pro text or text (316) 232-8111.", "This website chat doesn't keep your messages after you close the tab. To have Messenger or booking records deleted, send DELETE MY DATA to our Facebook Page, or text (316) 232-8111.")], { phone: true }); }
+        if (SQFT_HOME_RE.test(tn) && !ROOM_COUNT_RE.test(tn) && !COMMERCIAL_SPACE_RE.test(tn)) { state.turns += 1; return out("price", ["We price carpet by the room, not by square footage, so a bigger home is still priced by its rooms, hallways and stairs. How many carpeted rooms, hallways and stairs are there? Exceptionally large or unusual spaces can be reviewed before service."]); }
         const linkBefore = state.linkSent;
         let res = askDayAfterPrice(applySlots(this.incoming0(msg), msg && msg.text, linkBefore));
         // a day, date or stretch of days the brain didn't follow: answer with the real open times and the link
         if (slotsNow && res && String(state.lastIntent || "") === "unknown" && (SPECIFIC_RE.test(tn) || TIME_ASK_RE.test(tn))) {
           const s = slotSentence(tn);
-          if (s) { state.linkSent = true; res = { ...out("booking", [`${s} You can grab one here, and you'll get a confirmation text right away:`, bookingUrl]), slots: true }; }
+          if (s) { state.linkSent = true; res = { ...out("booking", [`${s} You can grab one here, and you'll get a confirmation text right away:`, bookingUrl]), slots: true }; if (/ is open right now\.$/.test(s)) res = withBookInChat(res, pickedSlot(tn)); }
         }
         // old urine: say plainly what treatment can't promise
         if (res && Array.isArray(res.bubbles) && OLD_URINE_RE.test(tn) && !res.bubbles.some((b) => /can't promise|cannot promise/.test(b))) {
